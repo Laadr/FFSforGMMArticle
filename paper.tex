@@ -302,7 +302,8 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
                 \caption{Summary of the various criterion functions.\label{tab:crit}}
                 \begin{tabular}[b]{l|c|c||c|c}
                   \hline
-                  Criterion & Divergence & Classification rate & Gaussian hypothesis & Speed \\
+                  Criterion & Divergence & Classification & Gaussian   & Speed \\
+                            &            & rate           & hypothesis &       \\
                   \hline
                   Overall accuracy            &  & \checkmark & 0 & - \\
                   Cohen's kappa               &  & \checkmark & 0 & - \\
@@ -345,7 +346,7 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
             \paragraph{Sequential floating forward feature selection}
             \label{sec:floating-presentation}
 
-            The Sequential Floating Forward Selection (SFFS) is actually based on two algorithms: the SFS described above and the Sequential Backward Selection (SBS). The SBS is the backward equivalent of SFS. The difference is that it starts with every features in the pool of selected features and tries at each step to remove the less significant one in term of the given criterion function.
+            The Sequential Floating Forward Selection (SFFS)\cite{somol1999adaptive} is actually based on two algorithms: the SFS described above and the Sequential Backward Selection (SBS). The SBS is the backward equivalent of SFS. The difference is that it starts with every features in the pool of selected features and tries at each step to remove the less significant one in term of the given criterion function.
 
             The SFFS works as the SFS but between each step of the SFS algorithm a backward selection is operated. At the end of the SBS step, the value of the criterion function is compared to the best value ever obtained with a set of features of the same size and if the new value is better the feature put into question is effectively taken away and the next step is again a SBS but if the new value is not better the SBS step is forgotten and it moves to the next SFS step. The algorithm stops when a given number of features \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sffs} sums up the method.
 
@@ -394,16 +395,18 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
 \label{sec:implementation}
 
     \subsection{Statistical update rules}
+    In the presented method, the most costly operation is the evaluation of the criterion function which needs to be done for each possible subset of variables augmented by one of the candidate variable. To compute these values, the most costly operation are the inversion of the covariance matrix and the computation of its determinant. Both of these operations have a $O(n^3)$ computational complexity. Additionaly, the estimation of classification rate with cross-validation is a heavy process which take a consequent amount of time.
+
     A major contribution of this work is the optimization in term of computational efficiency. More precisely, three steps of the proposed method has been upgraded in order to reduce computational time. First of all, the GMM model is learned only once using samples. When a covariance matrix or a mean vector of a reduced set of variables is required, it is obtained from the global model learned at the beginning by marginalization.
 
-    Secondly, when a cross-validation is performed, submodels, i.e. GMM model trained with $(n-1)$ folds, are not learned using the $(n-1)$ folds but, instead, are derived from the global model and from the covariance matrices and mean vectors of the fold used for validation for the given submodel. The process is described in details in Section~\ref{sec:update-cv}.
+    Secondly, when a cross-validation is performed, submodels, i.e. GMM model trained with $(n_{cv}-1)$ folds, are not learned using the $(n_{cv}-1)$ folds but, instead, are derived from the global model and from the covariance matrices and mean vectors of the fold used for validation for the given submodel. The process is described in details in Section~\ref{sec:update-cv}.
 
     Finally and most importantly, when variables are tested one by one during a selection step, costly operations are made when computing criterion functions for each variable especially the computation of the inverse of covariance matrices and its determinant. Several update rules are set up which allow to compute this inverse and determinant only once to test all variables. These update rules are presented in Section~\ref{sec:update-crit}.
 
         \subsubsection{Update for cross validation}
         \label{sec:update-cv}
 
-        Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM model with the whole training set and then, instead of training a model on $(n_{cv}-1)$ folds, the complete model and the mean vector and the covariance matrix of the $k^{th}$ fold is used to derive the corresponding submodel.
+        Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM model with the whole training set once and then, instead of training models on $(n_{cv}-1)$ folds, parameters of the complete model are used to derive those of submodels.
 
         The following formulae can be obtained
         \begin{prop}
@@ -421,16 +424,14 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
                 &- \frac{n_c \nu_c}{(n_c-\nu_c)} (\boldsymbol{\mu}_c^{\nu_c}-\boldsymbol{\mu}_c^{n_c})(\boldsymbol{\mu}_c^{\nu_c}-\boldsymbol{\mu}_c^{n_c})^t \biggr) \nonumber
             \end{align*}
         \end{prop}
-        where $\nu_c$ is the number of samples of class $c$ removed from the initial set, $\boldsymbol{\mu}_c^{n_c}$ the mean vector estimated with this $\nu_c$ samples and $\boldsymbol{\Sigma}_c^{\nu_c}$ the covariance matrix estimated with this $\nu_c$ samples.
+        where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exposants on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\nu}_c$ denotes the set of samples used to compute them.
 
         \subsubsection{Criterion function computation}
         \label{sec:update-crit}
 
-        As explained earlier, at each iteration the SFS and SFFS algorithms compute the value of a criterion function for every possible set of features composed of the selected ones augmented by one of the remaining features. One of the main achievements of this work is to reduce the computational time needed to compute the criterion function of augmented sets.
+        At each iteration the SFS and SFFS algorithms compute the value of a criterion function for every possible set of features composed of the selected ones augmented by one of the remaining features. One of the main achievements of this work is to reduce the computational time in factorizing the computation of the inverse and determinant of the covariance matrix..
 
-        In the remaining of the paper, $\boldsymbol{\Sigma}^{(k-1)}$ is the covariance matrix of the $(k-1)^{th}$ iteration, i.e., the covariance matrix of the selected features and $\boldsymbol{\Sigma}^{(k)}$ is a covariance matrix at the $k^{th}$ iteration, i.e., the covariance matrix of an augmented set. Then, the inverse of the covariance matrix $(\boldsymbol{\Sigma}^{(k)})^{-1}$, the quadratical term $(\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}$ and the determinant $\log |\boldsymbol{\Sigma}^{(k)}|$ can be expressed in function of terms of the $(k-1)^{th}$ iteration. These calculi use the fact that the covariance matrix is a positive definite symmetric matrix to simplify formulae using block matrices \cite{webb2003statistical} (chapter 9.2). These update rules are summed up hereafter
-
-        In order to easily understand which terms are available and which ones needs to be computed, the terms already computed are set in green in the update rules.
+        In the remaining of the paper, $\boldsymbol{\Sigma}^{(k-1)}$ is the covariance matrix of the $(k-1)^{th}$ iteration, i.e., the covariance matrix of the selected features and $\boldsymbol{\Sigma}^{(k)}$ is a covariance matrix at the $k^{th}$ iteration, i.e., the covariance matrix of an augmented set. Then, the inverse of the covariance matrix $(\boldsymbol{\Sigma}^{(k)})^{-1}$, the quadratical term $(\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}$ and the determinant $\log |\boldsymbol{\Sigma}^{(k)}|$ can be expressed in function of terms of the $(k-1)^{th}$ iteration. These calculi use the fact that the covariance matrix is a positive definite symmetric matrix to simplify formulae using block matrices \cite{webb2003statistical} (chapter 9.2). These update rules are summed up hereafter.
 
         As $\boldsymbol{\Sigma}^{(k)}$ is a positive definite symmetric matrix, the following notation can be used
         \begin{equation*}
