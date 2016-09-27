@@ -1,6 +1,6 @@
 \documentclass[journal,peerreview,onecolumn]{IEEEtran}
 % \documentclass[journal]{IEEEtran}
-
+\usepackage{etex}
 \usepackage{cite}
 \usepackage[pdftex]{graphicx}
 \graphicspath{{./Fig/}}
@@ -18,6 +18,7 @@
 \usepackage{pgfplots}
 \usepackage{tabularx}
 \usepackage{empheq}
+\usepackage{hyperref}
 
 \newcommand\MyBox[2]{
   \fbox{\lower0.75cm
@@ -68,6 +69,8 @@ DYNAFOR, France.}
 % make the title area
 \maketitle
 
+\tableofcontents
+\clearpage
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
@@ -116,62 +119,121 @@ This work proposes to develop a forward feature selection method using GMM in co
 
 The remaining of this article is organized as follows. Section~\ref{sec:gmm-hd} presents Gaussian Mixture Model classifiers and the features selection methods used to make them suitable for high-dimension space. The work done to develop a smart implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. And finally, the tests conducted to explore variations of the algorithm and to compare it to other standard classifiers are detailed in Section~\ref{sec:test}.
 
-\section{Gaussian Mixture Models in high dimension space}
+\section{Gaussian Mixture Models in high dimensional space}
 \label{sec:gmm-hd}
 
-In the remaining of the paper, the following notations are used. $\mathcal{S} = \{\mathbf{x}_i,y_i\}_{i=1}^{n}$ denotes the training set where $\mathbf{x}_i \in \mathbb{R}^d$ is the vector of features of the $i^{th}$ sample, $y_i = 1,...,C$ the associated label, C the total number of classes, $n$ the number of samples and $n_c$ the number of samples of class $c$.
+The    following    notations    are   used    in    the    remaining.
+$\mathcal{S}  = \{\mathbf{x}_i,y_i\}_{i=1}^{n}$  denotes the  training
+set where $\mathbf{x}_i \in \mathbb{R}^d$ is the vector of features of
+the $i^{th}$ sample, $y_i = 1,...,C$ the associated label, C the total
+number of classes,  $n$ the number of samples and  $n_c$ the number of
+samples of class $c$.
 
-    \subsection{Gaussian Mixture Models}
+\subsection{Gaussian Mixture Models}
 
-    The hypothesis of mixture models is that a given sample is the realization of a random vector which distribution is a mixture (convex combination) of several class conditioned distribution:
+For mixture models, it is assumed  that a given sample $\mathbf{x}$ is
+the realization  of a  random vector which  distribution is  a mixture
+(convex     combination)     of      several     class     conditioned
+distribution~\cite{Fraley00model-basedclustering}:
     \begin{equation}
         p(\mathbf{x}) = \sum_{c=1}^{C} \pi_c f_c(\mathbf{x}|\theta)
     \end{equation}
-    where $\pi_c$ is the prior i.e. the proportion of class $c$ and $f_c$ a probability density function parametrized by $\theta$.
+    where $\pi_c$ is  the prior, \emph{i.e.}, the  proportion of class
+    $c$  and  $f_c$  a  parametric density  function  parametrized  by
+    $\theta$.
 
-    The Gaussian mixture model (GMM) assumes that each $f_c$ is , conditionally to $c$, a Gaussian distribution of parameters $\boldsymbol{\mu}_c$ and $\boldsymbol{\Sigma}_c$ and so $f_c(\mathbf{x}|\theta)$ can be written as
+    Among the possible parametric model,  the Gaussian one is the most
+    used~\cite{bouveyron2014model}.   It assumes  that each  $f_c$ is,
+    conditionally  to  $c$,  a  Gaussian  distribution  of  parameters
+    $\boldsymbol{\mu}_c$    and    $\boldsymbol{\Sigma}_c$:
     \begin{equation*}
-        f_c(\mathbf{x}|\theta) = \frac{1}{(2\pi)^{\frac{d}{2}} |\boldsymbol{\Sigma}_c|^{\frac{1}{2}}} \exp \left( -\frac{1}{2} (\mathbf{x} - \boldsymbol{\mu}_c)^t \boldsymbol{\Sigma}_c^{-1} (\mathbf{x} - \boldsymbol{\mu}_c) \right).
+        f_c(\mathbf{x}|\boldsymbol{\mu}_c, \boldsymbol{\Sigma}_c) = \frac{1}{(2\pi)^{\frac{d}{2}} |\boldsymbol{\Sigma}_c|^{\frac{1}{2}}} \exp \left( -\frac{1}{2} (\mathbf{x} - \boldsymbol{\mu}_c)^t \boldsymbol{\Sigma}_c^{-1} (\mathbf{x} - \boldsymbol{\mu}_c) \right).
     \end{equation*}
 
-    In supervised learning the class parameters $\boldsymbol{\mu}_c$, $\boldsymbol{\Sigma}_c$ and $\pi_c$ are usually estimated through the conventional unbiased empirical estimators:
+    It  is  referred  to  as  Gaussian  mixture  model  (GMM).   In  a
+    supervised    learning    framework,    the    class    parameters
+    $\boldsymbol{\mu}_c$,   $\boldsymbol{\Sigma}_c$   and  the   prior
+    $\pi_c$ are  usually estimated  through the  conventional unbiased
+    empirical estimators:
     \begin{align}
         \hat{\pi}_c &= \frac{n_c}{n},\\
         \hat{\boldsymbol{\mu}}_c &= \frac{1}{n_c} \sum_{\{i|y_i = c\}} \mathbf{x}_i ,\\
         \hat{\boldsymbol{\Sigma}}_c &= \frac{1}{(n_c - 1)} \sum_{\{i|y_i = c\}} (\mathbf{x}_i - \boldsymbol{\mu}_c) (\boldsymbol{}x_i - \boldsymbol{\mu}_c)^t.
     \end{align}
 
-    To predict the class of a new sample, the maximum a posteriori (MAP) rule is used and thus, using Bayes' law, the decision rule is
+    To predict the  class of a new unseen sample,  the maximum \emph{a
+      posteriori}  rule  is  used:
     \begin{equation*}
         \mathbf{x} \text{ belongs to } c \Leftrightarrow c = \text{arg} \max_{c \in C} p(c) p(\mathbf{x}|c).
     \end{equation*}
-    Identifying $p(c)$ as $\pi_c$ and $p(x|c)$ as $f_c(x|\theta)$ and by taking the log, a simplified decision rule is obtained
-    \begin{align}
-        Q_c(\mathbf{x})
-        &= 2 \log \left( p(c) p(\mathbf{x}|c) \right) \nonumber \\
-        &= - (\mathbf{x} - \boldsymbol{\mu}_c)^t \boldsymbol{\Sigma}_c^{-1} (\mathbf{x} - \boldsymbol{\mu}_c) \nonumber \\
-        &~~-\log (|\boldsymbol{\Sigma}_c|) + 2 \log (\pi_c) - d \log (2\pi).
-        \label{eq:decision}
-    \end{align}
+    Under the GMM,  and identifying $p(c)$ as $\pi_c$  and $p(x|c)$ as
+    $f_c(x|\theta)$ and by taking the log, a decision rule is obtained
+    \begin{eqnarray}\label{eq:decision}
+      Q_c(\mathbf{x}) &=& 2 \log \left( p(c) p(\mathbf{x}|c) \right) \nonumber \\
+                      &=& - (\mathbf{x} - \boldsymbol{\mu}_c)^t \boldsymbol{\Sigma}_c^{-1} (\mathbf{x} - \boldsymbol{\mu}_c) \nonumber \\
+                      & &-\log (|\boldsymbol{\Sigma}_c|) + 2 \log (\pi_c) - d \log (2\pi).
+    \end{eqnarray}
 
-    It is important to notice that the inverse and the determinant of the covariance matrix are key elements of the decision function. The estimations of these elements suffer from the curse of dimensionality\cite{bouveyron2014model}. More precisely, the number of parameters to estimate increases quadratically relatively to the number of features as illustrated by Figure~\ref{fig:nb-param}. The minimum number of samples requires to estimate the model is equal to the number of parameters and it can be an issue in some case. For example, hyperspectral data is a case of high dimensional samples and, in general, very few labeled samples are available because of the difficulty and the cost to collect ground-truth.
+    \subsection{Curse of dimensionality in GMM}
+    \label{sec:curse:gmm}
+    
+    The computation of~\ref{eq:decision} requires the inversion of the
+    covariance matrix and and the  computation of the logarithm of the
+    determinant.  The estimations of these terms suffer from the curse
+    of  dimensionality\cite{bouveyron2014model}, because  in practice,
+    the  number of  parameters  $\eta_c$ to  estimate  for each  class
+    increases quadratically with respect to the number of features, as
+    illustrated in Figure~\ref{fig:nb-param}.  Hence, if the number of
+    observation  $n_c$ is  small  compared to  the  number of  samples
+    $n_c$, the  estimated covariance  matrix is badly  conditioned and
+    thus the computation  of its inverse and its  determinant would be
+    unstable.  The  worst situation  is  $n_c<\eta_c$  which leads  to
+    singular covariance matrix.
 
-    \begin{figure}[!t]
+    Unfortunately, this situation happens regularly in remote sensing.
+    For  instance  in  hyperspectral image  classification,  very  few
+    labeled samples  are usually  available because of  the difficulty
+    and the cost to collect ground-truth.
+
+    \begin{figure}[!t] % TODO : log plot et donner la formule dans la légende 
         \centering
         \begin{tikzpicture}
-            \begin{axis}[xmin=0,xmax=500,ymin=0,width=0.5*\columnwidth,grid,axis x line=left ,axis y line=left, tick align=outside,xlabel = Dimension,ylabel =Number of parameters]
-                \addplot+[very thick,mark=none,smooth,domain=0:500,samples=500] (\x,{\x*(\x+3)/2+1});
-            \end{axis}
+          \begin{semilogyaxis}[xmin=0,xmax=200,ymin=0,width=0.5*\columnwidth,grid,axis x line=left ,axis y line=left, tick align=outside,xlabel = $d$,ylabel = $\eta_c$]
+            \addplot+[very thick,mark=none,smooth,domain=0:200,samples=200] (\x,{\x*(\x+3)/2+1});
+            \end{semilogyaxis}
         \end{tikzpicture}
-        \caption{Number of parameters by class in function of dimension.\label{fig:nb-param}}
+        \caption{Number of parameters $\eta_c$ by class in function of dimension $d$: $\eta_c=d(d+3)/2+1$.\label{fig:nb-param}}
     \end{figure}
 
-    A lack of samples induces badly-conditioned covariance matrices and so unstable inversion and computation of the determinant. There are two major solutions to this problem. First option is to use a regularization method to stabilize the inversion of the covariance matrices\cite{hoerl1970ridge}. Second option is to use a features extraction/selection method in order to reduce the dimensionality of the samples. In this study, the latter option is explored and a feature selection method named sequential forward features selection is presented in the next Section.
+    %% TODO: il faut reprendre cette partie en détaillant plus
+    %% Il y a deux approches: une qui regularise le probleme inverse,
+    %% ridge est une solution, mais il y en a d'autres. Voir le
+    %% paragraphe qui est consacré à cela dans la thèse d'Anthony ->
+    %% elle arrive pas mail. Ensuite, il y a la réduction de dimension
+    %% données des refs (voir intro du papier JSTARS) et dans la
+    %% réduction  de dimension, il  y a  la sélection de  features. La
+    %% conclusion doit s'enchainer avec la partie suivante.
+    There are two major  solutions to this problem. First
+    option  is  to  use  a  regularization  method  to  stabilize  the
+    inversion of the  covariance matrices\cite{hoerl1970ridge}. Second
+    option is to  use a features extraction/selection  method in order
+    to reduce  the dimensionality of  the samples. In this  study, the
+    latter option  is explored  and a  feature selection  method named
+    sequential  forward features  selection is  presented in  the next
+    Section.
 
-    \subsection{Features selection}
+    \section{Features selection}
     \label{sec:selection}
 
-    The objective of feature selection is to retrieve the most compact representation of the data with minimum loss of information. In deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.
+    The objective of feature selection is to retrieve the most compact
+    representation of  the data with  minimum loss of  information. By
+    deleting the  redundant information,  feature selection  allows to
+    reduce  dimension  and  thus  avoid  statistical  issue,  increase
+    algorithm speed and limit  storage requirements. Moreover, it adds
+    several beneficial side effects. It improves data understanding by
+    identify where  is the  most relevant information  and it  is then
+    possible to save resources when organizing a new data
+    acquisition.% TODO: add ref. et example.
 
     It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
 
@@ -941,3 +1003,7 @@ Biography text here.
 % Note that, LaTeX2e, unlike IEEE journals/conferences, places
 % footnotes above bottom floats. This can be corrected via the
 % \fnbelowfloat command of the stfloats package.
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
