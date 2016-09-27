@@ -659,15 +659,15 @@ Experimentation has been conducted on two different datasets. The first dataset,
         \end{tabular}
     \end{table}
 
-    In the experiment, the following features are computed using the RGBIR images similar to \cite{tuia2015multiclass}:
+    In the experiment, the following features are computed using the RGBIR images similarly to \cite{tuia2015multiclass}:
     \begin{itemize}
         \item Radiometric indexes: NDVI, TNDVI, RVI, SAVI, TSAVI, MSAVI, MSAVI2, GEMI, IPVI, NDWI2, NDTI, RI, CI, BI, BI2 (15 features) \footnote{\url{https://www.orfeo-toolbox.org//Applications/RadiometricIndices.html}};
-        \item Morphological profile with reconstruction of each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features)\cite{tuia2015multiclass};
-        \item Attribute profile of each band with area as attribute and 1000, 2000, 5000, 10000 and 15000 as thresholds (40 features)\cite{tuia2015multiclass};
-        \item Attribute profile of each band with diagonal of bounding box as attribute and 100, 200, 500, 1000 and 20000 as thresholds (40 features)\cite{tuia2015multiclass};
-        \item Textural features with neighborhood of 19x19 pixels: mean, standard deviation, range and entropy (16 features)\cite{tuia2015multiclass}.
+        \item Morphological profile with reconstruction of each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features);
+        \item Attribute profile of each band with area as attribute and 1000, 2000, 5000, 10000 and 15000 as thresholds (40 features);
+        \item Attribute profile of each band with diagonal of bounding box as attribute and 100, 200, 500, 1000 and 20000 as thresholds (40 features);
+        \item Textural features with neighborhood of 19x19 pixels: mean, standard deviation, range and entropy (16 features).
     \end{itemize}
-    The normalized DSM and the raw RGBIR image are added to these 191 features and then then stacked to create a new image with 196 bands. The training is made with tile 5\_11 and test with tile 5\_12.
+    The normalized DSM and the raw RGBIR image are added to these 191 features and then then stacked to create a new image with 196 bands. The training is made with tile 5\_11 and test with two tiles: 5\_12 which very similar with tile 5\_11 and 3\_10 which a further area a bit less urban and more industrial.
 
 
 \section{Experimental results}
@@ -676,9 +676,9 @@ Experimentation has been conducted on two different datasets. The first dataset,
     \subsection{Method}
     \label{sec:method}
 
-    The aim of the experiments is to compare the proposed method to some standard classifiers. In order to do it, OTB commandline application are used. The following classifier are tested:
+    The aim of the experiments is to compare the proposed method to some standard classifiers knowing that it has been compared to other selection method in \cite{fauvel2015fast}. The real objective is to test the operational efficiency and it justifies to compare it with the other OTB classifiers already used operationally. In order to do it, OTB commandline application are used. The following classifiers are tested:
     \begin{itemize}
-        \item a k-nearest-neighbors classifier (KNN) with OTB default parameters (32 number of neighbors);
+        \item a k-nearest-neighbors classifier (KNN) with OTB default parameters (32 as number of neighbors);
         \item a Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 max depth, 50 size of subset of variables);
         \item a GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by gridsearch.
     \end{itemize}
