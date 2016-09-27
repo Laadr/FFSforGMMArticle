@@ -374,7 +374,7 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
             \STATE $R_i = J(\{\Omega_k \setminus f_i\})$
             \ENDFOR
             \STATE $j=\text{arg} \max_{i} R_i$
-            \IF{$R_j > J(\Omega^{(k-1)})$}
+            \IF{$R_j > J(\Omega_{k-1})$}
             \STATE $\Omega_{k-1} = \{\Omega_k \setminus f_j\}$
             \STATE $k=k-1$
             \ELSE
@@ -512,9 +512,9 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
 
     \subsection{Numerical issues}
 
-    During an iteration of the selection algorithm, it still needs to invert the covariance matrix of the previous iteration. In order to so, a decomposition in eigenvalues and eigenvectors is performed using algorithm specific for symmetric matrices. More precisely, In other words, $\boldsymbol{\Sigma}$ is decomposed s.t. $\boldsymbol{\Sigma} = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$ with $\boldsymbol{\Lambda}$ the diagonal matrix of eigenvalues and $\mathbf{Q}$ the matrix of eigenvectors.
+    During the selection process, numerical issues needs to be handled due to the computation of the inverse and determinant of the covariance matrix. As pointed out before, the lack of training samples can induce a badly-conditioned matrix with very small eigenvalues. Even with a well-estimated covariance matrix, it is still possible to encounter very correlated features resulting also in very low eigenvalues. The issue with these very small eigenvalues is that they reach the computational precision allowed by the computer especially when computing the logarithm of the determinant.
 
-    This decomposition has several advantages. First, it is very simple to compute the determinant once the eigenvalues are available because the determinant is equal to the product of these values. Secondly, it is possible to check the eigenvalues and so to assure a better computational stability. Due to the curse of dimensionality, the covariance matrix is sometimes badly conditioned and the result is that some eigenvalues are really small (below computational precision). The decomposition helps to check their actual values and if they are below EPS\_FLT which is the machine maximum precision for a float, these eigenvalues are set to EPS\_FLT. For the same reason, the constant $\alpha$ used in update rules is also thresholded to EPS\_FLT. Algorithm~\ref{alg:sffs-update} details when computational stability is checked.
+    In order to deal with this limitation, the choice has been made to perform an explicit decomposition in eigenvalues and eigenvectors of the covariance matrix s.t. $\boldsymbol{\Sigma} = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$ with $\boldsymbol{\Lambda}$ the diagonal matrix of eigenvalues and $\mathbf{Q}$ the matrix of eigenvectors. The advantage of an explicit decomposition is the possibility to check the eigenvalues and, if some appears to be below computational precision, to threshold them at EPS\_FLT which is the computer precision for a floating number. For the same reason, the constant $\alpha$ used in update rules is also thresholded to EPS\_FLT. Algorithm~\ref{alg:sffs-update} details when computational stability is checked.
 
     \begin{algorithm}
     \caption{Sequential floating forward features selection with updates\label{alg:sffs-update}}
@@ -565,25 +565,17 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
     \subsection{OTB external module}
     \label{sec:otb-module}
 
+    The developed method has been made available as a remote module of Orfeo toolbox called \emph{otbFFSforGMM} and can be download on Github\footnote{\url{https://github.com/Laadr/otbExternalFastFeaturesSelection}}.
+
     The Orfeo Toolbox is an open-source library for remote sensing image processing. This library allows developers to code external modules and make them available to the community. It is to note that the toolbox already implements several classifiers inherited mostly from OpenCV. Nevertheless, the GMM classifier currently in place is not robust to high dimensionality and that is why a new GMM model has been developed.
 
-    The developed module is available on Github \footnote{\url{https://github.com/Laadr/otbExternalFastFeaturesSelection}} and is a fork of the template for remote module furnished by OTB developers.
+    In addition of the C++ class directly available to develop C++ code, three command line application has been produced. These applications allow the user to use and parametrize the algorithm as desire.
 
-    The GMM classifier class called \emph{GMMMachineLearningModel} inherits from the OTB class \emph{MachineLearningModel} which is a basic class used for all classifier in the OTB. The \emph{MachineLearningModel} class enables the management of a list of samples used for training and also declares the virtual methods inherited: \emph{Train()}, \emph{Predict()}, \emph{Save()}, \emph{Load()}.
+    The first application \emph{otbcli\_TrainGMMApp} trains a GMM classifier from multiple pairs of images and training vector data and creates a model file. It also allows to perform ridge regularization with an embedded selection of the regularization parameter among a list of proposed values. The regularization values is chosen by maximizing a criterion function (Cohen's kappa, overall accuracy or mean of F1 scores) estimated by cross-validation.
 
-    The \emph{GMMMachineLearningModel} class implements all these virtual methods. The \emph{Train()} aims to train the classifier using a list of samples set as a class member. Then, it is possible to use the method \emph{Predict()} to classify a sample and optional get the confidence in the prediction. The methods \emph{Save()} and \emph{Load()} obviously are used to save and load a trained model.
+    The second application \emph{otbcli\_TrainGMMSelectionApp} also trains a GMM classifier and in addition perform a feature selection algorithm (SFS, SFFS) with various possible criterion (Jeffries-Matusita dist., Kullback-Lieber div., Cohen’s kappa, overall accuracy, mean F1-score).
 
-    In addition to these inherited methods, two noticeable methods are implemented. The \emph{Decomposition()} method perform a decomposition of a symmetric matrix in eigenvalues and eigenvectors using a function of the VNL library. It is to notice that this method check the value of the extracted eigenvalues and minor them to EPSILON\_FLT (or EPSILON\_DBL) which corresponds to computational precision.  The idea is to limit computational instability when parameters are badly-estimated due to an insufficient amount of training samples. The second interesting method is \emph{TrainTau()} which concerns an optional ridge regularization. Given a set of possible regularization constant $\tau$, this method selects the most efficient value in estimating classification rate with cross-validation.
-
-    To implement the selection algorithm, a new class \emph{GMMSelectionMachineLearningModel} inheriting from \emph{GMMMachineLearningModel} is defined. This class keeps the same six methods inherited from \emph{MachineLearningModel} but reimplements \emph{Predict()} to predict with a reduced set of features and  \emph{Save()}/\emph{Load()} to use a second file to handle the results of the selection.
-
-    The other methods available in class \emph{GMMSelectionMachineLearningModel} are used to perform the selection algorithms presented in Section \ref{sec:gmm-hd}. The method \emph{Selection()} aims to set the various parameter of the selection and then calls either the \emph{ForwardSelection()} method to use forward feature selection or the \emph{FloatingForwardSelection()} method to use SFFS. Then, 3 different methods are used to evaluate criterion functions during selection. Given a pool of variables available for selection, these functions evaluate the criterion functions for all the possible augmented set. The \emph{ComputeJM()} method is used for Jeffries-Matusita distance, \emph{ComputeDivKL()} for Kullback–Leibler divergence and \emph{ComputeClassifRate()} for the three correct classification criteria. It is to notice that the correct classification criteria are evaluated using cross-validation.
-
-    In order to provide an easy way to use the developed algorithm, OTB applications has been developed. These applications allow the user to use and parametrize the algorithm from command line. Three applications are built.
-
-    The application \emph{otbcli\_TrainGMMApp} creates and trains a model from class \emph{GMMMachineLearningModel} and the application \emph{otbcli\_TrainGMMSelectionApp} does the same for a model of class \emph{GMMSelectionMachineLearningModel}. These two applications use a raster image and shapefile with groundtruth as input and create a model file.
-
-    The last application \emph{otbcli\_PredictGMMApp} takes a raster image as input and a model file and perform classification of the image. It generates a classification map in an image file and optionally a confidence map. An other application is available in the OTB to compute classification rate from the image and a groundtruth file.
+    The third application \emph{otbcli\_PredictGMMApp} takes a raster image as input and a model file and perform the classification of the image. It generates a classification map in an image file and optionally a confidence map. It also allows to precise manually the number of features to use for prediction if the number automatically set does not fit the user requirement (evolution of criterion function is available in model file).
 
 \section{Experimental results}
 \label{sec:test}
