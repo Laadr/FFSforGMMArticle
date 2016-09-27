@@ -356,28 +356,26 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
             \caption{Sequential floating forward features selection\label{alg:sffs}}
             {\footnotesize
             \begin{algorithmic}[1]
-            \REQUIRE $\Omega,J,\text{maxVarNb}$
-            \STATE $\Omega=\emptyset$
+            \REQUIRE $J,\text{maxVarNb}$
+            \STATE $\Omega=\overbrace{(\emptyset,...,\emptyset)}^{maxVarNb}$
             \STATE $F=\text{\{all variables\}}$
             \STATE $k=0$
-            \WHILE{$\text{card}(\Omega) \leq maxVarNb$}
+            \WHILE{$k \neq \text{maxVarNb}$}
             \FORALL{$f_i \in F$}
-            \STATE $R_i = J(\{\Omega{(k)} + f_i\})$
+            \STATE $R_i = J(\{\Omega_k + f_i\})$
             \ENDFOR
             \STATE $j=\text{arg} \max_{i} R_i$
-            \IF{$R_j \geq J(\Omega^{(k+1)})$}
             \STATE $k=k+1$
-            \ELSE
-            \STATE $\Omega^{(k+1)} = \{\Omega{(k)} + f_i\}$
-            \STATE $k=k+1$
+            \IF{$R_j \geq J(\Omega_k)$}
+            \STATE $\Omega_k = \{\Omega_{k-1} + f_j\}$
             \STATE $\text{flag}=1$
             \WHILE{$k > 2 \text{ and } \text{flag}=1$}
-            \FORALL{$f_i \in \Omega^{(k)}$}
-            \STATE $R_i = J(\{\Omega{(k)}\setminus f_i\})$
+            \FORALL{$f_i \in \Omega_k$}
+            \STATE $R_i = J(\{\Omega_k \setminus f_i\})$
             \ENDFOR
             \STATE $j=\text{arg} \max_{i} R_i$
-            \IF{$R_j < J(\Omega^{(k-1)})$}
-            \STATE $\Omega^{(k-1)} = \{\Omega{(k)} \setminus f_i\}$
+            \IF{$R_j > J(\Omega^{(k-1)})$}
+            \STATE $\Omega_{k-1} = \{\Omega_k \setminus f_j\}$
             \STATE $k=k-1$
             \ELSE
             \STATE $\text{flag}=0$
@@ -385,7 +383,7 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
             \ENDWHILE
             \ENDIF
             \ENDWHILE
-            \RETURN $\Omega$
+            \RETURN $\Omega_{\text{maxVarNb}}$
             \end{algorithmic}
             }
             \end{algorithm}
@@ -455,16 +453,14 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
                 \end{array}\bigg]
             \end{equation*}
         \end{prop}
-        where $A = \textcolor[rgb]{0,0.5,0}{(\boldsymbol{\Sigma}^{(k-1)})^{-1}} + \frac{1}{\alpha} \textcolor[rgb]{0,0.5,0}{(\boldsymbol{\Sigma}^{(k-1)})^{-1}} \mathbf{u} \mathbf{u}^t \textcolor[rgb]{0,0.5,0}{(\boldsymbol{\Sigma}^{(k-1)})^{-1}}$, $v = - \frac{1}{\alpha} \textcolor[rgb]{0,0.5,0}{(\boldsymbol{\Sigma}^{(k-1)})^{-1}} \mathbf{u}$ and $ \alpha = \sigma_{kk} - \mathbf{u}^t \textcolor[rgb]{0,0.5,0}{(\boldsymbol{\Sigma}^{(k-1)})^{-1}} \mathbf{u}$.
-
-        It means that, to select a variable among one hundred, instead of computing one hundred times $(\boldsymbol{\Sigma}^{(k)})^{-1}$, $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ is computed once and then with a few matrix multiplications and sums, the hundred inverses are obtained and a lot of processing time is saved.
+        where $A = (\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $v = - \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$ and $ \alpha = \sigma_{kk} - \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$. Then, $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ is computed only once and this update update formulae is used to obtain all the $(\boldsymbol{\Sigma}^{(k)})^{-1}$ corresponding to all the possible augmented set of a given selection iteration.
 
         In the case of a backward step in SFFS algorithm, the formula is inverted in order to compute $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ knowing $(\boldsymbol{\Sigma}^{(k)})^{-1}$. The update rule becomes (proof in Appendix~\ref{app:proof-update})
         \begin{prop}
         \label{eq:update-inv-back}
             (Backward update rule for inverse of covariance matrix)
             \begin{equation*}
-                (\boldsymbol{\Sigma}^{(k-1)})^{-1} = \textcolor[rgb]{0,0.5,0}{\mathbf{A}} - \alpha \mathbf{v} \mathbf{v}^t
+                (\boldsymbol{\Sigma}^{(k-1)})^{-1} = \underbrace{\mathbf{A}}_{\substack{\text{computed once}\\ \text{per selection step}}} - \underbrace{\alpha \mathbf{v} \mathbf{v}^t}_{\substack{\text{computed for} \\ \text{each augmented set}}}
             \end{equation*}
         \end{prop}
 
@@ -473,8 +469,8 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
         \label{eq:update-quad}
             (Update rule for quadratical term)
             \begin{align*}
-                (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\textcolor[rgb]{0,0.5,0}{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}} \\
-                &+ \alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2
+                (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once}\\ \text{per selection step}}} \\
+                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}}
             \end{align*}
         \end{prop}
 
@@ -483,35 +479,32 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
         \label{eq:update-log}
             (Update rule for logdet)
             \begin{equation*}
-                \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \textcolor[rgb]{0,0.5,0}{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)} + \log \alpha
+                \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)}_{\substack{\text{computed once}\\ \text{per selection step}}} + \underbrace{\log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}
             \end{equation*}
         \end{prop}
 
         Now using all update rules, criterion functions can be rewritten as follows
         \begin{align}
         \label{eq:q-update}
-            Q(\mathbf{x}) = &- \textcolor[rgb]{0,0.5,0}{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})} \nonumber \\
-            &- \alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 \nonumber \\
-            &- \textcolor[rgb]{0,0.5,0}{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)} - \log \alpha  + \textcolor[rgb]{0,0.5,0}{2 \log (\pi_c)} + \textcolor[rgb]{0,0.5,0}{k \log(2 \pi)};
+            Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+            &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+            &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}};
         \end{align}
 
-        {\footnotesize
         \begin{align}
         \label{eq:skl-update}
-            &\text{SKL}_{ij} = \frac{1}{2} \biggl( \text{Tr} \left((\boldsymbol{\Sigma}_{c_i}^{(k)})^{-1} \boldsymbol{\Sigma}_{c_j}^{(k)} + (\boldsymbol{\Sigma}_{c_j}^{(k)})^{-1} \boldsymbol{\Sigma}_{c_i}^{(k)}\right) \nonumber \\
-            &+ \textcolor[rgb]{0,0.5,0}{(\boldsymbol{\mu}_{c_i}^{(k-1)} - \boldsymbol{\mu}_{c_j}^{(k-1)})^t ((\boldsymbol{\Sigma}_{c_i}^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_{c_j}^{(k-1)})^{-1}) (\boldsymbol{\mu}_{c_i}^{(k-1)} - \boldsymbol{\mu}_{c_j}^{(k-1)})} \nonumber \\
-            &+ \alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_{c_i}^{(k)} - \boldsymbol{\mu}_{c_j}^{(k)}) )^2 \nonumber \\
-            &+ \alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_{c_i}^{(k)} - \boldsymbol{\mu}_{c_j}^{(k)}) )^2
-            - \textcolor[rgb]{0,0.5,0}{2k} \biggr),
+            &\text{SKL}_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_{c_i}^{(k)})^{-1} \boldsymbol{\Sigma}_{c_j}^{(k)} + (\boldsymbol{\Sigma}_{c_j}^{(k)})^{-1} \boldsymbol{\Sigma}_{c_i}^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_{c_i}^{(k)} - \boldsymbol{\mu}_{c_j}^{(k)}) )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_{c_i}^{(k)} - \boldsymbol{\mu}_{c_j}^{(k)}) )^2 - 2k}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+            &+ \underbrace{(\boldsymbol{\mu}_{c_i}^{(k-1)} - \boldsymbol{\mu}_{c_j}^{(k-1)})^t ((\boldsymbol{\Sigma}_{c_i}^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_{c_j}^{(k-1)})^{-1}) (\boldsymbol{\mu}_{c_i}^{(k-1)} - \boldsymbol{\mu}_{c_j}^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr),
         \end{align}
-        }
         with $(\boldsymbol{\Sigma}_{c_i}^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
 
         \begin{align}
         \label{eq:jm-update}
-            \text{B}_{ij} = &\textcolor[rgb]{0,0.5,0}{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})} \nonumber \\
-            &+ \frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 \nonumber \\
-            &+ \textcolor[rgb]{0,0.5,0}{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)} + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right),
+            \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+            &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+            &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for} \\ \text{each augmented set}}},
         \end{align}
         where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
 
@@ -527,38 +520,36 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
     \caption{Sequential floating forward features selection with updates\label{alg:sffs-update}}
     {\footnotesize
     \begin{algorithmic}[1]
-    \REQUIRE $\Omega,J,\text{maxVarNb}$
-    \STATE $\Omega=\emptyset$
+    \REQUIRE $J,\text{maxVarNb}$
+    \STATE $\Omega=\overbrace{(\emptyset,...,\emptyset)}^{maxVarNb}$
     \STATE $F=\text{\{all variables\}}$
     \STATE $k=0$
-    \WHILE{$\text{card}(\Omega) \leq maxVarNb$}
+    \WHILE{$k \neq \text{maxVarNb}$}
     \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)} = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$
-    \STATE {\bfseries for all} $\lambda_i$ {\bfseries do} $\lambda_i = \min (\text{EPS\_FLT},\lambda_i)$
+    \STATE {\bfseries for all} $\Lambda_{i,i}$ {\bfseries do} $\Lambda_{i,i} = \max (\text{EPS\_FLT},\Lambda_{i,i})$
     \STATE Precompute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions \ref{eq:update-inv}, \ref{eq:update-quad} and \ref{eq:update-log}
     \FORALL{$f_i \in F$}
     \STATE Compute update constant $\alpha$
-    \STATE $\alpha = \min (\text{EPS\_FLT},\alpha)$
-    \STATE $R_i = J(\{\Omega{(k)} + f_i\})$ using Equations \ref{eq:q-update}, \ref{eq:skl-update} or \ref{eq:jm-update}
+    \STATE $\alpha = \max (\text{EPS\_FLT},\alpha)$
+    \STATE $R_i = J(\{\Omega_k + f_i\})$ using Equations \ref{eq:q-update}, \ref{eq:skl-update} or \ref{eq:jm-update}
     \ENDFOR
     \STATE $j=\text{arg} \max_{i} R_i$
-    \IF{$R_j \geq J(\Omega^{(k+1)})$}
     \STATE $k=k+1$
-    \ELSE
-    \STATE $\Omega^{(k+1)} = \{\Omega{(k)} + f_i\}$
-    \STATE $k=k+1$
+    \IF{$R_j \geq J(\Omega_k)$}
+    \STATE $\Omega_k = \{\Omega_{k-1} + f_j\}$
     \STATE $\text{flag}=1$
     \WHILE{$k > 2 \text{ and } \text{flag}=1$}
     \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)} = = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$
-    \STATE {\bfseries for all} $\lambda_i$ {\bfseries do} $\lambda_i = \min (\text{EPS\_FLT},\lambda_i)$
+    \STATE {\bfseries for all} $\Lambda_{i,i}$ {\bfseries do} $\Lambda_{i,i} = \max (\text{EPS\_FLT},\Lambda_{i,i})$
     \STATE Compute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions \ref{eq:update-inv}, \ref{eq:update-quad} and \ref{eq:update-log}
-    \FORALL{$f_i \in \Omega^{(k)}$}
+    \FORALL{$f_i \in \Omega_k$}
     \STATE Compute update constant $\alpha$
-    \STATE $\alpha = \min (\text{EPS\_FLT},\alpha)$
-    \STATE $R_i = J(\{\Omega{(k)}\setminus f_i\})$ using Equations \ref{eq:q-update}, \ref{eq:skl-update} or \ref{eq:jm-update}
+    \STATE $\alpha = \max (\text{EPS\_FLT},\alpha)$
+    \STATE $R_i = J(\{\Omega_k \setminus f_i\})$ using Equations \ref{eq:q-update}, \ref{eq:skl-update} or \ref{eq:jm-update}
     \ENDFOR
     \STATE $j=\text{arg} \max_{i} R_i$
-    \IF{$R_j < J(\Omega^{(k-1)})$}
-    \STATE $\Omega^{(k-1)} = \{\Omega{(k)} \setminus f_i\}$
+    \IF{$R_j > J(\Omega_{k-1})$}
+    \STATE $\Omega_{k-1} = \{\Omega_k \setminus f_j\}$
     \STATE $k=k-1$
     \ELSE
     \STATE $\text{flag}=0$
@@ -566,7 +557,7 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
     \ENDWHILE
     \ENDIF
     \ENDWHILE
-    \RETURN $\Omega$
+    \RETURN $\Omega_{\text{maxVarNb}}$
     \end{algorithmic}
     }
     \end{algorithm}
