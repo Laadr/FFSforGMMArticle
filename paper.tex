@@ -577,35 +577,12 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
 
     The third application \emph{otbcli\_PredictGMMApp} takes a raster image as input and a model file and perform the classification of the image. It generates a classification map in an image file and optionally a confidence map. It also allows to precise manually the number of features to use for prediction if the number automatically set does not fit the user requirement (evolution of criterion function is available in model file).
 
-\section{Experimental results}
-\label{sec:test}
-
-    \subsection{Method}
-    \label{sec:method}
-
-    The aim of the experiments is to compare the proposed method to some standard classifiers. In order to do it, OTB commandline application are used. The following classifier are tested:
-    \begin{itemize}
-        \item a k-nearest-neighbors classifier (KNN) with OTB default parameters (32 number of neighbors);
-        \item a Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 max depth, 50 size of subset of variables);
-        \item a GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by gridsearch.
-    \end{itemize}
-    The GMM classifier is part of the external module described in Section~\ref{sec:otb-module}.
-
-    All these classifiers are compared with 3 configurations of the proposed GMM classifier:
-    \begin{itemize}
-        \item one with forward selection and JM distance as criterion (GMM SFS JM);
-        \item one with forward selection and Cohen's kappa as criterion (GMM SFS kappa);
-        \item one with floating forward selection and JM distance as criterion (GMM SFFS JM).
-    \end{itemize}
-
-    The results obtained with two different datasets are presented. The first dataset is an airborne hyperspectral dataset and second is a remote sensing dataset made of heterogeneous spatial features. Training set has been created with an equal number of samples for each class and additionally a spatial stratification has been performed. Several size of training set has been tested. For Aisa dataset, experiments have been conducted using 250, 500 and 1000 samples by class and for the Potsdam dataset, 1000 and 50000 samples by class.
-
-    For SFS and SFFS selection, the number of variables to select is set to 30 for the Aisa datset and 60 for the Potsdam dataset and then the number of variables which maximizes the criterion function is used to perform classification.
-
-    The classification rate is presented using Cohen's kappa but it has to be noticed the results were similar when looking at the mean F1-score. Processing time has been evaluated on a desktop computer with 4Gb of RAM and Intel(R) Core(TM) i5-3570 CPU \@ 3.40GHz x 4 processor. All results has been estimated with multiple repetitions (20 trials with Aisa dataset, 5 trials with Potsdam dataset).
+\section{Datasets}
+\label{sec:datasets}
+Experimentation has been conducted on two different datasets. The first dataset, called Aisa, is an airborne hyperspectral dataset and second, called Potsdam, is a remote sensing dataset made of heterogeneous spatial features.
 
     \subsection{Aisa dataset}
-    \label{sec:aisa}
+    \label{sec:aisa-dataset}
     The Aisa dataset has been acquired by the AISA Eagle sensor during a flight campaign over Heves, Hungary. It contains 252 bands ranging from 395 to 975 nm. 16 classes have been defined for a total of 361,971 referenced pixels. Figure~\ref{fig:aisa} shows a colored composition of the multispectral image and the shapefile representing groundtruth and Table \ref{tab:aisa} presents the repartition of the various classes.
 
     \begin{figure}[!t]
@@ -642,6 +619,86 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
           Oat & 3,436 \\ \hline
         \end{tabular}
     \end{table}
+
+    \subsection{Potsdam dataset}
+    \label{sec:pots-dataset}
+
+    This second dataset is built from a dataset of remote sensing images distributed by the International Society for Photogrammetry and Remote Sensing (ISPRS)\footnote{\url{http://www2.isprs.org/commissions/comm3/wg4/2d-sem-label-potsdam.html}}. The dataset is composed of aerial images of the urban area of Potsdam. The area is cut into 38 patches of 6000x6000 pixels with a resolution of 5cm by pixel and 4 channels are available: Red, Blue, Green and Infrared (RGBIR). A Digital Surface Model with same resolution is also provided and a so-called normalized DSM representing the height above ground. The groundtruth for 24 tiles are provided with 6 classes: Low vegetation, High vegetation, Impervious surfaces, Buildings, Cars, Clutter. Table~\ref{tab:potsdam} summarizes the number of samples of each class in the three images used during experimentations and Figure~\ref{fig:potsdam-expl} the data itself.
+
+    \begin{figure}[!t]
+        \centering
+        \begin{tabular}{ccc}
+            \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_5_11_RGB.jpg} &
+            \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_5_12_RGB.jpg} &
+            \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_3_10_RGB.jpg} \\
+            \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_5_11_label.jpg} &
+            \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_5_12_label.jpg} &
+            \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_3_10_label.jpg} \\
+            \includegraphics[width=0.3\columnwidth]{Fig/dsm_potsdam_05_11_normalized_lastools.jpg} &
+            \includegraphics[width=0.3\columnwidth]{Fig/dsm_potsdam_05_12_normalized_lastools.jpg} &
+            \includegraphics[width=0.3\columnwidth]{Fig/dsm_potsdam_03_10_normalized_lastools.jpg} \\
+            {\bfseries{(a)}} & {\bfseries{(b)}}  & {\bfseries{(c)}}\\
+        \end{tabular}
+        \caption{From top to bottom, image RGB, reference and normalized DSM of: {\bfseries{(a)}} tile 5\_11, {\bfseries{(b)}} tile 5\_12 and {\bfseries{(c)}} tile 3\_10.\label{fig:potsdam-expl}}
+    \end{figure}
+
+    \begin{table}[!t]
+        \centering
+        \caption{Repartition of classes in Aisa dataset.\label{tab:potsdam}}
+        \begin{tabular}[b]{lrrr}\hline
+          Class & Number of samples & Number of samples & Number of samples \\
+                & in 5\_11          & in 5\_12          & in 3\_10 \\
+          \hline
+          Clutter             & 1,078,611  & 812,038    & 1,890,467 \\
+          Trees               & 4,493,295  & 2,132,368  & 8,780,245 \\
+          Cars                & 900,076    & 1,101,541  & 434,615 \\
+          Buildings           & 13,469,575 & 17,501,421 & 5,128,149 \\
+          Low vegetation      & 4,718,219  & 3,210,596  & 11,428,326 \\
+          Impervious surfaces & 11,340,224 & 11,242,036 & 8,338,198 \\
+          \hline
+        \end{tabular}
+    \end{table}
+
+    In the experiment, the following features are computed using the RGBIR images similar to \cite{tuia2015multiclass}:
+    \begin{itemize}
+        \item Radiometric indexes: NDVI, TNDVI, RVI, SAVI, TSAVI, MSAVI, MSAVI2, GEMI, IPVI, NDWI2, NDTI, RI, CI, BI, BI2 (15 features) \footnote{\url{https://www.orfeo-toolbox.org//Applications/RadiometricIndices.html}};
+        \item Morphological profile with reconstruction of each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features)\cite{tuia2015multiclass};
+        \item Attribute profile of each band with area as attribute and 1000, 2000, 5000, 10000 and 15000 as thresholds (40 features)\cite{tuia2015multiclass};
+        \item Attribute profile of each band with diagonal of bounding box as attribute and 100, 200, 500, 1000 and 20000 as thresholds (40 features)\cite{tuia2015multiclass};
+        \item Textural features with neighborhood of 19x19 pixels: mean, standard deviation, range and entropy (16 features)\cite{tuia2015multiclass}.
+    \end{itemize}
+    The normalized DSM and the raw RGBIR image are added to these 191 features and then then stacked to create a new image with 196 bands. The training is made with tile 5\_11 and test with tile 5\_12.
+
+
+\section{Experimental results}
+\label{sec:test}
+
+    \subsection{Method}
+    \label{sec:method}
+
+    The aim of the experiments is to compare the proposed method to some standard classifiers. In order to do it, OTB commandline application are used. The following classifier are tested:
+    \begin{itemize}
+        \item a k-nearest-neighbors classifier (KNN) with OTB default parameters (32 number of neighbors);
+        \item a Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 max depth, 50 size of subset of variables);
+        \item a GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by gridsearch.
+    \end{itemize}
+    The GMM classifier is part of the external module described in Section~\ref{sec:otb-module}.
+
+    All these classifiers are compared with 3 configurations of the proposed GMM classifier:
+    \begin{itemize}
+        \item one with forward selection and JM distance as criterion (GMM SFS JM);
+        \item one with forward selection and Cohen's kappa as criterion (GMM SFS kappa);
+        \item one with floating forward selection and JM distance as criterion (GMM SFFS JM).
+    \end{itemize}
+
+    Training set has been created with an equal number of samples for each class and additionally a spatial stratification has been performed. Several size of training set has been tested. For Aisa dataset, experiments have been conducted using 250, 500 and 1000 samples by class and for the Potsdam dataset, 1000 and 50000 samples by class.
+
+    For SFS and SFFS selection, the number of variables to select is set to 30 for the Aisa datset and 60 for the Potsdam dataset and then the number of variables which maximizes the criterion function is used to perform classification.
+
+    The classification rate is presented using Cohen's kappa but it has to be noticed the results were similar when looking at the mean F1-score. Processing time has been evaluated on a desktop computer with 4Gb of RAM and Intel(R) Core(TM) i5-3570 CPU \@ 3.40GHz x 4 processor. All results has been estimated with multiple repetitions (20 trials with Aisa dataset, 5 trials with Potsdam dataset).
+
+    \subsection{Aisa dataset}
+    \label{sec:aisa}
 
     When creating training and validation sets, special care is taken to assure that training samples are picked in distinct areas than test samples. In order to do it, the polygons of the reference are split in smaller polygons and then 50\% of the polygons are taken randomly for training and the remaining 50\% for validation. Moreover 20 trials are run each time with a different training set (different polygons). An example of training and validation set is shown in Figure~\ref{fig:set-aisa}. Additionally, it is important to understand that only a subpart of this training set is actually used to train the model, a given number of samples for each class. Table~\ref{tab:aisa-otbsimu} presents the results of the experiment with mean and standard deviation over the 20 trials and Table~\ref{tab:aisa-otbsimu-time} the corresponding processing time.
 
@@ -700,46 +757,7 @@ In the remaining of the paper, the following notations are used. $\mathcal{S} = 
 
     \subsection{Potsdam dataset}
 
-    This second dataset is built from a dataset of remote sensing images distributed by the International Society for Photogrammetry and Remote Sensing (ISPRS)\footnote{\url{http://www2.isprs.org/commissions/comm3/wg4/2d-sem-label-potsdam.html}}. The dataset is composed of aerial images of the urban area of Potsdam. The area is cut into 38 patches of 6000x6000 pixels with a resolution of 5cm by pixel and 4 channels are available: Red, Blue, Green and Infrared (RGBIR). A Digital Surface Model with same resolution is also provided and a so-called normalized DSM representing the height above ground. The groundtruth for 24 tiles are provided with 6 classes: Low vegetation, High vegetation, Impervious surfaces, Buildings, Cars, Clutter. Table~\ref{tab:potsdam} summarizes the number of samples of each class in the two images used during experimentations. Figure~\ref{fig:potsdam-dataset} shows the complete area and Figure~\ref{fig:potsdam-expl} a particular patch.
-
-    \begin{figure}[!t]
-        \centering
-        \includegraphics[width=0.7\columnwidth]{Fig/potsdam_full.png}
-        \caption{Full Potsdam dataset.\label{fig:potsdam-dataset}}
-    \end{figure}
-
-    \begin{figure}[!t]
-        \centering
-        \includegraphics[width=0.8\columnwidth]{Fig/potsdam_imgexpl.png}
-        \caption{Example of patch with {\bfseries{(a)}} orthophoto, {\bfseries{(b)}} DSM and {\bfseries{(c)}} groundtruth.\label{fig:potsdam-expl}}
-    \end{figure}
-
-    \begin{table}[!t]
-        \centering
-        \caption{Repartition of classes in Aisa dataset.\label{tab:potsdam}}
-        \begin{tabular}[b]{lrr}\hline
-          Class & Number of samples & Number of samples \\
-                & in 5\_11          & in 5\_12 \\
-          \hline
-          Clutter             & 1,078,611  & 812,038 \\
-          Trees               & 4,493,295  & 2,132,368 \\
-          Cars                & 900,076    & 1,101,541 \\
-          Buildings           & 13,469,575 & 17,501,421 \\
-          Low vegetation      & 4,718,219  & 3,210,596 \\
-          Impervious surfaces & 11,340,224 & 11,242,036 \\
-          \hline
-        \end{tabular}
-    \end{table}
-
-    In the experiment, the following features are computed using the RGBIR images similar to \cite{tuia2015multiclass}:
-    \begin{itemize}
-        \item Radiometric indexes: NDVI, TNDVI, RVI, SAVI, TSAVI, MSAVI, MSAVI2, GEMI, IPVI, NDWI2, NDTI, RI, CI, BI, BI2 (15 features) \footnote{\url{https://www.orfeo-toolbox.org//Applications/RadiometricIndices.html}};
-        \item Morphological profile with reconstruction of each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features)\cite{tuia2015multiclass};
-        \item Attribute profile of each band with area as attribute and 1000, 2000, 5000, 10000 and 15000 as thresholds (40 features)\cite{tuia2015multiclass};
-        \item Attribute profile of each band with diagonal of bounding box as attribute and 100, 200, 500, 1000 and 20000 as thresholds (40 features)\cite{tuia2015multiclass};
-        \item Textural features with neighborhood of 19x19 pixels: mean, standard deviation, range and entropy (16 features)\cite{tuia2015multiclass}.
-    \end{itemize}
-    The normalized DSM and the raw RGBIR image are added to these 191 features and then then stacked to create a new image with 196 bands. The training is made with tile 5\_11 and test with tile 5\_12. Table~\ref{tab:potsdam-otbsimu} presents the results.
+    Table~\ref{tab:potsdam-otbsimu} presents the results.
 
     \begin{table}[!t]
         \centering
