@@ -177,7 +177,7 @@ distribution~\cite{Fraley00model-basedclustering}:
 
     \subsection{Curse of dimensionality in GMM}
     \label{sec:curse:gmm}
-    
+
     The computation of~\ref{eq:decision} requires the inversion of the
     covariance matrix and and the  computation of the logarithm of the
     determinant.  The estimations of these terms suffer from the curse
@@ -224,15 +224,7 @@ distribution~\cite{Fraley00model-basedclustering}:
     \section{Features selection}
     \label{sec:selection}
 
-    The objective of feature selection is to retrieve the most compact
-    representation of  the data with  minimum loss of  information. By
-    deleting the  redundant information,  feature selection  allows to
-    reduce  dimension  and  thus  avoid  statistical  issue,  increase
-    algorithm speed and limit  storage requirements. Moreover, it adds
-    several beneficial side effects. It improves data understanding by
-    identify where  is the  most relevant information  and it  is then
-    possible to save resources when organizing a new data
-    acquisition.% TODO: add ref. et example
+    The objective of feature selection is to retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.% TODO: add ref. et example
 
     % It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
 
@@ -654,12 +646,7 @@ high resolution multispectral image.
     the number of pixel per  class.  The Figure~\ref{fig:aisa} shows a
     colored composition of the image and the groundtruth.
 
-    \begin{figure}[!t]  %TODO: elle  est  pourrie cette  colorisation!
-      % Prend trois bandes dans le visible (RGB) et
-      % étire  correctement l'histogramme. De  plus, on ne sait  pas à
-      %  quelle  couleur correspond  la  couleur.  Tu devrais  pouvoir
-      % récupérer  cela depuis QGIS.  Il faudrait le  rajouter quelque
-      % part. J'ai du code TIKZ pour le faire ci-besoin ...
+    \begin{figure}[!t]
         \centering
         \begin{tabular}{c}
             \includegraphics[width=0.7\columnwidth]{Fig/aisa.png} \\
@@ -667,7 +654,7 @@ high resolution multispectral image.
             \includegraphics[width=0.7\columnwidth]{Fig/aisa_gt.png} \\
             {\bfseries{(b)}} \\
         \end{tabular}
-        \caption{Aisa dataset: {\bfseries{(a)}} colored composition of the image, {\bfseries{(b)}} groundtruth.\label{fig:aisa}}
+        \caption{Aisa dataset: {\bfseries{(a)}} colored composition of the image (R: 634nm, G: 519nm, B: 477nm), {\bfseries{(b)}} groundtruth.\label{fig:aisa}}
     \end{figure}
 
     \begin{table}[!t]
@@ -854,16 +841,17 @@ high resolution multispectral image.
         \centering
         \caption{Results of classification with 1000 samples by class and 5 trials (standard deviation in parenthesis).\label{tab:potsdam-otbsimu}}
         \resizebox{\columnwidth}{!}{%
-        \begin{tabular}{|l|c|c|c|c|c|}\hline
-             & {\bfseries Kappa of} & {\bfseries Kappa of} & {\bfseries Training} & {\bfseries Classif.} & {\bfseries \# features} \\
-             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries time (s)} & {\bfseries time (s)} & {\bfseries to classify} \\ \hline
+        \begin{tabular}{|l|c|c|c||c|c|c|}\hline
+             & {\bfseries Kappa of}      & {\bfseries Kappa of}     & {\bfseries Kappa of}     & {\bfseries Training} & {\bfseries Classif.} & {\bfseries \# features} \\
+             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries time (s)} & {\bfseries time (s)} & {\bfseries to classify} \\
+            \hline
 
-            GMM SFS kappa & 0.694 (0.002) & 0.669 (0.005) & 400 & 310 & 13.2 \\
-            GMM SFS JM &    0.624 (0.028) & 0.631 (0.034) & 2 & 310   & 11 \\
-            GMM SFFS JM &   0.624 (0.028) & 0.631 (0.034) & 2.6 & 310   & 11 \\
-            GMM ridge &     0.632 (0.007) & 0.592 (0.010) & 10 & 2000 & all \\
-            KNN &           0.637 (0.005) & 0.607 (0.005) &  &   & all \\
-            Random Forest & 0.729 (0.004) & 0.673 (0.005) & 20 & 840  & all \\
+            GMM SFS kappa & 0.694 (0.002)             & {\bfseries 0.669 (0.005)} & {\bfseries 0.533 (0.008)} & 400 & 310  & 13.2 \\
+            GMM SFS JM &    0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2   & 310  & 11 \\
+            GMM SFFS JM &   0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2.6 & 310  & 11 \\
+            GMM ridge &     0.632 (0.007)             & 0.592 (0.010)             & 0.433 (0.008)             & 10  & 2000 & all \\
+            KNN &           0.637 (0.005)             & 0.607 (0.005)             & 0.478 (0.002)             &     &      & all \\
+            Random Forest & {\bfseries 0.729 (0.004)} & {\bfseries 0.673 (0.005)} & {\bfseries 0.529 (0.009)} & 20  & 840  & all \\
 
             \hline
         \end{tabular}
@@ -874,15 +862,15 @@ high resolution multispectral image.
         \centering
         \caption{Results of classification with 50000 samples by class and 5 trials (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-big}}
         \resizebox{\columnwidth}{!}{%
-        \begin{tabular}{|l|c|c|c|c|c|}\hline
-             & {\bfseries Kappa of} & {\bfseries Kappa of} & {\bfseries Training} & {\bfseries Classif.} & {\bfseries \# features} \\
-             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries time (s)} & {\bfseries time (s)} & {\bfseries to classify} \\ \hline
+        \begin{tabular}{|l|c|c|c||c|c|c|}\hline
+             & {\bfseries Kappa of}      & {\bfseries Kappa of}     & {\bfseries Kappa of}     & {\bfseries Training} & {\bfseries Classif.} & {\bfseries \# features} \\
+             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries time (s)} & {\bfseries time (s)} & {\bfseries to classify} \\ \hline
 
-            GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 20000 & 340 & 29 \\
-            GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 6 & 330 & 10 \\
-            GMM SFFS JM &   0.560 (0.111) & 0.576 (0.104) & 6.6 & 340 & 10 \\
-            GMM ridge &     0.641 (0.015) & 0.611 (0.026) & 460 & 2000 & all \\
-            Random Forest & 0.851 (0.001) & 0.715 (0.001) & 2000 & 2000 & all \\
+            GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 0.531 (0.005) & 20000 & 340 & 29 \\
+            GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6 & 330 & 10 \\
+            GMM SFFS JM &   0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6.6 & 340 & 10 \\
+            GMM ridge &     0.641 (0.015) & 0.611 (0.026) & 0.440 (0.015) & 460 & 2000 & all \\
+            Random Forest & {\bfseries 0.851 (0.001)} & {\bfseries 0.715 (0.001)} & {\bfseries 0.573 (0.002)} & 2000 & 2000 & all \\
 
             \hline
         \end{tabular}
