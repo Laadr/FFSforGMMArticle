@@ -181,7 +181,7 @@ samples of class $c$.
     The computation of~\ref{eq:decision} requires the inversion of the
     covariance matrix and and the  computation of the logarithm of the
     determinant.  The estimations of these terms suffer from the curse
-    of  dimensionality\cite{}, because  in practice,
+    of  dimensionality\cite{bouveyron2014model}, because  in practice,
     the  number of  parameters  $\eta_c$ to  estimate  for each  class
     increases quadratically with respect to the number of features, as
     illustrated in Figure~\ref{fig:nb-param}.  Hence, if the number of
@@ -221,13 +221,14 @@ The objective of feature selection is to retrieve the most compact representatio
 
 % It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
 
-Features selection algorithms may be divided into three types. The first type called filter method is based uniquely on data analysis. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical filter method and there is numerous other methods \cite{bruzzone1995extension}, \cite{biesiada2007feature}, \cite{demir2008phase}.
+Features selection algorithms can be divided into three types. The first type, called \emph{filter methods}, is based uniquely on data analysis. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical filter method and there is numerous other methods \cite{bruzzone1995extension,biesiada2007feature,demir2008phase}.
 
-The second sort are known as wrapper methods which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are out of question in a practical amount of time, numerous search strategies have been designed some optimal under particular hypothesis \cite{narendra1977branch} and other suboptimal but easier to set up \cite{whitney1971direct}, \cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be slower.
+The second sort are known as \emph{wrapper methods} which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are to expansive in terms of processing time, several search strategies have been designed. Some are optimal under particular hypothesis \cite{narendra1977branch} and other sub-optimal but easier to set up \cite{whitney1971direct,somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be more time consuming.
 
-The third type corresponds to the embedded method which do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene} \cite{weston2003use}.
+The third type corresponds to the \emph{embedded method} which do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene,weston2003use}.
 
-The selection method proposed in this work is a wrapper method associated to GMM models. Thus, in order to set a wrapper method, two elements are needed, a function to rank the various features which is defined in Section~\ref{sec:criterion} and a search strategy. Two search algorithms are presented: the sequential forward features selection method (Section \ref{sec:forward-presentation}) and the sequential floating forward feature selection method (\ref{sec:floating-presentation}) the second being a more complex variation of the first.
+The feature selection method proposed in this work is a wrapper method associated to GMM models. To set up a wrapper method, two elements are needed. A function that  ranks the features according to some criteria and a search strategy to optimize the function. The criterion used are described in Section~\ref{sec:criterion} and the two search strategy are discussed in~\ref{sec:selection:method}.
+
 
     \subsection{Criterion function}
     \label{sec:criterion}
@@ -358,7 +359,8 @@ The selection method proposed in this work is a wrapper method associated to GMM
             \end{tabular}
         \end{table}
 
-    \subsection{Selection method}
+        \subsection{Selection method}
+        \label{sec:selection:method}
 
         \subsubsection{Sequential forward features selection}
         \label{sec:forward-presentation}
@@ -625,8 +627,8 @@ The selection method proposed in this work is a wrapper method associated to GMM
 \label{sec:datasets}
 Numerical experiments  have been conducted on  two different datasets.
 The first  dataset, called  \emph{Aisa}, is an  airborne hyperspectral
-dataset and  the second,  called \emph{Potsdam},  is an  airborne very
-high resolution multispectral image.
+dataset  and  the  second,  called \emph{Potsdam},  is  an  very  high
+resolution multispectral airborne image.
 
     \subsection{Aisa dataset}
     \label{sec:aisa-dataset}
@@ -875,7 +877,7 @@ high resolution multispectral image.
         \centering
         \caption{Kappa coefficient and processing time for 1,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu}}
         \begin{tabular}{lcccccc}\toprule
-            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-6}
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-7}
             GMM SFS kappa & 0.694 (0.002)             & {\bfseries 0.669 (0.005)} & {\bfseries 0.533 (0.008)} & 400 & 310  & 13.2 \\
             GMM SFS JM &    0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2   & 310  & 11 \\
             GMM SFFS JM &   0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2.6 & 310  & 11 \\
@@ -890,7 +892,7 @@ high resolution multispectral image.
         \centering
         \caption{Kappa coefficient and processing time for 50,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu-big}}
         \begin{tabular}{|lcccccc}\toprule
-            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-6}
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-7}
             GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 0.531 (0.005) & 20000 & 340 & 29 \\
             GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6 & 330 & 10 \\
             GMM SFFS JM &   0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6.6 & 340 & 10 \\
