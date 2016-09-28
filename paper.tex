@@ -19,6 +19,7 @@
 \usepackage{tabularx}
 \usepackage{empheq}
 \usepackage{hyperref}
+\usepackage{booktabs}
 
 \newcommand\MyBox[2]{
   \fbox{\lower0.75cm
@@ -187,15 +188,13 @@ distribution~\cite{Fraley00model-basedclustering}:
     observation  $n_c$ is  small  compared to  the  number of  samples
     $n_c$, the  estimated covariance  matrix is badly  conditioned and
     thus the computation  of its inverse and its  determinant would be
-    unstable.  The  worst situation  is  $n_c<\eta_c$  which leads  to
-    singular covariance matrix.
+    unstable.   The worst  situation  is $n_c<\eta_c$  which leads  to
+    singular covariance matrix.  Unfortunately, this situation happens
+    regularly in remote sensing.   For instance in hyperspectral image
+    classification,  very few  labeled samples  are usually  available
+    because of the difficulty and the cost to collect ground-truth.
 
-    Unfortunately, this situation happens regularly in remote sensing.
-    For  instance  in  hyperspectral image  classification,  very  few
-    labeled samples  are usually  available because of  the difficulty
-    and the cost to collect ground-truth.
-
-    \begin{figure}[!t] % TODO : log plot et donner la formule dans la légende 
+    \begin{figure}[!t]
         \centering
         \begin{tikzpicture}
           \begin{semilogyaxis}[xmin=0,xmax=200,ymin=0,width=0.5*\columnwidth,grid,axis x line=left ,axis y line=left, tick align=outside,xlabel = $d$,ylabel = $\eta_c$]
@@ -233,9 +232,9 @@ distribution~\cite{Fraley00model-basedclustering}:
     several beneficial side effects. It improves data understanding by
     identify where  is the  most relevant information  and it  is then
     possible to save resources when organizing a new data
-    acquisition.% TODO: add ref. et example.
+    acquisition.% TODO: add ref. et example
 
-    It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
+    % It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
 
     Features selection algorithms may be divided into three types. The first type called filter method is based uniquely on data analysis. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical filter method and there is numerous other methods \cite{bruzzone1995extension}, \cite{biesiada2007feature}, \cite{demir2008phase}.
 
@@ -361,18 +360,18 @@ distribution~\cite{Fraley00model-basedclustering}:
 
             \begin{table}[!t]
                 \centering
-                \caption{Summary of the various criterion functions.\label{tab:crit}}
-                \begin{tabular}[b]{l|c|c||c|c}
-                  \hline
-                  Criterion & Divergence & Classification & Gaussian   & Speed \\
-                            &            & rate           & hypothesis &       \\
-                  \hline
-                  Overall accuracy            &  & \checkmark & 0 & - \\
-                  Cohen's kappa               &  & \checkmark & 0 & - \\
-                  F1 mean                     &  & \checkmark & 0 & - \\
-                  Kullback-Leibler divergence & \checkmark &  & ++ & + \\
-                  Jeffries-Matusita distance  & \checkmark &  & ++ & + \\
-                  \hline
+                \caption{Summary of the different criterion functions.\label{tab:crit}}
+                \begin{tabular}[b]{lccc}
+                  \toprule
+                  Criterion & Type Divergence & Complexity \\
+                  \midrule
+                  Overall accuracy            & Accuracy   & High \\
+                  Cohen's kappa               & Accuracy   & High\\
+                  F1 mean                     & Accuracy   & High\\
+                  \midrule
+                  Kullback-Leibler divergence & Divergence & Low \\
+                  Jeffries-Matusita distance  & Divergence & Low \\
+                  \bottomrule
                 \end{tabular}
             \end{table}
 
@@ -641,13 +640,26 @@ distribution~\cite{Fraley00model-basedclustering}:
 
 \section{Datasets}
 \label{sec:datasets}
-Experimentation has been conducted on two different datasets. The first dataset, called Aisa, is an airborne hyperspectral dataset and second, called Potsdam, is a remote sensing dataset made of heterogeneous spatial features.
+Numerical experiments  have been conducted on  two different datasets.
+The first  dataset, called  \emph{Aisa}, is an  airborne hyperspectral
+dataset and  the second,  called \emph{Potsdam},  is an  airborne very
+high resolution multispectral image.
 
     \subsection{Aisa dataset}
     \label{sec:aisa-dataset}
-    The Aisa dataset has been acquired by the AISA Eagle sensor during a flight campaign over Heves, Hungary. It contains 252 bands ranging from 395 to 975 nm. 16 classes have been defined for a total of 361,971 referenced pixels. Figure~\ref{fig:aisa} shows a colored composition of the multispectral image and the shapefile representing groundtruth and Table \ref{tab:aisa} presents the repartition of the various classes.
+    The Aisa dataset has been acquired by the AISA Eagle sensor during
+    a  flight campaign  over Heves,  Hungary.  It  contains 252  bands
+    ranging from  395 to 975  nm. 16 classes  have been defined  for a
+    total of 361,971  referenced pixels, Table~\ref{tab:aisa} presents
+    the number of pixel per  class.  The Figure~\ref{fig:aisa} shows a
+    colored composition of the image and the groundtruth.
 
-    \begin{figure}[!t]
+    \begin{figure}[!t]  %TODO: elle  est  pourrie cette  colorisation!
+      % Prend trois bandes dans le visible (RGB) et
+      % étire  correctement l'histogramme. De  plus, on ne sait  pas à
+      %  quelle  couleur correspond  la  couleur.  Tu devrais  pouvoir
+      % récupérer  cela depuis QGIS.  Il faudrait le  rajouter quelque
+      % part. J'ai du code TIKZ pour le faire ci-besoin ...
         \centering
         \begin{tabular}{c}
             \includegraphics[width=0.7\columnwidth]{Fig/aisa.png} \\
@@ -661,8 +673,8 @@ Experimentation has been conducted on two different datasets. The first dataset,
     \begin{table}[!t]
         \centering
         \caption{Repartition of classes in Aisa dataset.\label{tab:aisa}}
-        \begin{tabular}[b]{lc}\hline
-          Class & Number of samples \\ \hline
+        \begin{tabular}[b]{lc}\toprule
+          Class & Number of samples \\ \midrule
           Winter wheat & 136,524 \\
           Sunflower & 61,517 \\
           Green fallow last year treatment & 30,197 \\
@@ -678,14 +690,28 @@ Experimentation has been conducted on two different datasets. The first dataset,
           Green fallow with shrub & 9,272 \\
           Green fallow last year treated & 3,426 \\
           Pasture & 2,107 \\
-          Oat & 3,436 \\ \hline
+          Oat & 3,436 \\ \bottomrule
         \end{tabular}
     \end{table}
 
     \subsection{Potsdam dataset}
     \label{sec:pots-dataset}
 
-    This second dataset is built from a dataset of remote sensing images distributed by the International Society for Photogrammetry and Remote Sensing (ISPRS)\footnote{\url{http://www2.isprs.org/commissions/comm3/wg4/2d-sem-label-potsdam.html}}. The dataset is composed of aerial images of the urban area of Potsdam. The area is cut into 38 patches of 6000x6000 pixels with a resolution of 5cm by pixel and 4 channels are available: Red, Blue, Green and Infrared (RGBIR). A Digital Surface Model with same resolution is also provided and a so-called normalized DSM representing the height above ground. The groundtruth for 24 tiles are provided with 6 classes: Low vegetation, High vegetation, Impervious surfaces, Buildings, Cars, Clutter. Table~\ref{tab:potsdam} summarizes the number of samples of each class in the three images used during experimentations and Figure~\ref{fig:potsdam-expl} the data itself.
+    This  second dataset  is built  from a  dataset of  remote sensing
+    images distributed by the International Society for Photogrammetry
+    and                         Remote                         Sensing
+    (ISPRS)\footnote{\url{http://www2.isprs.org/commissions/comm3/wg4/2d-sem-label-potsdam.html}}. The
+    dataset is composed of aerial images of the urban area of Potsdam.
+    The area is cut into 38  patches of 6000$\times$6000 pixels with a
+    resolution  of 5cm  by pixel  and 4  channels are  available: Red,
+    Blue, Green  and Infrared (RGBIR).   A Digital Surface  Model with
+    the same  resolution is also  provided and a  so-called normalized
+    DSM representing the height above  ground. The ground-truth for 24
+    tiles  are   provided  with   6  classes:  Low   vegetation,  High
+    vegetation, Impervious surfaces,  Buildings, Cars, Clutter.  Three
+    tiles  have  been  used  in  this  work,  they  are  displayed  in
+    Figure~\ref{fig:potsdam-expl}.  Table~\ref{tab:potsdam} summarizes
+    the  number of  samples of  each class.
 
     \begin{figure}[!t]
         \centering
@@ -701,35 +727,38 @@ Experimentation has been conducted on two different datasets. The first dataset,
             \includegraphics[width=0.3\columnwidth]{Fig/dsm_potsdam_03_10_normalized_lastools.jpg} \\
             {\bfseries{(a)}} & {\bfseries{(b)}}  & {\bfseries{(c)}}\\
         \end{tabular}
-        \caption{From top to bottom, image RGB, reference and normalized DSM of: {\bfseries{(a)}} tile 5\_11, {\bfseries{(b)}} tile 5\_12 and {\bfseries{(c)}} tile 3\_10.\label{fig:potsdam-expl}}
+        \caption{From top to bottom, true color composition, ground-truth and normalized DSM of: {\bfseries{(a)}} tile 5\_11, {\bfseries{(b)}} tile 5\_12 and {\bfseries{(c)}} tile 3\_10.\label{fig:potsdam-expl}}
     \end{figure}
 
     \begin{table}[!t]
         \centering
         \caption{Repartition of classes in Aisa dataset.\label{tab:potsdam}}
-        \begin{tabular}[b]{lrrr}\hline
-          Class & Number of samples & Number of samples & Number of samples \\
-                & in 5\_11          & in 5\_12          & in 3\_10 \\
-          \hline
+        \begin{tabular}[b]{lrrr}\toprule
+          Class & \# of samples in 5\_11  & \#  of samples in 5\_12  & \#  of samples in 3\_10 \\
+          \midrule
           Clutter             & 1,078,611  & 812,038    & 1,890,467 \\
           Trees               & 4,493,295  & 2,132,368  & 8,780,245 \\
           Cars                & 900,076    & 1,101,541  & 434,615 \\
           Buildings           & 13,469,575 & 17,501,421 & 5,128,149 \\
           Low vegetation      & 4,718,219  & 3,210,596  & 11,428,326 \\
           Impervious surfaces & 11,340,224 & 11,242,036 & 8,338,198 \\
-          \hline
+          \bottomrule
         \end{tabular}
     \end{table}
 
-    In the experiment, the following features are computed using the RGBIR images similarly to \cite{tuia2015multiclass}:
+    In order to increase the dimensionality of the data, the following features are computed using the RGBIR images similarly to \cite{tuia2015multiclass}:
     \begin{itemize}
-        \item Radiometric indexes: NDVI, TNDVI, RVI, SAVI, TSAVI, MSAVI, MSAVI2, GEMI, IPVI, NDWI2, NDTI, RI, CI, BI, BI2 (15 features) \footnote{\url{https://www.orfeo-toolbox.org//Applications/RadiometricIndices.html}};
-        \item Morphological profile with reconstruction of each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features);
-        \item Attribute profile of each band with area as attribute and 1000, 2000, 5000, 10000 and 15000 as thresholds (40 features);
-        \item Attribute profile of each band with diagonal of bounding box as attribute and 100, 200, 500, 1000 and 20000 as thresholds (40 features);
-        \item Textural features with neighborhood of 19x19 pixels: mean, standard deviation, range and entropy (16 features).
+        \item 15 Radiometric indexes: NDVI, TNDVI, RVI, SAVI, TSAVI, MSAVI, MSAVI2, GEMI, IPVI, NDWI2, NDTI, RI, CI, BI, BI2~\cite{otb}.
+        \item Morphological profile with reconstruction of each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features)~\cite{fauvel2013advances};
+        \item Attribute profile of each band with area as attribute and 1000, 2000, 5000, 10000 and 15000 as thresholds (40 features)~\cite{dalla2010morphological}.
+        \item Attribute profile of each band with diagonal of bounding box as attribute and 100, 200, 500, 1000 and 20000 as thresholds (40 features)~\cite{dalla2010morphological}.
+        \item Textural features with neighborhood of 19x19 pixels: mean, standard deviation, range and entropy (16 features)~\cite{otb}.
     \end{itemize}
-    The normalized DSM and the raw RGBIR image are added to these 191 features and then then stacked to create a new image with 196 bands. The training is made with tile 5\_11 and test with two tiles: 5\_12 which very similar with tile 5\_11 and 3\_10 which a further area a bit less urban and more industrial.
+    The normalized DSM and the raw  RGBIR image are added to these 191
+    features and  then then  stacked to  create a  new image  with 196
+    bands. %  The  training is  made with  tile 5\_11  and test  with two
+    % tiles: 5\_12 which very similar with  tile 5\_11 and 3\_10 which a
+    % further area a bit less urban and more industrial.
 
 
 \section{Experimental results}
