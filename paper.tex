@@ -767,11 +767,20 @@ high resolution multispectral image.
     \subsection{Method}
     \label{sec:method}
 
-    The aim of the experiments is to compare the proposed method to some standard classifiers knowing that it has been compared to other selection method in \cite{fauvel2015fast}. The real objective is to test the operational efficiency and it justifies to compare it with the other OTB classifiers already used operationally. In order to do it, OTB commandline application are used. The following classifiers are tested:
+    The aim  of the experiments is  to compare the proposed  method to
+    some   standard  classifiers   used   in   operational  land   map
+    production~\cite{rs70912356}. A non-optimized  previous version of
+    the method has been already compared to other selection methods in
+    \cite{fauvel2015fast}.  Hence,  the primary  objective is  to test
+    the  operational  efficiency  and  it is  compared  to  other  OTB
+    classifiers   used  operationally   through  their   command  line
+    applications\footnote{\url{http://otbcb.readthedocs.io/en/latest/OTB-Applications.html}}.
+    
+    The following classifiers are tested:
     \begin{itemize}
-        \item a k-nearest-neighbors classifier (KNN) with OTB default parameters (32 as number of neighbors);
-        \item a Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 max depth, 50 size of subset of variables);
-        \item a GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by gridsearch.
+        \item A k-nearest-neighbors classifier (KNN) with OTB default parameters (32 as number of neighbors).
+        \item A Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 max depth, 50 size of subset of variables)%%TODO : pas clair ce qu'est "50 size of subset of variables"
+        \item A GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by gridsearch.
     \end{itemize}
     The GMM classifier is part of the external module described in Section~\ref{sec:otb-module}.
 
@@ -782,16 +791,45 @@ high resolution multispectral image.
         \item one with floating forward selection and JM distance as criterion (GMM SFFS JM).
     \end{itemize}
 
-    Training set has been created with an equal number of samples for each class and additionally a spatial stratification has been performed. Several size of training set has been tested. For Aisa dataset, experiments have been conducted using 250, 500 and 1000 samples by class and for the Potsdam dataset, 1000 and 50000 samples by class.
+    The training set has been created  with an equal number of samples
+    for each class and additionally  a spatial stratification has been
+    performed, \emph{i.e.}, each training  sample belongs to a spatial
+    polygon  that  does  not  intersect  spatially  with  any  spatial
+    polygons used  for the validation.   Several size of  training set
+    have been tested investigated.   For the Aisa dataset, experiments
+    have been conducted  using 250, 500 and 1000 samples  by class and
+    for the Potsdam dataset, 1000 and 50000 samples by class.
+    
+    %% TODO : c'est encore le cas ? à verifier: si on prends quand cela arréte de croitre rapidement il faut changer
+    For SFS and  SFFS selection, the number of variables  to select is
+    set to 30 for  the Aisa datset and 60 for  the Potsdam dataset and
+    then  the  number  of  variables  which  maximizes  the  criterion
+    function is used to perform classification.
 
-    For SFS and SFFS selection, the number of variables to select is set to 30 for the Aisa datset and 60 for the Potsdam dataset and then the number of variables which maximizes the criterion function is used to perform classification.
-
-    The classification rate is presented using Cohen's kappa but it has to be noticed the results were similar when looking at the mean F1-score. Processing time has been evaluated on a desktop computer with 4Gb of RAM and Intel(R) Core(TM) i5-3570 CPU \@ 3.40GHz x 4 processor. All results has been estimated with multiple repetitions (20 trials with Aisa dataset, 5 trials with Potsdam dataset).
+    The classification  rate is presented  using Cohen's kappa  but it
+    has to  be noticed the  results were  similar when looking  at the
+    mean F1-score.  Processing time  has been  evaluated on  a desktop
+    computer  with 4Gb  of RAM  and  Intel(R) Core(TM)  i5-3570 CPU  @
+    3.40GHz $\times$ 4 processors. 
 
     \subsection{Aisa dataset}
     \label{sec:aisa}
 
-    When creating training and validation sets, special care is taken to assure that training samples are picked in distinct areas than test samples. In order to do it, the polygons of the reference are split in smaller polygons and then 50\% of the polygons are taken randomly for training and the remaining 50\% for validation. Moreover 20 trials are run each time with a different training set (different polygons). An example of training and validation set is shown in Figure~\ref{fig:set-aisa}. Additionally, it is important to understand that only a subpart of this training set is actually used to train the model, a given number of samples for each class. Table~\ref{tab:aisa-otbsimu} presents the results of the experiment with mean and standard deviation over the 20 trials and Table~\ref{tab:aisa-otbsimu-time} the corresponding processing time.
+    When creating training and validation  sets, special care is taken
+    to assure that training samples are picked out from distinct areas
+    than test  samples.  The  polygons of the  reference are  split in
+    smaller polygons and then 50\%  of the polygons are taken randomly
+    for training and the remaining 50\% for validation.  An example of
+    training      and     validation      set     is      shown     in
+    Figure~\ref{fig:set-aisa}.  From the  training  polygons, a  given
+    number of samples  were selected to build the  training set, while
+    all  the pixels  from the  validation polygons  were used  for the
+    validation.  Moreover 20  random trials were run  with a different
+    training  set (different  polygons).  Table~\ref{tab:aisa-otbsimu}
+    presents  the results  of the  experiment with  mean and  standard
+    deviation  of  the  Kappa  coefficient  over  the  20  trials  and
+    Table~\ref{tab:aisa-otbsimu-time}  the   corresponding  processing
+    time.
 
     \begin{figure}[!t]
         \centering
@@ -806,10 +844,10 @@ high resolution multispectral image.
 
     \begin{table}[!t]
         \centering
-        \caption{Results of classification with sampling on separate polygons and 20 trials (standard deviation in parenthesis).\label{tab:aisa-otbsimu}}
-        \begin{tabular}{|l|c|c|c|}\hline
-             & \multicolumn{3}{c|}{\bfseries Cohen's kappa} \\ \hline
-            \# samples by class & 250 & 500 & 1000 \\ \hline
+        \caption{Average classification accuracy 20 trials (standard deviation in parenthesis).\label{tab:aisa-otbsimu}}
+        \begin{tabular}{lccc}\toprule
+             & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cline{2-4}
+            \# samples by class & 250 & 500 & 1000 \\ \midrule
 
             GMM SFS kappa & 0.684 (0.025) & 0.698 (0.027) & 0.711 (0.028) \\
             GMM SFS JM &    0.680 (0.028) & 0.700 (0.028) & 0.710 (0.030) \\
@@ -817,18 +855,17 @@ high resolution multispectral image.
             GMM ridge &     0.611 (0.040) & 0.620 (0.036) & 0.642 (0.034) \\
             KNN &           0.551 (0.035) & 0.563 (0.033) & 0.574 (0.030) \\
             Random Forest & 0.645 (0.026) & 0.673 (0.023) & 0.693 (0.023) \\
-
-            \hline
+            \bottomrule
         \end{tabular}
     \end{table}
 
     \begin{table}[!t]
         \centering
-        \caption{Mean processing time for training and classification for results of Table \ref{tab:aisa-otbsimu}.\label{tab:aisa-otbsimu-time}}
-        \begin{tabularx}{\columnwidth}{|l|*{6}{>{\centering\arraybackslash}X|}}
-            \hline
-             & \multicolumn{3}{c|}{\bfseries Training time (s)} & \multicolumn{3}{c|}{\bfseries Classification time (s)} \\ \hline
-            \# samples by class & 250 & 500 & 1000 & 250 & 500 & 1000 \\ \hline
+        \caption{Mean processing time for training and classification for results in Table \ref{tab:aisa-otbsimu}.\label{tab:aisa-otbsimu-time}}
+        \begin{tabularx}{\columnwidth}{l*{6}{>{\centering\arraybackslash}X}}
+            \toprule
+             & \multicolumn{3}{c}{\bfseries Training time (s)} & \multicolumn{3}{c}{\bfseries Classification time (s)} \\ \cline{2-7}
+            \# samples by class & 250 & 500 & 1000 & 250 & 500 & 1000 \\ \midrule
 
             GMM SFS kappa & 257 & 496 & 955 & 7.7 & 8.6 & 8.7 \\
             GMM SFS JM &    8.6 & 8.9 & 9.1 & 9.7 & 9.8 & 9.6 \\
@@ -836,44 +873,70 @@ high resolution multispectral image.
             GMM ridge &     71.7 & 105 & 167 & 530 & 530 & 530 \\
             KNN &           8.9 & 19.6 & 59.7 & 387 & 639 & 887 \\
             Random Forest & 24.5 & 49.3 & 105 & 33.0 & 41.7 & 45.9 \\
-
-            \hline
+            \bottomrule
         \end{tabularx}
     \end{table}
 
-    The results show that, on this dataset, GMM classifiers with selection get the best classification rate. Especially with very few training samples, GMM classifiers with selection seems to outperform the others. In term of computational time, the GMM classifiers are as expected very fast for classification and also for training if the criterion function is not a classification rate. The computation of the kappa seems to suffer from a lack of parallelization which could be improved. Among the three variations of the selection algorithm, none appears to perform better than the others. Using kappa or Jeffries-Matusita distance as criterion is equal and using SFFS does not give any advantage. In this case, using J-M distance as criterion and SFS as search strategy is the best choice in term of time efficiency.
+    %% TODO; Reprendre cette partie: ne parle pas à la fois de la
+    %% classification et du temps de calcul. D'abors du commences à
+    %% décrire et commenter sur la classification. Ensuite tu fais la
+    %% même chose sur les temps de calculs. Et il faut en dire plus !!
+    %%   Pour   les   classifs,   il  faut   parler   des   tests   de
+    %%  significativité.  Pour les  temps  de  calculs, il  faut  plus
+    %% détailler  pourquoi cela  va plus  ou moins  vite. Avec  FS, on
+    %% réduit le nombre de variables et comme la régle de décision est
+    %%  de compléxité  (d^3)  donc  quand on  réduit  d, on  améliorer
+    %% grandement  les temps de  calcul, pour les RF,  plus il y  a de
+    %% training samples, plus lse arbres vont êtres grands ...
+    The  results show  that,  on this  dataset,  GMM classifiers  with
+    feature selection  get the  best classification  rate.  Especially
+    with  very  few training  samples,  GMM  classifiers with  feature
+    selection outperform  the others.  In term  of computational time,
+    the GMM classifiers  are as expected very  fast for classification
+    and also  for training,  except when the  criterion function  is a
+    classification rate.  Among the  three variations of the selection
+    algorithm, none appears  to perform better than  the others. Using
+    kappa  or Jeffries-Matusita  distance  as criterion  is equal  and
+    using SFFS  does not give any  advantage. In this case,  using J-M
+    distance  as criterion  and SFS  as  search strategy  is the  best
+    choice in term of time efficiency.  % The computation of the kappa
+                                       % seems  to suffer from  a lack
+                                       %   of  parallelization   which
+                                       %  could be  improved. ->  plus
+                                       % tard dans la conclusion.
 
-    Nevertheless, good performance are also obtained with Random Forest which becomes more competitive when the number of samples increases.
-    The KNN classifier and the GMM classifier with ridge regularization are totally outperform both in term of classification rate and of processing time.
+    Nevertheless,  good  performance  are also  obtained  with  Random
+    Forest which becomes  more competitive when the  number of samples
+    increases.  The KNN  classifier and the GMM  classifier with ridge
+    regularization   are   totally   outperform  both   in   term   of
+    classification rate and of processing time.
 
     \subsection{Potsdam dataset}
 
-    Table~\ref{tab:potsdam-otbsimu} presents the results.
+    For the Potsdam  dataset, training samples were  selected from one
+    tile (5\_11)  and validation  samples were all  the pixel  of tile
+    5\_12  or  3\_10.  Table~\ref{tab:potsdam-otbsimu}  presents  the
+    results.
 
     \begin{table}[!t]
         \centering
-        \caption{Results of classification with 1000 samples by class and 5 trials (standard deviation in parenthesis).\label{tab:potsdam-otbsimu}}
-        \resizebox{\columnwidth}{!}{%
-        \begin{tabular}{|l|c|c|c|c|c|}\hline
-             & {\bfseries Kappa of} & {\bfseries Kappa of} & {\bfseries Training} & {\bfseries Classif.} & {\bfseries \# features} \\
-             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries time (s)} & {\bfseries time (s)} & {\bfseries to classify} \\ \hline
-
-            GMM SFS kappa & 0.694 (0.002) & 0.669 (0.005) & 400 & 310 & 13.2 \\
-            GMM SFS JM &    0.624 (0.028) & 0.631 (0.034) & 2 & 310   & 11 \\
-            GMM SFFS JM &   0.624 (0.028) & 0.631 (0.034) & 2.6 & 310   & 11 \\
-            GMM ridge &     0.632 (0.007) & 0.592 (0.010) & 10 & 2000 & all \\
-            KNN &           0.637 (0.005) & 0.607 (0.005) &  &   & all \\
-            Random Forest & 0.729 (0.004) & 0.673 (0.005) & 20 & 840  & all \\
-
-            \hline
+        \caption{Kappa coefficient and processing time for 1000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu}}
+        \begin{tabular}{lccccc}\toprule
+          & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-6}
+          GMM SFS kappa & 0.694 (0.002) & 0.669 (0.005) & 400 & 310 & 13.2 \\
+          GMM SFS JM &    0.624 (0.028) & 0.631 (0.034) & 2 & 310   & 11 \\
+          GMM SFFS JM &   0.624 (0.028) & 0.631 (0.034) & 2.6 & 310   & 11 \\
+          GMM ridge &     0.632 (0.007) & 0.592 (0.010) & 10 & 2000 & all \\
+          KNN &           0.637 (0.005) & 0.607 (0.005) &  &   & all \\
+          Random Forest & 0.729 (0.004) & 0.673 (0.005) & 20 & 840  & all \\
+          \bottomrule
         \end{tabular}
-        }
     \end{table}
 
+    %% TODO: je te laisse modifier le tableau de la même manière (style, legende etc ...)
     \begin{table}[!t]
         \centering
         \caption{Results of classification with 50000 samples by class and 5 trials (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-big}}
-        \resizebox{\columnwidth}{!}{%
         \begin{tabular}{|l|c|c|c|c|c|}\hline
              & {\bfseries Kappa of} & {\bfseries Kappa of} & {\bfseries Training} & {\bfseries Classif.} & {\bfseries \# features} \\
              & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries time (s)} & {\bfseries time (s)} & {\bfseries to classify} \\ \hline
@@ -886,9 +949,9 @@ high resolution multispectral image.
 
             \hline
         \end{tabular}
-        }
-    \end{table}
+      \end{table}
 
+      %% TODO: reprendre la discussion avec les commentaires de l'image précédente
     In this case, the classification rate of GMM classifiers with Jeffries-Matusita distance as criterion function drops clearly and has a high standard deviation. It could be due to the fact that the Gaussian hypothesis, on which this metric relies a lot, is not enough verified. When the classification rate is directly used as criterion, the classifier manages to select the relevant features. It has to be noticed that with kappa only 30 features are selected on average when with Jeffries-Matusita distance, the maximum number of features is selected almost always (set to 60).
 
     The KNN classifier and the GMM classifier with ridge regularization are again outperformed even if they get stable results.
