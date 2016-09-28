@@ -130,12 +130,12 @@ the $i^{th}$ sample, $y_i = 1,...,C$ the associated label, C the total
 number of classes,  $n$ the number of samples and  $n_c$ the number of
 samples of class $c$.
 
-\subsection{Gaussian Mixture Models}
+    \subsection{Gaussian Mixture Models}
 
-For mixture models, it is assumed  that a given sample $\mathbf{x}$ is
-the realization  of a  random vector which  distribution is  a mixture
-(convex     combination)     of      several     class     conditioned
-distribution~\cite{Fraley00model-basedclustering}:
+    For mixture models, it is assumed  that a given sample $\mathbf{x}$ is
+    the realization  of a  random vector which  distribution is  a mixture
+    (convex     combination)     of      several     class     conditioned
+    distribution~\cite{Fraley00model-basedclustering}:
     \begin{equation}
         p(\mathbf{x}) = \sum_{c=1}^{C} \pi_c f_c(\mathbf{x}|\theta)
     \end{equation}
@@ -181,7 +181,7 @@ distribution~\cite{Fraley00model-basedclustering}:
     The computation of~\ref{eq:decision} requires the inversion of the
     covariance matrix and and the  computation of the logarithm of the
     determinant.  The estimations of these terms suffer from the curse
-    of  dimensionality\cite{bouveyron2014model}, because  in practice,
+    of  dimensionality\cite{}, because  in practice,
     the  number of  parameters  $\eta_c$ to  estimate  for each  class
     increases quadratically with respect to the number of features, as
     illustrated in Figure~\ref{fig:nb-param}.  Hence, if the number of
@@ -212,234 +212,225 @@ distribution~\cite{Fraley00model-basedclustering}:
     %% données des refs (voir intro du papier JSTARS) et dans la
     %% réduction  de dimension, il  y a  la sélection de  features. La
     %% conclusion doit s'enchainer avec la partie suivante.
-    There are two major  solutions to this problem. First
-    option  is  to  use  a  regularization  method  to  stabilize  the
-    inversion of the  covariance matrices\cite{hoerl1970ridge}. Second
-    option is to  use a features extraction/selection  method in order
-    to reduce  the dimensionality of  the samples. In this  study, the
-    latter option  is explored  and a  feature selection  method named
-    sequential  forward features  selection is  presented in  the next
-    Section.
+    There are two major  solutions to this problem. First option is to stabilize the inversion of the covariance matrices work. Some methods investigate the use of constraints on the direct problem \cite{reynolds1995robust} \cite{hathaway1985constrained} and some work on the inverse problem by using regularization method \cite{hoerl1970ridge} \cite{jensen2008regression}. Second option is to reduce dimension. Features extraction/selection methods have been developed in order to reduce the dimension. In this  study, the latter option is explored and a feature selection method named sequential forward features selection is presented after a brief overview of the selection algorithms in the next Section. %A finir
 
-    \section{Features selection}
-    \label{sec:selection}
+\section{Features selection}
+\label{sec:selection}
 
-    The objective of feature selection is to retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.% TODO: add ref. et example
+The objective of feature selection is to retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.% TODO: add ref. et example
 
-    % It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
+% It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
 
-    Features selection algorithms may be divided into three types. The first type called filter method is based uniquely on data analysis. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical filter method and there is numerous other methods \cite{bruzzone1995extension}, \cite{biesiada2007feature}, \cite{demir2008phase}.
+Features selection algorithms may be divided into three types. The first type called filter method is based uniquely on data analysis. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical filter method and there is numerous other methods \cite{bruzzone1995extension}, \cite{biesiada2007feature}, \cite{demir2008phase}.
 
-    The second sort are known as wrapper methods which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are out of question in a practical amount of time, numerous search strategies have been designed some optimal under particular hypothesis \cite{narendra1977branch} and other suboptimal but easier to set up \cite{whitney1971direct}, \cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be slower.
+The second sort are known as wrapper methods which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are out of question in a practical amount of time, numerous search strategies have been designed some optimal under particular hypothesis \cite{narendra1977branch} and other suboptimal but easier to set up \cite{whitney1971direct}, \cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be slower.
 
-    The third type corresponds to the embedded method which do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene} \cite{weston2003use}.
-²
-    The selection method proposed in this work is a wrapper method associated to GMM models. Thus, in order to set a wrapper method, two elements are needed, a function to rank the various features which is defined in Section~\ref{sec:criterion} and a search strategy. Two search algorithms are presented: the sequential forward features selection method (Section \ref{sec:forward-presentation}) and the sequential floating forward feature selection method (\ref{sec:floating-presentation}) the second being a more complex variation of the first.
+The third type corresponds to the embedded method which do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene} \cite{weston2003use}.
 
-        \subsubsection{Criterion function}
-        \label{sec:criterion}
+The selection method proposed in this work is a wrapper method associated to GMM models. Thus, in order to set a wrapper method, two elements are needed, a function to rank the various features which is defined in Section~\ref{sec:criterion} and a search strategy. Two search algorithms are presented: the sequential forward features selection method (Section \ref{sec:forward-presentation}) and the sequential floating forward feature selection method (\ref{sec:floating-presentation}) the second being a more complex variation of the first.
+
+    \subsection{Criterion function}
+    \label{sec:criterion}
+
+    Criterion functions aim to evaluate either a rate of correct classification or the separability/similarity of class distributions. These functions are used to estimate which sets of variables are the best to represent data, to assure the separability of the classes and to perform classification. The choice of a criterion function is the choice of a way to compare sets of variables.
+
+        \subsubsection{Measures of correct classification}
+        \label{sec:criterion-rate}
 
         \hspace{0pt} \\
 
-        Criterion functions aim to evaluate either a rate of correct classification or the separability/similarity of class distributions. These functions are used to estimate which sets of variables are the best to represent data, to assure the separability of the classes and to perform classification. The choice of a criterion function is the choice of a way to compare sets of variables.
+        As described in \cite{congalton2008assessing} (chapter 4), all this measures of good classification are based on an error matrix $M$ called confusion matrix which is defined so that $M_{ij}$ is the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several interesting values relatively to each class:
+        \begin{itemize}
+            \item the number of True Positive (TP) corresponding to good prediction;
+            \item the number of True Negative (TN) corresponding to good classification of the other class;
+            \item the number of False Negative (FN) corresponding to the samples of the class labeled as an other class;
+            \item the number of False Positive (FP) corresponding to the samples wrongly classified as part of of this class.
+        \end{itemize}
+        Figure~\ref{fig:confusion} illustrates the definition of this values.
 
-            \paragraph{Measures of correct classification}
-            \label{sec:criterion-rate}
+        \begin{figure}[!ht]
+            \centering
+            \begin{tabular}{c >{\bfseries}r @{\hspace{0.7em}}c @{\hspace{0.4em}}c @{\hspace{0.4em}}c @{\hspace{0.7em}}l}
+              \multirow{10}{*}{\parbox{1.1cm}{\bfseries\raggedleft Actual\\ value}} &
+                & \multicolumn{3}{c}{\bfseries Prediction outcome} \\
+              & & \bfseries $c_1$ & \bfseries $c_2$ & \bfseries $c_3$ \\
+              & $c_1'$ & \MyBox{True}{Positive} & \MyBox{False}{Negative} & \MyBox{False}{Negative} \\[2.4em]
+              & $c_2'$ & \MyBox{False}{Positive} & \MyBox{True}{Negative} & \MyBox{~}{~} \\[2.4em]
+              & $c_3'$ & \MyBox{False}{Positive} & \MyBox{~}{~} & \MyBox{True}{Negative}
+            \end{tabular}
+            \caption{Confusion matrix with TP, TN, FP and FN relatively to $c_1$}
+            \label{fig:confusion}
+        \end{figure}
 
-            \hspace{0pt} \\
+        \emph{The overall accuracy} (OA) is the rate of the number of samples with the correct predicted label over the total number of samples. This metric is easy to interpret but is biased in the case of unbalanced classes.
 
-            As described in \cite{congalton2008assessing} (chapter 4), all this measures of good classification are based on an error matrix $M$ called confusion matrix which is defined so that $M_{ij}$ is the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several interesting values relatively to each class:
-            \begin{itemize}
-                \item the number of True Positive (TP) corresponding to good prediction;
-                \item the number of True Negative (TN) corresponding to good classification of the other class;
-                \item the number of False Negative (FN) corresponding to the samples of the class labeled as an other class;
-                \item the number of False Positive (FP) corresponding to the samples wrongly classified as part of of this class.
-            \end{itemize}
-            Figure~\ref{fig:confusion} illustrates the definition of this values.
+        \emph{The Cohen's kappa} (K) is a statistic which measures the probability of agreement between predictions and ground-truth.
 
-            \begin{figure}[!ht]
-                \centering
-                \begin{tabular}{c >{\bfseries}r @{\hspace{0.7em}}c @{\hspace{0.4em}}c @{\hspace{0.4em}}c @{\hspace{0.7em}}l}
-                  \multirow{10}{*}{\parbox{1.1cm}{\bfseries\raggedleft Actual\\ value}} &
-                    & \multicolumn{3}{c}{\bfseries Prediction outcome} \\
-                  & & \bfseries $c_1$ & \bfseries $c_2$ & \bfseries $c_3$ \\
-                  & $c_1'$ & \MyBox{True}{Positive} & \MyBox{False}{Negative} & \MyBox{False}{Negative} \\[2.4em]
-                  & $c_2'$ & \MyBox{False}{Positive} & \MyBox{True}{Negative} & \MyBox{~}{~} \\[2.4em]
-                  & $c_3'$ & \MyBox{False}{Positive} & \MyBox{~}{~} & \MyBox{True}{Negative}
-                \end{tabular}
-                \caption{Confusion matrix with TP, TN, FP and FN relatively to $c_1$}
-                \label{fig:confusion}
-            \end{figure}
+        \emph{The mean F1 score} (F1mean) is the average of the F1 score for each class and the F1 score is the harmonic mean of the precision (number of True Positive over True Positive plus False Positive) and the recall (number of True Positive over True Positive plus False Negative).
 
-            \emph{The overall accuracy} (OA) is the rate of the number of samples with the correct predicted label over the total number of samples. This metric is easy to interpret but is biased in the case of unbalanced classes.
+        \begin{align}
+            OA &= \frac{\text{TP}}{n}. \\
+            K &= \frac{pa - pr}{1 - pr}.  \\
+            \text{F1mean} &= \frac{2 \text{TP}}{2 \text{TP} + \text{FN} + \text{FP}}.
+        \end{align}
+        where TP stands for True Positive, FN for False Negative, FP for False Positive, $pa$ is the probability of agreement defined by $pa = OA$  and $pr$ the probability of random agreement defined by $pr = \sum_{c=1}^{C} \frac{TP_c}{FP_c} \frac{TP_c}{FN_c}$.
 
-            \emph{The Cohen's kappa} (K) is a statistic which measures the probability of agreement between predictions and ground-truth.
+        In order to estimate classification rate, a cross-validation process over training set is used\cite{opac-b1127878}. The training set is divided in k folds, then, the training is done with $(k-1)$ folds and the performances are estimated with the remaining fold.
 
-            \emph{The mean F1 score} (F1mean) is the average of the F1 score for each class and the F1 score is the harmonic mean of the precision (number of True Positive over True Positive plus False Positive) and the recall (number of True Positive over True Positive plus False Negative).
+        \hspace{0pt} \\
 
-            \begin{align}
-                OA &= \frac{\text{TP}}{n}. \\
-                K &= \frac{pa - pr}{1 - pr}.  \\
-                \text{F1mean} &= \frac{2 \text{TP}}{2 \text{TP} + \text{FN} + \text{FP}}.
-            \end{align}
-            where TP stands for True Positive, FN for False Negative, FP for False Positive, $pa$ is the probability of agreement defined by $pa = OA$  and $pr$ the probability of random agreement defined by $pr = \sum_{c=1}^{C} \frac{TP_c}{FP_c} \frac{TP_c}{FN_c}$.
+        \subsubsection{Similarity between distributions}
 
-            In order to estimate classification rate, a cross-validation process over training set is used\cite{opac-b1127878}. The training set is divided in k folds, then, the training is done with $(k-1)$ folds and the performances are estimated with the remaining fold.
-
-            \hspace{0pt} \\
-
-            \paragraph{Similarity between distributions}
-
-            \hspace{0pt} \\
-            The second type of criterion functions is a measure of similarity between two distributions. These measures are called divergence function and are defined so that, if $S$ is a space of all probability distribution with same support, it satisfies
-            \begin{align*}
-                &\forall (p,q) \in S, \text{Div}(p,q) \geq 0, \\
-                &\text{Div}(p,q) = 0 \Leftrightarrow p = q.
-            \end{align*}
-            More specifically, focus is made on two particular divergences: the Kullback–Leibler divergence and the Jeffries–Matusita distance. The advantage of these divergences is that they have an explicit expression in the case of Gaussian models. The simplification allows to get rid of any integration calculus which is a major problem when dealing with high-dimensional data.
+        \hspace{0pt} \\
+        The second type of criterion functions is a measure of similarity between two distributions. These measures are called divergence function and are defined so that, if $S$ is a space of all probability distribution with same support, it satisfies
+        \begin{align*}
+            &\forall (p,q) \in S, \text{Div}(p,q) \geq 0, \\
+            &\text{Div}(p,q) = 0 \Leftrightarrow p = q.
+        \end{align*}
+        More specifically, focus is made on two particular divergences: the Kullback–Leibler divergence and the Jeffries–Matusita distance. The advantage of these divergences is that they have an explicit expression in the case of Gaussian models. The simplification allows to get rid of any integration calculus which is a major problem when dealing with high-dimensional data.
 
 
-            \emph{The Kullback-Leibler divergence} (KL divergence) measures the amount of information lost when the first distribution is approximated by the second one\cite{kullback1987letter}. The formal definition is
-            \begin{equation}
-                \text{Div}_{KL}(c_i,c_j) = \int_\mathbf{x} p(\mathbf{x}|c_i) \ln \left(\frac{p(\mathbf{x}|c_i)}{p(\mathbf{x}|c_j)}\right) d\mathbf{x}.
-            \end{equation}
-            And in the case of Gaussian model, it can be rewritten as follows
-            \begin{align}
-                &\text{Div}_{KL}(c_i,c_j) = \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j}) \nonumber \\
-                & + (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t \boldsymbol{\Sigma}_{c_i}^{-1} (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - d + \log \left( \frac{|\boldsymbol{\Sigma}_{c_i}|}{|\boldsymbol{\Sigma}_{c_j}|} \right) \biggr),
-            \end{align}
-            where Tr is the trace operator and $d$ the dimension of the distribution.
+        \emph{The Kullback-Leibler divergence} (KL divergence) measures the amount of information lost when the first distribution is approximated by the second one\cite{kullback1987letter}. The formal definition is
+        \begin{equation}
+            \text{Div}_{KL}(c_i,c_j) = \int_\mathbf{x} p(\mathbf{x}|c_i) \ln \left(\frac{p(\mathbf{x}|c_i)}{p(\mathbf{x}|c_j)}\right) d\mathbf{x}.
+        \end{equation}
+        And in the case of Gaussian model, it can be rewritten as follows
+        \begin{align}
+            &\text{Div}_{KL}(c_i,c_j) = \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j}) \nonumber \\
+            & + (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t \boldsymbol{\Sigma}_{c_i}^{-1} (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - d + \log \left( \frac{|\boldsymbol{\Sigma}_{c_i}|}{|\boldsymbol{\Sigma}_{c_j}|} \right) \biggr),
+        \end{align}
+        where Tr is the trace operator and $d$ the dimension of the distribution.
 
-            It can be noticed that the KL divergence is not symmetric, i.e. $\text{Div}_{KL}(c_i,c_j) \ne \text{Div}_{KL}(c_j,c_i)$, and so the symmetrized version is used to compute the criterion function. In the case of Gaussian model, the symmetrization induces the following simplification of the formula
-            \begin{align}
-                \text{SKL}_{ij} &=\text{Div}_{KL}(c_i,c_j) + \text{Div}_{KL}(c_j,c_i) \nonumber \\
-                &= \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j} + \boldsymbol{\Sigma}_{c_j}^{-1} \boldsymbol{\Sigma}_{c_i}) \nonumber \\
-                &~~+ (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t (\boldsymbol{\Sigma}_{c_i}^{-1} + \boldsymbol{\Sigma}_{c_j}^{-1}) (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - 2d \biggr).
-            \end{align}
+        It can be noticed that the KL divergence is not symmetric, i.e. $\text{Div}_{KL}(c_i,c_j) \ne \text{Div}_{KL}(c_j,c_i)$, and so the symmetrized version is used to compute the criterion function. In the case of Gaussian model, the symmetrization induces the following simplification of the formula
+        \begin{align}
+            \text{SKL}_{ij} &=\text{Div}_{KL}(c_i,c_j) + \text{Div}_{KL}(c_j,c_i) \nonumber \\
+            &= \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j} + \boldsymbol{\Sigma}_{c_j}^{-1} \boldsymbol{\Sigma}_{c_i}) \nonumber \\
+            &~~+ (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t (\boldsymbol{\Sigma}_{c_i}^{-1} + \boldsymbol{\Sigma}_{c_j}^{-1}) (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - 2d \biggr).
+        \end{align}
 
-            Moreover, the divergence is computed between two classes and to obtain a unique value the weighted mean of divergence measures is taken as proposed in \cite{bruzzone1995extension}:
-            \begin{equation}
-                \text{C}_{SKL} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} \text{SKL}_{ij}.
-            \end{equation}
+        Moreover, the divergence is computed between two classes and to obtain a unique value the weighted mean of divergence measures is taken as proposed in \cite{bruzzone1995extension}:
+        \begin{equation}
+            \text{C}_{SKL} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} \text{SKL}_{ij}.
+        \end{equation}
 
-            \emph{The Bhattacharyya distance} is defined as follows
-            \begin{equation}
-                \text{B}_{ij} = - \ln \left( \int_\mathbf{x} \sqrt{p(\mathbf{x}|c_i) p(\mathbf{x}|c_j)} d\mathbf{x} \right).
-            \end{equation}
-            And in the case of Gaussian model:
-            \begin{align}
-                \text{B}_{ij} = &\frac{1}{8} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \left( \frac{\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j}{2} \right)^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) \nonumber \\
-                &+ \frac{1}{2} \ln \left( \frac{|\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j|}{\sqrt{|\boldsymbol{\Sigma}_i| |\boldsymbol{\Sigma}_j|}} \right).
-            \end{align}
+        \emph{The Bhattacharyya distance} is defined as follows
+        \begin{equation}
+            \text{B}_{ij} = - \ln \left( \int_\mathbf{x} \sqrt{p(\mathbf{x}|c_i) p(\mathbf{x}|c_j)} d\mathbf{x} \right).
+        \end{equation}
+        And in the case of Gaussian model:
+        \begin{align}
+            \text{B}_{ij} = &\frac{1}{8} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \left( \frac{\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j}{2} \right)^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) \nonumber \\
+            &+ \frac{1}{2} \ln \left( \frac{|\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j|}{\sqrt{|\boldsymbol{\Sigma}_i| |\boldsymbol{\Sigma}_j|}} \right).
+        \end{align}
 
-            \emph{The Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases \cite{bruzzone2009novel}. The JM distance is defined according to
-            \begin{equation}
-                \text{JM}_{ij} = \sqrt{ \int_\mathbf{x} \left[\sqrt{p(\mathbf{x}|c_i)} - \sqrt{p(\mathbf{x}|c_j)}\right]^2 d\mathbf{x} }.
-            \end{equation}
-            And the Jeffries–Matusita distance can be rewritten according to the Bhattacharyya distance
-            \begin{equation}
-                \text{JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}[-B_{ij}]\} }.
-            \end{equation}
+        \emph{The Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases \cite{bruzzone2009novel}. The JM distance is defined according to
+        \begin{equation}
+            \text{JM}_{ij} = \sqrt{ \int_\mathbf{x} \left[\sqrt{p(\mathbf{x}|c_i)} - \sqrt{p(\mathbf{x}|c_j)}\right]^2 d\mathbf{x} }.
+        \end{equation}
+        And the Jeffries–Matusita distance can be rewritten according to the Bhattacharyya distance
+        \begin{equation}
+            \text{JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}[-B_{ij}]\} }.
+        \end{equation}
 
-            As for the KL divergence, a weighted mean of the distance between two classes is computed to aggregate the measures in a single value:
-            \begin{equation}
-                \text{C}_{JM} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} \text{JM}_{ij}.
-            \end{equation}
+        As for the KL divergence, a weighted mean of the distance between two classes is computed to aggregate the measures in a single value:
+        \begin{equation}
+            \text{C}_{JM} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} \text{JM}_{ij}.
+        \end{equation}
 
-            \vspace{10 mm}
+        \vspace{10 mm}
 
-            According to \cite{bruzzone2009novel}, it is interesting to notice that the KL divergence increases quadratically with respect to the distance between the mean vectors of the class distributions whereas the measures of correct classification asymptotically tends to one when distributions are perfectly separable. On the contrary, the JM distance tends to saturate as the measures of correct classification. Table~\ref{tab:crit} summarized the presented criterion functions and their characteristics.
+        According to \cite{bruzzone2009novel}, it is interesting to notice that the KL divergence increases quadratically with respect to the distance between the mean vectors of the class distributions whereas the measures of correct classification asymptotically tends to one when distributions are perfectly separable. On the contrary, the JM distance tends to saturate as the measures of correct classification. Table~\ref{tab:crit} summarized the presented criterion functions and their characteristics.
 
-            \begin{table}[!t]
-                \centering
-                \caption{Summary of the different criterion functions.\label{tab:crit}}
-                \begin{tabular}[b]{lccc}
-                  \toprule
-                  Criterion & Type Divergence & Complexity \\
-                  \midrule
-                  Overall accuracy            & Accuracy   & High \\
-                  Cohen's kappa               & Accuracy   & High\\
-                  F1 mean                     & Accuracy   & High\\
-                  \midrule
-                  Kullback-Leibler divergence & Divergence & Low \\
-                  Jeffries-Matusita distance  & Divergence & Low \\
-                  \bottomrule
-                \end{tabular}
-            \end{table}
+        \begin{table}[!t]
+            \centering
+            \caption{Summary of the different criterion functions.\label{tab:crit}}
+            \begin{tabular}[b]{lccc}
+              \toprule
+              Criterion & Type Divergence & Complexity \\
+              \midrule
+              Overall accuracy            & Accuracy   & High \\
+              Cohen's kappa               & Accuracy   & High\\
+              F1 mean                     & Accuracy   & High\\
+              \midrule
+              Kullback-Leibler divergence & Divergence & Low \\
+              Jeffries-Matusita distance  & Divergence & Low \\
+              \bottomrule
+            \end{tabular}
+        \end{table}
 
-        \subsubsection{Selection method}
+    \subsection{Selection method}
 
-            \paragraph{Sequential forward features selection}
-            \label{sec:forward-presentation}
+        \subsubsection{Sequential forward features selection}
+        \label{sec:forward-presentation}
 
-            The Sequential Forward Selection (SFS) starts with an empty set of selected features. Then, it computes at each step for all the remaining features the value of the criterion function $J$ chosen among the ones presented in Table~\ref{tab:crit} when the feature is added to the pool of selected features. The feature that maximizes the criterion function is definitively added to the pool of selected features and it moves to the next iteration. The algorithm stops when a given number of variables \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sfs} presents the process in details.
+        The Sequential Forward Selection (SFS) starts with an empty set of selected features. Then, it computes at each step for all the remaining features the value of the criterion function $J$ chosen among the ones presented in Table~\ref{tab:crit} when the feature is added to the pool of selected features. The feature that maximizes the criterion function is definitively added to the pool of selected features and it moves to the next iteration. The algorithm stops when a given number of variables \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sfs} presents the process in details.
 
-            The advantage of this search algorithm is its reasonable processing time. The trade-off is that the result is a suboptimal solution in the sense that an untested subset of variable could lead to better classification result.
+        The advantage of this search algorithm is its reasonable processing time. The trade-off is that the result is a suboptimal solution in the sense that an untested subset of variable could lead to better classification result.
 
-            \begin{algorithm}
-            \caption{Sequential forward features selection\label{alg:sfs}}
-            {\footnotesize
-            \begin{algorithmic}[1]
-            \REQUIRE $\Omega,J,\text{maxVarNb}$
-            \STATE $\Omega=\emptyset$
-            \STATE $F=\text{\{all variables\}}$
-            \WHILE{$\text{card}(\Omega) \leq maxVarNb$}
-            \FORALL{$f_i \in F$}
-            \STATE $R_i = J(\{\Omega + f_i\})$
-            \ENDFOR
-            \STATE $j=\text{arg} \max_{i} R_i$
-            \STATE $\Omega = \{\Omega + f_j\}$
-            \STATE $F = F \setminus f_j$
-            \ENDWHILE
-            \RETURN $\Omega$
-            \end{algorithmic}
-            }
-            \end{algorithm}
+        \begin{algorithm}
+        \caption{Sequential forward features selection\label{alg:sfs}}
+        {\footnotesize
+        \begin{algorithmic}[1]
+        \REQUIRE $\Omega,J,\text{maxVarNb}$
+        \STATE $\Omega=\emptyset$
+        \STATE $F=\text{\{all variables\}}$
+        \WHILE{$\text{card}(\Omega) \leq maxVarNb$}
+        \FORALL{$f_i \in F$}
+        \STATE $R_i = J(\{\Omega + f_i\})$
+        \ENDFOR
+        \STATE $j=\text{arg} \max_{i} R_i$
+        \STATE $\Omega = \{\Omega + f_j\}$
+        \STATE $F = F \setminus f_j$
+        \ENDWHILE
+        \RETURN $\Omega$
+        \end{algorithmic}
+        }
+        \end{algorithm}
 
-            \paragraph{Sequential floating forward feature selection}
-            \label{sec:floating-presentation}
+        \subsubsection{Sequential floating forward feature selection}
+        \label{sec:floating-presentation}
 
-            The Sequential Floating Forward Selection (SFFS)\cite{somol1999adaptive} is actually based on two algorithms: the SFS described above and the Sequential Backward Selection (SBS). The SBS is the backward equivalent of SFS. The difference is that it starts with every features in the pool of selected features and tries at each step to remove the less significant one in term of the given criterion function.
+        The Sequential Floating Forward Selection (SFFS)\cite{somol1999adaptive} is actually based on two algorithms: the SFS described above and the Sequential Backward Selection (SBS). The SBS is the backward equivalent of SFS. The difference is that it starts with every features in the pool of selected features and tries at each step to remove the less significant one in term of the given criterion function.
 
-            The SFFS works as the SFS but between each step of the SFS algorithm a backward selection is operated. At the end of the SBS step, the value of the criterion function is compared to the best value ever obtained with a set of features of the same size and if the new value is better the feature put into question is effectively taken away and the next step is again a SBS but if the new value is not better the SBS step is forgotten and it moves to the next SFS step. The algorithm stops when a given number of features \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sffs} sums up the method.
+        The SFFS works as the SFS but between each step of the SFS algorithm a backward selection is operated. At the end of the SBS step, the value of the criterion function is compared to the best value ever obtained with a set of features of the same size and if the new value is better the feature put into question is effectively taken away and the next step is again a SBS but if the new value is not better the SBS step is forgotten and it moves to the next SFS step. The algorithm stops when a given number of features \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sffs} sums up the method.
 
-            This SFFS algorithm eventually tests more solutions than the SFS algorithm. The results are expected to be better but the trade-off is an increased computational time which is dependent on the complexity of the dataset.
+        This SFFS algorithm eventually tests more solutions than the SFS algorithm. The results are expected to be better but the trade-off is an increased computational time which is dependent on the complexity of the dataset.
 
-            \begin{algorithm}
-            \caption{Sequential floating forward features selection\label{alg:sffs}}
-            {\footnotesize
-            \begin{algorithmic}[1]
-            \REQUIRE $J,\text{maxVarNb}$
-            \STATE $\Omega=\overbrace{(\emptyset,...,\emptyset)}^{maxVarNb}$
-            \STATE $F=\text{\{all variables\}}$
-            \STATE $k=0$
-            \WHILE{$k \neq \text{maxVarNb}$}
-            \FORALL{$f_i \in F$}
-            \STATE $R_i = J(\{\Omega_k + f_i\})$
-            \ENDFOR
-            \STATE $j=\text{arg} \max_{i} R_i$
-            \STATE $k=k+1$
-            \IF{$R_j \geq J(\Omega_k)$}
-            \STATE $\Omega_k = \{\Omega_{k-1} + f_j\}$
-            \STATE $\text{flag}=1$
-            \WHILE{$k > 2 \text{ and } \text{flag}=1$}
-            \FORALL{$f_i \in \Omega_k$}
-            \STATE $R_i = J(\{\Omega_k \setminus f_i\})$
-            \ENDFOR
-            \STATE $j=\text{arg} \max_{i} R_i$
-            \IF{$R_j > J(\Omega_{k-1})$}
-            \STATE $\Omega_{k-1} = \{\Omega_k \setminus f_j\}$
-            \STATE $k=k-1$
-            \ELSE
-            \STATE $\text{flag}=0$
-            \ENDIF
-            \ENDWHILE
-            \ENDIF
-            \ENDWHILE
-            \RETURN $\Omega_{\text{maxVarNb}}$
-            \end{algorithmic}
-            }
-            \end{algorithm}
+        \begin{algorithm}
+        \caption{Sequential floating forward features selection\label{alg:sffs}}
+        {\footnotesize
+        \begin{algorithmic}[1]
+        \REQUIRE $J,\text{maxVarNb}$
+        \STATE $\Omega=\overbrace{(\emptyset,...,\emptyset)}^{maxVarNb}$
+        \STATE $F=\text{\{all variables\}}$
+        \STATE $k=0$
+        \WHILE{$k \neq \text{maxVarNb}$}
+        \FORALL{$f_i \in F$}
+        \STATE $R_i = J(\{\Omega_k + f_i\})$
+        \ENDFOR
+        \STATE $j=\text{arg} \max_{i} R_i$
+        \STATE $k=k+1$
+        \IF{$R_j \geq J(\Omega_k)$}
+        \STATE $\Omega_k = \{\Omega_{k-1} + f_j\}$
+        \STATE $\text{flag}=1$
+        \WHILE{$k > 2 \text{ and } \text{flag}=1$}
+        \FORALL{$f_i \in \Omega_k$}
+        \STATE $R_i = J(\{\Omega_k \setminus f_i\})$
+        \ENDFOR
+        \STATE $j=\text{arg} \max_{i} R_i$
+        \IF{$R_j > J(\Omega_{k-1})$}
+        \STATE $\Omega_{k-1} = \{\Omega_k \setminus f_j\}$
+        \STATE $k=k-1$
+        \ELSE
+        \STATE $\text{flag}=0$
+        \ENDIF
+        \ENDWHILE
+        \ENDIF
+        \ENDWHILE
+        \RETURN $\Omega_{\text{maxVarNb}}$
+        \end{algorithmic}
+        }
+        \end{algorithm}
 
 
 \section{Efficient implementation}
@@ -762,11 +753,11 @@ high resolution multispectral image.
     the  operational  efficiency  and  it is  compared  to  other  OTB
     classifiers   used  operationally   through  their   command  line
     applications\footnote{\url{http://otbcb.readthedocs.io/en/latest/OTB-Applications.html}}.
-    
+
     The following classifiers are tested:
     \begin{itemize}
         \item A k-nearest-neighbors classifier (KNN) with OTB default parameters (32 as number of neighbors).
-        \item A Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 max depth, 50 size of subset of variables)%%TODO : pas clair ce qu'est "50 size of subset of variables"
+        \item A Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 as max depth, 50 as size of the randomly selected subset of features at each tree node)
         \item A GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by gridsearch.
     \end{itemize}
     The GMM classifier is part of the external module described in Section~\ref{sec:otb-module}.
@@ -786,18 +777,18 @@ high resolution multispectral image.
     have been tested investigated.   For the Aisa dataset, experiments
     have been conducted  using 250, 500 and 1000 samples  by class and
     for the Potsdam dataset, 1000 and 50000 samples by class.
-    
-    %% TODO : c'est encore le cas ? à verifier: si on prends quand cela arréte de croitre rapidement il faut changer
-    For SFS and  SFFS selection, the number of variables  to select is
-    set to 30 for  the Aisa datset and 60 for  the Potsdam dataset and
-    then  the  number  of  variables  which  maximizes  the  criterion
-    function is used to perform classification.
+
+    For SFS and  SFFS selection, the number of variables to select is set to 30 for the Aisa dataset and 60 for the Potsdam dataset. Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.001\% in this experiment,
+    \begin{equation*}
+        \Omega^{*} = \Omega_{\min \{k|DJ_k<th\}}
+    \end{equation*}
+    with $DJ_k = \frac{J(\Omega_k) - J(\Omega_{k-1})}{\max_k (J(\Omega_k) - J(\Omega_{k-1}))}$.
 
     The classification  rate is presented  using Cohen's kappa  but it
     has to  be noticed the  results were  similar when looking  at the
     mean F1-score.  Processing time  has been  evaluated on  a desktop
     computer  with 4Gb  of RAM  and  Intel(R) Core(TM)  i5-3570 CPU  @
-    3.40GHz $\times$ 4 processors. 
+    3.40GHz $\times$ 4 processors.
 
     \subsection{Aisa dataset}
     \label{sec:aisa}
@@ -864,39 +855,14 @@ high resolution multispectral image.
         \end{tabularx}
     \end{table}
 
-    %% TODO; Reprendre cette partie: ne parle pas à la fois de la
-    %% classification et du temps de calcul. D'abors du commences à
-    %% décrire et commenter sur la classification. Ensuite tu fais la
-    %% même chose sur les temps de calculs. Et il faut en dire plus !!
-    %%   Pour   les   classifs,   il  faut   parler   des   tests   de
-    %%  significativité.  Pour les  temps  de  calculs, il  faut  plus
-    %% détailler  pourquoi cela  va plus  ou moins  vite. Avec  FS, on
-    %% réduit le nombre de variables et comme la régle de décision est
-    %%  de compléxité  (d^3)  donc  quand on  réduit  d, on  améliorer
-    %% grandement  les temps de  calcul, pour les RF,  plus il y  a de
-    %% training samples, plus lse arbres vont êtres grands ...
-    The  results show  that,  on this  dataset,  GMM classifiers  with
-    feature selection  get the  best classification  rate.  Especially
-    with  very  few training  samples,  GMM  classifiers with  feature
-    selection outperform  the others.  In term  of computational time,
-    the GMM classifiers  are as expected very  fast for classification
-    and also  for training,  except when the  criterion function  is a
-    classification rate.  Among the  three variations of the selection
-    algorithm, none appears  to perform better than  the others. Using
-    kappa  or Jeffries-Matusita  distance  as criterion  is equal  and
-    using SFFS  does not give any  advantage. In this case,  using J-M
-    distance  as criterion  and SFS  as  search strategy  is the  best
-    choice in term of time efficiency.  % The computation of the kappa
-                                       % seems  to suffer from  a lack
-                                       %   of  parallelization   which
-                                       %  could be  improved. ->  plus
-                                       % tard dans la conclusion.
+    The results show that, on this  dataset, GMM classifiers with feature selection get the best classification rate. Among the three variations of the selection algorithm, none appears to perform better than the others. Using kappa or Jeffries-Matusita distance as criterion is equal and using SFFS does not give any advantage.
 
-    Nevertheless,  good  performance  are also  obtained  with  Random
-    Forest which becomes  more competitive when the  number of samples
-    increases.  The KNN  classifier and the GMM  classifier with ridge
-    regularization   are   totally   outperform  both   in   term   of
-    classification rate and of processing time.
+    The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples. The GMM classifier with ridge regularization and the kNN classifier are both outperformed.
+
+    In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can explain by the dimensional reduction. Actually, the decision rule corresponding to Equation~\ref{eq:decision} has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
+
+    The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because the classification rate estimation needed. For the kNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be more deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
+    % The computation of the kappa seems  to suffer from  a lack of  parallelization   which could be  improved. ->  plus tard dans la conclusion.
 
     \subsection{Potsdam dataset}
 
@@ -907,42 +873,42 @@ high resolution multispectral image.
 
     \begin{table}[!t]
         \centering
-        \caption{Kappa coefficient and processing time for 1000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu}}
-        \begin{tabular}{lccccc}\toprule
-          & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-6}
-          GMM SFS kappa & 0.694 (0.002) & 0.669 (0.005) & 400 & 310 & 13.2 \\
-          GMM SFS JM &    0.624 (0.028) & 0.631 (0.034) & 2 & 310   & 11 \\
-          GMM SFFS JM &   0.624 (0.028) & 0.631 (0.034) & 2.6 & 310   & 11 \\
-          GMM ridge &     0.632 (0.007) & 0.592 (0.010) & 10 & 2000 & all \\
-          KNN &           0.637 (0.005) & 0.607 (0.005) &  &   & all \\
-          Random Forest & 0.729 (0.004) & 0.673 (0.005) & 20 & 840  & all \\
-          \bottomrule
+        \caption{Kappa coefficient and processing time for 1,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu}}
+        \begin{tabular}{lcccccc}\toprule
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-6}
+            GMM SFS kappa & 0.694 (0.002)             & {\bfseries 0.669 (0.005)} & {\bfseries 0.533 (0.008)} & 400 & 310  & 13.2 \\
+            GMM SFS JM &    0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2   & 310  & 11 \\
+            GMM SFFS JM &   0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2.6 & 310  & 11 \\
+            GMM ridge &     0.632 (0.007)             & 0.592 (0.010)             & 0.433 (0.008)             & 10  & 2000 & all \\
+            KNN &           0.637 (0.005)             & 0.607 (0.005)             & 0.478 (0.002)             &     &      & all \\
+            Random Forest & {\bfseries 0.729 (0.004)} & {\bfseries 0.673 (0.005)} & {\bfseries 0.529 (0.009)} & 20  & 840  & all \\
+            \bottomrule
         \end{tabular}
     \end{table}
 
-    %% TODO: je te laisse modifier le tableau de la même manière (style, legende etc ...)
     \begin{table}[!t]
         \centering
-        \caption{Results of classification with 50000 samples by class and 5 trials (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-big}}
-        \begin{tabular}{|l|c|c|c|c|c|}\hline
-             & {\bfseries Kappa of} & {\bfseries Kappa of} & {\bfseries Training} & {\bfseries Classif.} & {\bfseries \# features} \\
-             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries time (s)} & {\bfseries time (s)} & {\bfseries to classify} \\ \hline
-
-            GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 20000 & 340 & 29 \\
-            GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 6 & 330 & 10 \\
-            GMM SFFS JM &   0.560 (0.111) & 0.576 (0.104) & 6.6 & 340 & 10 \\
-            GMM ridge &     0.641 (0.015) & 0.611 (0.026) & 460 & 2000 & all \\
-            Random Forest & 0.851 (0.001) & 0.715 (0.001) & 2000 & 2000 & all \\
-            \hline
+        \caption{Kappa coefficient and processing time for 50,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu-big}}
+        \begin{tabular}{|lcccccc}\toprule
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-6}
+            GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 0.531 (0.005) & 20000 & 340 & 29 \\
+            GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6 & 330 & 10 \\
+            GMM SFFS JM &   0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6.6 & 340 & 10 \\
+            GMM ridge &     0.641 (0.015) & 0.611 (0.026) & 0.440 (0.015) & 460 & 2000 & all \\
+            Random Forest & {\bfseries 0.851 (0.001)} & {\bfseries 0.715 (0.001)} & {\bfseries 0.573 (0.002)} & 2000 & 2000 & all \\
+            \bottomrule
         \end{tabular}
-      \end{table}
+    \end{table}
 
-      %% TODO: reprendre la discussion avec les commentaires de l'image précédente
-    In this case, the classification rate of GMM classifiers with Jeffries-Matusita distance as criterion function drops clearly and has a high standard deviation. It could be due to the fact that the Gaussian hypothesis, on which this metric relies a lot, is not enough verified. When the classification rate is directly used as criterion, the classifier manages to select the relevant features. It has to be noticed that with kappa only 30 features are selected on average when with Jeffries-Matusita distance, the maximum number of features is selected almost always (set to 60).
+    With this second dataset, the Random Forest classifier and the GMM classifier with kappa as selection criterion distinguished themselves by good performance. When using 1000 samples, no significant difference of classification rate has been observed on test set. But, with 50,000 samples, the Random Forest classifier better significantly better.
 
-    The KNN classifier and the GMM classifier with ridge regularization are again outperformed even if they get stable results.
+    It can be guessed that the fact that the Gaussian hypothesis is unlikely to be verified explains the difficulty to extract the finer information available in a larger dataset. The JM distance has stressed in Table~\ref{tab:crit} has a strong Gaussian hypothesis and the same hypotheses could also explain the drop of the classification rate of GMM classifiers with Jeffries-Matusita distance as criterion.
 
-    Finally, the Random Forest classifier and the GMM with kappa as criterion are from far the best classifiers. The only difference is in the processing time and also a small difference of classification rate with the training image. Random Forest is faster for the training process while the GMM classifier is faster for classifying.
+    The KNN classifier and the GMM classifier with ridge regularization are again outperformed even if they get more stable results than GMM classifiers with JM as criterion.
+
+    The number of variables identified by the selection process shows that selection with JM distance as criterion identifies less relevant samples than with kappa as criterion. Moreover, the GMM classifier with kappa manages to get good performance with only 6.7\ of the variables with 1000 samples and 15\% with 50,000 samples.
+
+    In term of processing time, results are similar than with the Aisa dataset. GMM classifiers with selection are very fast for prediction. For example, the GMM classifier with kappa as criterion is 63\% faster than the Random Forest classifier for prediction with 1000 samples and 83\% faster with 50,000 samples.
 
 \section{Conclusion}
 
