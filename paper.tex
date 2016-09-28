@@ -181,7 +181,7 @@ samples of class $c$.
     The computation of~\ref{eq:decision} requires the inversion of the
     covariance matrix and and the  computation of the logarithm of the
     determinant.  The estimations of these terms suffer from the curse
-    of  dimensionality\cite{bouveyron2014model}, because  in practice,
+    of  dimensionality\cite{}, because  in practice,
     the  number of  parameters  $\eta_c$ to  estimate  for each  class
     increases quadratically with respect to the number of features, as
     illustrated in Figure~\ref{fig:nb-param}.  Hence, if the number of
@@ -212,14 +212,7 @@ samples of class $c$.
     %% données des refs (voir intro du papier JSTARS) et dans la
     %% réduction  de dimension, il  y a  la sélection de  features. La
     %% conclusion doit s'enchainer avec la partie suivante.
-    There are two major  solutions to this problem. First
-    option  is  to  use  a  regularization  method  to  stabilize  the
-    inversion of the  covariance matrices\cite{hoerl1970ridge}. Second
-    option is to  use a features extraction/selection  method in order
-    to reduce  the dimensionality of  the samples. In this  study, the
-    latter option  is explored  and a  feature selection  method named
-    sequential  forward features  selection is  presented in  the next
-    Section.
+    There are two major  solutions to this problem. First option is to stabilize the inversion of the covariance matrices work. Some methods investigate the use of constraints on the direct problem \cite{reynolds1995robust} \cite{hathaway1985constrained} and some work on the inverse problem by using regularization method \cite{hoerl1970ridge} \cite{jensen2008regression}. Second option is to reduce dimension. Features extraction/selection methods have been developed in order to reduce the dimension. In this  study, the latter option is explored and a feature selection method named sequential forward features selection is presented after a brief overview of the selection algorithms in the next Section. %A finir
 
 \section{Features selection}
 \label{sec:selection}
