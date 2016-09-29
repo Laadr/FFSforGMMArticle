@@ -359,13 +359,16 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         \subsection{Selection method}
         \label{sec:selection:method}
-
+        Two  sequential  search  functions were  implemented  in  this
+        work~\cite{Guyon:2006:FEF:1208773}:  the   sequential  forward
+        selection and the sequential  floating forward.  The later one
+        is  an   extension  of   the  former.  Both   select  features
+        iteratively.
+        
         \subsubsection{Sequential forward features selection}
         \label{sec:forward-presentation}
 
-        The Sequential Forward Selection (SFS) starts with an empty set of selected features. Then, it computes at each step for all the remaining features the value of the criterion function $J$ chosen among the ones presented in Table~\ref{tab:crit} when the feature is added to the pool of selected features. The feature that maximizes the criterion function is definitively added to the pool of selected features and it moves to the next iteration. The algorithm stops when a given number of variables \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sfs} presents the process in details.
-
-        The advantage of this search algorithm is its reasonable processing time. The trade-off is that the result is a suboptimal solution in the sense that an untested subset of variable could lead to better classification result.
+        The Sequential Forward Selection (SFS) starts with an empty set of selected features.  At each  step, the feature that most  improves one selected criterion function $J$ selected in Table~\ref{tab:crit} is added  to the set. This feature is definitively added to the pool of selected features and the algorithm stops when a given number of variables \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sfs} presents the process in details.
 
         \begin{algorithm}
         \caption{Sequential forward features selection\label{alg:sfs}}
@@ -390,9 +393,9 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \subsubsection{Sequential floating forward feature selection}
         \label{sec:floating-presentation}
 
-        The Sequential Floating Forward Selection (SFFS)\cite{somol1999adaptive} is actually based on two algorithms: the SFS described above and the Sequential Backward Selection (SBS). The SBS is the backward equivalent of SFS. The difference is that it starts with every features in the pool of selected features and tries at each step to remove the less significant one in term of the given criterion function.
+        The Sequential Floating Forward Selection (SFFS)\cite{somol1999adaptive} is based on two algorithms: the SFS described above and the Sequential Backward Selection (SBS). The SBS is the backward equivalent of SFS. The difference is that it starts with every features in the pool of selected features and tries at each step to remove the less significant one in term of the given criterion function.
 
-        The SFFS works as the SFS but between each step of the SFS algorithm a backward selection is operated. At the end of the SBS step, the value of the criterion function is compared to the best value ever obtained with a set of features of the same size and if the new value is better the feature put into question is effectively taken away and the next step is again a SBS but if the new value is not better the SBS step is forgotten and it moves to the next SFS step. The algorithm stops when a given number of features \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sffs} sums up the method.
+        The SFFS works like the SFS but between each step of the SFS algorithm, a backward selection is operated to identify the less important feature. If the criterion function is higher than the best value value ever obtained with a set of same size, the identified feature is picked out. The SBS step is repeated while removing the less important feature leads to an increase of the criterion function. Then SFS is going back. The algorithm stops when a given number of features \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sffs} provides details of the process.
 
         This SFFS algorithm eventually tests more solutions than the SFS algorithm. The results are expected to be better but the trade-off is an increased computational time which is dependent on the complexity of the dataset.
 
