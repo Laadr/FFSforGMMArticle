@@ -214,68 +214,55 @@ samples of class $c$.
     %% conclusion doit s'enchainer avec la partie suivante.
     There are two major  solutions to this problem. First option is to stabilize the inversion of the covariance matrices work. Some methods investigate the use of constraints on the direct problem \cite{reynolds1995robust} \cite{hathaway1985constrained} and some work on the inverse problem by using regularization method \cite{hoerl1970ridge} \cite{jensen2008regression}. Second option is to reduce dimension. Features extraction/selection methods have been developed in order to reduce the dimension. In this  study, the latter option is explored and a feature selection method named sequential forward features selection is presented after a brief overview of the selection algorithms in the next Section. %A finir
 
-\section{Features selection}
+\section{Sequential forward features selection}
 \label{sec:selection}
 
+%%% Debut Déplacer vers l'intro
 The objective of feature selection is to retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.% TODO: add ref. et example
 
-% It is important to underline that the proposed method is a \emph{selection} method and not an \emph{extraction} method. It means the subset of variables obtained is composed of actual variables of the original set and not variables built as combination of several others as it is the case for example with PCA. This choice is made to assure an easier interpretation by the user of the obtained subset of variables.
-
+%% Cette partie, dans l'intro il faut la rallonger: mieux décrire ces trois méthodes, dire les avantages et les inconvénients de chaque approche et positionner notre approche par rapport à tout cela (je dis cela sans avoir relu l'intro). Tu peux t'inspirer de la thèse de Arnaud Lebris et des pages 58-66)
 Features selection algorithms can be divided into three types. The first type, called \emph{filter methods}, is based uniquely on data analysis. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical filter method and there is numerous other methods \cite{bruzzone1995extension,biesiada2007feature,demir2008phase}.
 
 The second sort are known as \emph{wrapper methods} which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are to expansive in terms of processing time, several search strategies have been designed. Some are optimal under particular hypothesis \cite{narendra1977branch} and other sub-optimal but easier to set up \cite{whitney1971direct,somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be more time consuming.
 
 The third type corresponds to the \emph{embedded method} which do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene,weston2003use}.
+%%% Fin déplacer
 
-The feature selection method proposed in this work is a wrapper method associated to GMM models. To set up a wrapper method, two elements are needed. A function that  ranks the features according to some criteria and a search strategy to optimize the function. The criterion used are described in Section~\ref{sec:criterion} and the two search strategy are discussed in~\ref{sec:selection:method}.
+The feature selection method proposed in this work is a wrapper method associated to GMM models. Two elements are needed to set up a wrapper method:
+\begin{enumerate}
+\item A function that  ranks the features according to some good classification criteria,
+\item A search strategy to optimize the function.
+\end{enumerate}
+
+Section~\ref{sec:criterion} describes the different criterion used in this work and two search strategies are discussed in~\ref{sec:selection:method}.
 
 
     \subsection{Criterion function}
     \label{sec:criterion}
-
-    Criterion functions aim to evaluate either a rate of correct classification or the separability/similarity of class distributions. These functions are used to estimate which sets of variables are the best to represent data, to assure the separability of the classes and to perform classification. The choice of a criterion function is the choice of a way to compare sets of variables.
+    The criterion evaluates how a given model built with a subset of features performs for the classification task. It can be an estimation of the correct classification or a measure of separability/similarity between class distribution. The former are in general more demanding in terms of processing time than the later.
+    
+    % Criterion functions aim to evaluate either a rate of correct classification or the separability/similarity of class distributions. These functions are used to estimate which sets of variables are the best to represent data, to assure the separability of the classes and to perform classification. The choice of a criterion function is the choice of a way to compare sets of variables.
 
         \subsubsection{Measures of correct classification}
         \label{sec:criterion-rate}
 
-        \hspace{0pt} \\
-
-        As described in \cite{congalton2008assessing} (chapter 4), all this measures of good classification are based on an error matrix $M$ called confusion matrix which is defined so that $M_{ij}$ is the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several interesting values relatively to each class:
+        A measure of good classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. An element $M_{ij}$ of the matrix represents the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used 
         \begin{itemize}
-            \item the number of True Positive (TP) corresponding to good prediction;
-            \item the number of True Negative (TN) corresponding to good classification of the other class;
-            \item the number of False Negative (FN) corresponding to the samples of the class labeled as an other class;
-            \item the number of False Positive (FP) corresponding to the samples wrongly classified as part of of this class.
-        \end{itemize}
-        Figure~\ref{fig:confusion} illustrates the definition of this values.
+        \item  \emph{The overall  accuracy} (OA)  is the  rate of  the
+          number of samples with the  correct predicted label over the
+          total  number of  samples~\cite{congalton2008assessing}. This
+          metric is  easy to interpret  but is  biased in the  case of
+          unbalanced classes.
 
-        \begin{figure}[!ht]
-            \centering
-            \begin{tabular}{c >{\bfseries}r @{\hspace{0.7em}}c @{\hspace{0.4em}}c @{\hspace{0.4em}}c @{\hspace{0.7em}}l}
-              \multirow{10}{*}{\parbox{1.1cm}{\bfseries\raggedleft Actual\\ value}} &
-                & \multicolumn{3}{c}{\bfseries Prediction outcome} \\
-              & & \bfseries $c_1$ & \bfseries $c_2$ & \bfseries $c_3$ \\
-              & $c_1'$ & \MyBox{True}{Positive} & \MyBox{False}{Negative} & \MyBox{False}{Negative} \\[2.4em]
-              & $c_2'$ & \MyBox{False}{Positive} & \MyBox{True}{Negative} & \MyBox{~}{~} \\[2.4em]
-              & $c_3'$ & \MyBox{False}{Positive} & \MyBox{~}{~} & \MyBox{True}{Negative}
-            \end{tabular}
-            \caption{Confusion matrix with TP, TN, FP and FN relatively to $c_1$}
-            \label{fig:confusion}
-        \end{figure}
+        \item \emph{The Cohen's kappa} (K) is a statistic which measures the probability of agreement between predictions and ground-truth~\cite{congalton2008assessing}.
 
-        \emph{The overall accuracy} (OA) is the rate of the number of samples with the correct predicted label over the total number of samples. This metric is easy to interpret but is biased in the case of unbalanced classes.
-
-        \emph{The Cohen's kappa} (K) is a statistic which measures the probability of agreement between predictions and ground-truth.
-
-        \emph{The mean F1 score} (F1mean) is the average of the F1 score for each class and the F1 score is the harmonic mean of the precision (number of True Positive over True Positive plus False Positive) and the recall (number of True Positive over True Positive plus False Negative).
-
-        \begin{align}
-            OA &= \frac{\text{TP}}{n}. \\
-            K &= \frac{pa - pr}{1 - pr}.  \\
-            \text{F1mean} &= \frac{2 \text{TP}}{2 \text{TP} + \text{FN} + \text{FP}}.
-        \end{align}
-        where TP stands for True Positive, FN for False Negative, FP for False Positive, $pa$ is the probability of agreement defined by $pa = OA$  and $pr$ the probability of random agreement defined by $pr = \sum_{c=1}^{C} \frac{TP_c}{FP_c} \frac{TP_c}{FN_c}$.
-
+        \item \emph{The mean F1 score}  (F1mean) is the average of the
+          F1 score  for each class  and the  F1 score is  the harmonic
+          mean of  the precision  (number of  True Positive  over True
+          Positive plus False Positive) and the recall (number of True
+          Positive over True Positive plus False Negative)~\cite{powers2011evaluation}.
+      \end{itemize}
+      
         In order to estimate classification rate, a cross-validation process over training set is used\cite{opac-b1127878}. The training set is divided in k folds, then, the training is done with $(k-1)$ folds and the performances are estimated with the remaining fold.
 
         \hspace{0pt} \\
