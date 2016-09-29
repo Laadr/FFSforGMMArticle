@@ -246,7 +246,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \subsubsection{Measures of correct classification}
         \label{sec:criterion-rate}
 
-        A measure of correct classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. An element $M_{ij}$ of the matrix represents the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used 
+        A measure of correct classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. An element $M_{ij}$ of the matrix represents the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used :
         \begin{itemize}
         \item  \emph{The overall  accuracy} (OA)  is the  rate of  the
           number of samples with the  correct predicted label over the
@@ -261,7 +261,9 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
           mean of  the precision  (number of  True Positive  over True
           Positive plus False Positive) and the recall (number of True
           Positive over True Positive plus False Negative)~\cite{powers2011evaluation}.
-      \end{itemize}
+        \end{itemize}
+        High  value  of  theses  indices  correspond  to  an  accurate
+        classification.
       
       The classification rate is  estimated by a $k$- cross-validation
       ($k$-CV)~\cite{opac-b1127878}.  To compute  the $k$-CV, a subset
@@ -275,64 +277,68 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \hspace{0pt} \\
 
         \subsubsection{Similarity between distributions}
-        These measures are called divergence function and are defined so that, if $S$ is a space of all probability distribution with same support, it satisfies
-        \begin{align*}
-            &\forall (p,q) \in S, \text{Div}(p,q) \geq 0, \\
-            &\text{Div}(p,q) = 0 \Leftrightarrow p = q.
-        \end{align*}
-        More specifically, focus is made on two particular divergences: the Kullback–Leibler divergence and the Jeffries–Matusita distance. The advantage of these divergences is that they have an explicit expression in the case of Gaussian models. The simplification allows to get rid of any integration calculus which is a major problem when dealing with high-dimensional data.
+        The similarity  between two distributions is  quantified using
+        divergence  measure~\cite{opac-b1097517}. Contrary  to measure
+        of correct  classification, divergences are  computed directly
+        on the trained model, with no need of validation samples.  Two
+        particular   divergences   are   used  in   this   work:   the
+        \emph{Kullback–Leibler}        divergence       and        the
+        \emph{Jeffries–Matusita}  distance.  The  advantage  of  these
+        divergences is  that they have  an explicit expression  in the
+        case of Gaussian models. The  simplification allows to get rid
+        of  any integration  calculus which  is a  major problem  when
+        dealing with high-dimensional data.
 
-
-        \emph{The Kullback-Leibler divergence} (KL divergence) measures the amount of information lost when the first distribution is approximated by the second one\cite{kullback1987letter}. The formal definition is
-        \begin{equation}
-            \text{Div}_{KL}(c_i,c_j) = \int_\mathbf{x} p(\mathbf{x}|c_i) \ln \left(\frac{p(\mathbf{x}|c_i)}{p(\mathbf{x}|c_j)}\right) d\mathbf{x}.
-        \end{equation}
-        And in the case of Gaussian model, it can be rewritten as follows
+        \emph{The   Kullback-Leibler   divergence}   (KL   divergence)
+        measures  the  amount  of  information  lost  when  the  first
+        distribution     is     approximated     by     the     second
+        one\cite{kullback1987letter}. It can be explicitly computed in
+        the case of Gaussian distributions:
         \begin{align}
-            &\text{Div}_{KL}(c_i,c_j) = \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j}) \nonumber \\
+            &KL_{ij} = \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j}) \nonumber \\
             & + (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t \boldsymbol{\Sigma}_{c_i}^{-1} (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - d + \log \left( \frac{|\boldsymbol{\Sigma}_{c_i}|}{|\boldsymbol{\Sigma}_{c_j}|} \right) \biggr),
         \end{align}
         where Tr is the trace operator and $d$ the dimension of the distribution.
 
-        It can be noticed that the KL divergence is not symmetric, i.e. $\text{Div}_{KL}(c_i,c_j) \ne \text{Div}_{KL}(c_j,c_i)$, and so the symmetrized version is used to compute the criterion function. In the case of Gaussian model, the symmetrization induces the following simplification of the formula
+        The    KL   divergence    is   not    symmetric,   \emph{i.e.}
+        $KL_{ij} \ne KL_{i,j}$.  A the symmetrized version  is used to
+        compute the criterion function:
         \begin{align}
-            \text{SKL}_{ij} &=\text{Div}_{KL}(c_i,c_j) + \text{Div}_{KL}(c_j,c_i) \nonumber \\
+          SKL_{ij} &=KL_{ij} + KL_{i,j} \nonumber \\
             &= \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j} + \boldsymbol{\Sigma}_{c_j}^{-1} \boldsymbol{\Sigma}_{c_i}) \nonumber \\
             &~~+ (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t (\boldsymbol{\Sigma}_{c_i}^{-1} + \boldsymbol{\Sigma}_{c_j}^{-1}) (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - 2d \biggr).
         \end{align}
 
-        Moreover, the divergence is computed between two classes and to obtain a unique value the weighted mean of divergence measures is taken as proposed in \cite{bruzzone1995extension}:
+        The extension  to the multiclass  situation is done  by taking
+        the weighted mean  of the KL divergences computed  on all pair
+        of classes~\cite{bruzzone1995extension}:
         \begin{equation}
-            \text{C}_{SKL} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} \text{SKL}_{ij}.
+            C_{SKL} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} SKL_{ij}.
         \end{equation}
 
-        \emph{The Bhattacharyya distance} is defined as follows
-        \begin{equation}
-            \text{B}_{ij} = - \ln \left( \int_\mathbf{x} \sqrt{p(\mathbf{x}|c_i) p(\mathbf{x}|c_j)} d\mathbf{x} \right).
-        \end{equation}
-        And in the case of Gaussian model:
+        \emph{The Bhattacharyya distance} is defined in the case of Gaussian model as
         \begin{align}
-            \text{B}_{ij} = &\frac{1}{8} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \left( \frac{\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j}{2} \right)^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) \nonumber \\
+            {B}_{ij} = &\frac{1}{8} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \left( \frac{\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j}{2} \right)^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) \nonumber \\
             &+ \frac{1}{2} \ln \left( \frac{|\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j|}{\sqrt{|\boldsymbol{\Sigma}_i| |\boldsymbol{\Sigma}_j|}} \right).
         \end{align}
 
-        \emph{The Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases \cite{bruzzone2009novel}. The JM distance is defined according to
+        The \emph{Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases~\cite{bruzzone2009novel}. The JM distance is defined as
         \begin{equation}
-            \text{JM}_{ij} = \sqrt{ \int_\mathbf{x} \left[\sqrt{p(\mathbf{x}|c_i)} - \sqrt{p(\mathbf{x}|c_j)}\right]^2 d\mathbf{x} }.
-        \end{equation}
-        And the Jeffries–Matusita distance can be rewritten according to the Bhattacharyya distance
-        \begin{equation}
-            \text{JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}[-B_{ij}]\} }.
+            {JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}[-B_{ij}]\} }.
         \end{equation}
 
-        As for the KL divergence, a weighted mean of the distance between two classes is computed to aggregate the measures in a single value:
+        Similar to the KL divergence,  a weighted mean of the distance
+        between two classes is computed to aggregate the measures in a
+        single value:
         \begin{equation}
-            \text{C}_{JM} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} \text{JM}_{ij}.
+            {C}_{JM} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} {JM}_{ij}.
         \end{equation}
 
         \vspace{10 mm}
 
-        According to \cite{bruzzone2009novel}, it is interesting to notice that the KL divergence increases quadratically with respect to the distance between the mean vectors of the class distributions whereas the measures of correct classification asymptotically tends to one when distributions are perfectly separable. On the contrary, the JM distance tends to saturate as the measures of correct classification. Table~\ref{tab:crit} summarized the presented criterion functions and their characteristics.
+        % According to \cite{bruzzone2009novel}, it is interesting to notice that the KL divergence increases quadratically with respect to the distance between the mean vectors of the class distributions whereas the measures of correct classification asymptotically tends to one when distributions are perfectly separable. On the contrary, the JM distance tends to saturate as the measures of correct classification.
+
+        Table~\ref{tab:crit} summarized the presented criterion functions and their characteristics.
 
         \begin{table}[!t]
             \centering
