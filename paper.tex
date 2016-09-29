@@ -246,7 +246,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \subsubsection{Measures of correct classification}
         \label{sec:criterion-rate}
 
-        A measure of good classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. An element $M_{ij}$ of the matrix represents the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used 
+        A measure of correct classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. An element $M_{ij}$ of the matrix represents the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used 
         \begin{itemize}
         \item  \emph{The overall  accuracy} (OA)  is the  rate of  the
           number of samples with the  correct predicted label over the
@@ -263,14 +263,19 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
           Positive over True Positive plus False Negative)~\cite{powers2011evaluation}.
       \end{itemize}
       
-        In order to estimate classification rate, a cross-validation process over training set is used\cite{opac-b1127878}. The training set is divided in k folds, then, the training is done with $(k-1)$ folds and the performances are estimated with the remaining fold.
+      The classification rate is  estimated by a $k$- cross-validation
+      ($k$-CV)~\cite{opac-b1127878}.  To compute  the $k$-CV, a subset
+      is removed  from $\mathcal{S}$ and  the GMM is learned  with the
+      remaining training samples.   A test error is  computed with the
+      removed  training  samples  used  as  validation  samples.   The
+      process is  iterated $k$ times and  the estimated classification
+      rate is computed as the mean  test error over the $k$ subsets of
+      $\mathcal{S}$.
 
         \hspace{0pt} \\
 
         \subsubsection{Similarity between distributions}
-
-        \hspace{0pt} \\
-        The second type of criterion functions is a measure of similarity between two distributions. These measures are called divergence function and are defined so that, if $S$ is a space of all probability distribution with same support, it satisfies
+        These measures are called divergence function and are defined so that, if $S$ is a space of all probability distribution with same support, it satisfies
         \begin{align*}
             &\forall (p,q) \in S, \text{Div}(p,q) \geq 0, \\
             &\text{Div}(p,q) = 0 \Leftrightarrow p = q.
