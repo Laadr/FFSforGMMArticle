@@ -167,8 +167,8 @@ samples of class $c$.
     \begin{equation*}
         \mathbf{x} \text{ belongs to } c \Leftrightarrow c = \text{arg} \max_{c \in C} p(c) p(\mathbf{x}|c).
     \end{equation*}
-    Under the GMM,  and identifying $p(c)$ as $\pi_c$  and $p(x|c)$ as
-    $f_c(x|\theta)$ and by taking the log, a decision rule is obtained
+    Under the GMM,  and identifying $p(c)$ as $\pi_c$  and $p(\mathbf{x}|c)$ as
+    $f_c(\mathbf{x}|\theta)$ and by taking the log, a decision rule is obtained
     \begin{eqnarray}\label{eq:decision}
       Q_c(\mathbf{x}) &=& 2 \log \left( p(c) p(\mathbf{x}|c) \right) \nonumber \\
                       &=& - (\mathbf{x} - \boldsymbol{\mu}_c)^t \boldsymbol{\Sigma}_c^{-1} (\mathbf{x} - \boldsymbol{\mu}_c) \nonumber \\
@@ -212,7 +212,9 @@ samples of class $c$.
     %% données des refs (voir intro du papier JSTARS) et dans la
     %% réduction  de dimension, il  y a  la sélection de  features. La
     %% conclusion doit s'enchainer avec la partie suivante.
-    There are two major  solutions to this problem. First option is to stabilize the inversion of the covariance matrices work. Some methods investigate the use of constraints on the direct problem \cite{reynolds1995robust} \cite{hathaway1985constrained} and some work on the inverse problem by using regularization method \cite{hoerl1970ridge} \cite{jensen2008regression}. Second option is to reduce dimension. Features extraction/selection methods have been developed in order to reduce the dimension. In this  study, the latter option is explored and a feature selection method named sequential forward features selection is presented after a brief overview of the selection algorithms in the next Section. %A finir
+    There are two major solutions to this problem. First option is to stabilize the inversion of the covariance matrices. Some methods investigate the use of constraints on the direct problem. Reynolds \emph{et al.} \cite{reynolds1995robust} proposed to use diagonal covariance matrices. It is also possible to force the diagonal element to be higher than a given value by maximizing the GMM likelihood \cite{hathaway1985constrained}. Celeux and Govaert \cite{celeux1995gaussian} suggest to use equality constraints between coefficients of the covariance matrix in a parsimonious cluster-based GMM framework. Others papers propose to work on the inverse problem. A classical method is to use a regularization method as the well-known ridge regularization \cite{hoerl1970ridge}. A ridge regularization aims to stabilize the inversion by replacing the covariance matrix $\boldsymbol{\Sigma}_c$ by $\boldsymbol{\Sigma}_c + \tau \mathbf{I}$ where $\tau$ is a positive parameter and $\mathbf{I}$ the identity matrix. Jensen \emph{et al.} \cite{jensen2008regression} propose a different approach using a sparsity approximation to inverse the covariance matrix.
+
+    Second option is to reduce dimension. Features extraction/selection methods have been developed in order to reduce the dimension with various approaches described in Section~\ref{sec:intro}. In this study, this latter option is explored and a feature selection method named sequential forward features selection is presented after a brief overview of the selection algorithms in the next Section.
 
 \section{Sequential forward features selection}
 \label{sec:selection}
@@ -240,13 +242,13 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
     \subsection{Criterion function}
     \label{sec:criterion}
     The criterion evaluates how a given model built with a subset of features performs for the classification task. It can be an estimation of the correct classification or a measure of separability/similarity between class distribution. The former are in general more demanding in terms of processing time than the later.
-    
+
     % Criterion functions aim to evaluate either a rate of correct classification or the separability/similarity of class distributions. These functions are used to estimate which sets of variables are the best to represent data, to assure the separability of the classes and to perform classification. The choice of a criterion function is the choice of a way to compare sets of variables.
 
         \subsubsection{Measures of correct classification}
         \label{sec:criterion-rate}
 
-        A measure of good classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. An element $M_{ij}$ of the matrix represents the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used 
+        A measure of good classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. An element $M_{ij}$ of the matrix represents the number of samples of class $i$ classified as class $j$. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used
         \begin{itemize}
         \item  \emph{The overall  accuracy} (OA)  is the  rate of  the
           number of samples with the  correct predicted label over the
@@ -262,7 +264,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
           Positive plus False Positive) and the recall (number of True
           Positive over True Positive plus False Negative)~\cite{powers2011evaluation}.
       \end{itemize}
-      
+
         In order to estimate classification rate, a cross-validation process over training set is used\cite{opac-b1127878}. The training set is divided in k folds, then, the training is done with $(k-1)$ folds and the performances are estimated with the remaining fold.
 
         \hspace{0pt} \\
