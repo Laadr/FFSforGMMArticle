@@ -46,7 +46,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Operational Feature Selection in Gaussian Mixture Models}
+\title{Operational Feature Selection with Gaussian Mixture Models for remote sensing images}
 %
 %
 % author names and IEEE memberships
@@ -59,10 +59,10 @@
 %
 
 \author{Adrien~Lagrange,~Mathieu~Fauvel~and~Manuel~Grizonnet% <-this % stops a space
-\thanks{A. Lagrange and M. Fauvel are with the Université de Toulouse,
+\thanks{A. Lagrange and M. Fauvel are with the Universit\'{e} de Toulouse,
 INP-ENSAT, UMR 1201 DYNAFOR, France and with the INRA, UMR 1201
 DYNAFOR, France.}
-\thanks{M. Grizonnet is with Centre Nat. d'Etudes Spatiales, French Space Agency, Toulouse, France.}}
+\thanks{M. Grizonnet is with Centre National d'\'{E}tudes Spatiales, French Space Agency, Toulouse, France.}}
 
 % The paper headers
 \markboth{Transactions on Computational Imaging,~Special Issue on Computational Imaging for Earth Sciences, September~2016}{}
@@ -79,7 +79,7 @@ This article presents a forward feature selection algorithm based on Gaussian mi
 
 An important effort is made in exploiting GMM properties to implement a fast algorithm. In particular, update rules of the GMM model are used to compute the criterion function with various sets of features. The result is a C++ remote module for the remote sensing processing toolbox Orfeo (OTB) developed by CNES.
 
-Finally, the method is tested and also compared to other classifiers using two different datasets, one of hyperspectral images with a lot of spectral variables and one with heterogeneous spatial features. The results validate the fact that the method performs well in terms of processing time and classification accuracy in comparison to the standard classifiers available in OTB.\\
+Finally, the method is compared to standard classifiers using two different datasets, one of hyperspectral images with a lot of spectral variables and one with heterogeneous spatial features. The results validate the fact that the method performs well in terms of processing time and classification accuracy in comparison to the standard classifiers available in OTB.\\
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -102,29 +102,29 @@ Finally, the method is tested and also compared to other classifiers using two d
 
 \IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of data available for a given landscape becomes larger and larger. Several missions are about to produce huge amount of data or have already produced it. After 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites missioned by the German space agency will produce images with 244 spectral bands with a resolution of 30x30m and revisit every 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also take images with 212 spectral bands every 5 days. Additionally to hyperspectral data, hypertemporal data are also developping. The European satellites Sentinel-2 were launched successfully recently and the hypertemporal data produced by this mission will be fully available at the end of 2016\cite{drusch2012sentinel}.
 
-However, processing this data is more and more challenging because of statistical and computational issues. This statistical issues are often referred as the \emph{curse of dimensionality}. The Hughes phenomenon \cite{hughes1968mean} states that with a given number of samples, prediction accuracy will decays when the complexity is higher than some optimum value. The problem is the fast increase of the number of parameters to estimate in order to build a model when dimension expands \cite{bouveyron2014model}. Thus, a important number of labeled samples is needed to perform learning. For example, in the case of Gaussian Mixture Models, the number of parameters progresses quadratically with the dimension, e.g. with 200 describing variables, the model estimation requires at least around 20,000 samples by class.
+However, processing such data is more and more challenging because of statistical and computational issues. This statistical issues are often referred as the \emph{curse of dimensionality}. The Hughes phenomenon \cite{hughes1968mean} states that with a given number of samples, prediction accuracy will decays when the complexity, \emph{i.e.} the dimension, is higher than some optimum value. The problem is the fast increase of the number of parameters to estimate in order to build a model when dimension expands \cite{bouveyron2014model}. Thus, an important number of labeled samples is needed to perform learning. For example, in the case of Gaussian Mixture Models, the number of parameters progresses quadratically with the dimension, e.g. with 200 describing variables, the model estimation requires at least around 20,000 samples by class.
 
-The computational issues are multiple. The computing infrastructure needed to process data is more and more expensive because the processing might requires a GPU and a large amount of RAM to load images which can weight a dozen of gigabytes \cite{christophe2011remote}\cite{plaza2011high}. The processing time is also limiting and requires to use parallelize computing (GPU, multi-threading).
+The computational issues are also multiple. The computing infrastructure needed to process data is more and more expensive because the processing might requires a GPU and a large amount of RAM to load images which can weight a dozen of gigabytes \cite{christophe2011remote}\cite{plaza2011high}. The processing time is also limiting and requires to use parallelize computing (GPU, multi-threading).
 
-A possible method to solve these issues is to perform a reduction of dimension. It is possible to extract a set of relevant features to get a parsimonious representation of the data \cite{jimenez1998supervised}. For instance, in land-cover classification, given a set of spatial, temporal and spectral features, it is possible to extract those which are the most discriminant for the purpose of classification \cite{fassnacht2014comparison}. In hyperspectral data analysis from the hundreds of available spectral channels, it is possible to reduce the number of channels to make the processing more efficient in terms of statistical complexity because of the reduction of the number of parameters to estimate and thus also in term of computational time.
+A possible method to solve these issues is to perform a reduction of dimension. It is possible to extract a set of relevant features to get a parsimonious representation of the data \cite{jimenez1998supervised}. For instance, in land-cover classification, given a set of spatial, temporal and spectral features, it is possible to extract those which are the most discriminant for the purpose of classification \cite{fassnacht2014comparison}. In hyperspectral data, from the hundreds of available spectral channels, it is possible to reduce the number of channels to make the processing more efficient in terms of statistical complexity because of the reduction of the number of parameters to estimate and thus also in term of computational time.
 
 The objective of feature selection is to retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.
 
-There are two ways to reduce dimension \cite{Guyon:2006:FEF:1208773}: features extraction and feature selection. Feature extraction means reformulate and summarize the information by creating new features in combining the existing ones. Linear combinations of the initial features can be extracted as in Principal Component Analysis \cite{jimenez1998supervised} or in independent component analysis \cite{villa2011hyperspectral}. Supervised extraction method has also been investigate such as Fischer discriminant analysis. To the contrary, features selection selects a subset of existing features identified as the most relevant for a given criterion. It has the advantage to be much more interpretable for the end-user. The selected subset of features corresponds to the most important features for the given task.
+There are two ways to reduce dimension \cite{Guyon:2006:FEF:1208773}: features extraction and feature selection. Feature extraction means reformulate and summarize the information by creating new features in combining the existing ones. Linear combinations of the initial features can be extracted using for example in Principal Component Analysis \cite{jimenez1998supervised} or Independent Component Analysis \cite{villa2011hyperspectral}. Supervised extraction method has also been investigate such as Fischer discriminant analysis. To the contrary, features selection selects a subset of existing features identified as the most relevant for a given criterion. It has the advantage to be much more interpretable for the end-user. The selected subset of features corresponds to the most important features for the given task.
 
 Features selection/extraction algorithms can be divided into three types. The first type, called \emph{filter methods}, is based uniquely on data analysis in the sense that the method is independant of any classifier. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. A filter based on the Pearson $\chi^2$ statistical test has been used on biomedical data\cite{biesiada2007feature}. The use of correlation between bands has been explored with hyperspectral data\cite{demir2008phase}. In general, these methods have the advantage to be fast and usable with any classifier but they do not take into account the strength and weakness of the chosen classifier and do not optimize directly the classification process.
 
-The second sort are known as \emph{wrapper methods} which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are too expensive in terms of processing time, several search strategies have been designed. Some are optimal under particular hypothesis as the branch and bound algorithm \cite{narendra1977branch} optimal under the condition of a monotonic criterion function and other sub-optimal but easier to set up. Whitney \cite{whitney1971direct} proposed a forward search adding feature one by one \cite{whitney1971direct} when Marill and Green \cite{marill1963effectiveness} use a backward search eliminating features one by one. Some papers propose to combine these two search method \emph{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be more time consuming. The proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
+The second sort are known as \emph{wrapper methods} which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are too expensive in terms of processing time, several search strategies have been designed. Some are optimal under particular hypothesis as the branch and bound algorithm \cite{narendra1977branch} optimal under the condition of a monotonic criterion function. Others are sub-optimal but easier to set up. Whitney \cite{whitney1971direct} proposed a forward search adding feature one by one \cite{whitney1971direct} when Marill and Green \cite{marill1963effectiveness} use a backward search eliminating features one by one. Some papers propose to combine these two search method \cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be more time consuming. The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
 
 The third type corresponds to the \emph{embedded method} which do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene,weston2003use}.
 
-However, this large diversity of methods for feature selection usually do not scale well with the number of pixels to be processed \cite{fauvel2015fast}. Nevertheless, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
+Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed \cite{fauvel2015fast}. Nevertheless, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
 
-Several strategy have been explored to perform feature selection and, among them, wrapper methods receive a certain interest of the community. Wrapper methods can be seen as a search method to determine the best subset of variables for a given learning model. As exhaustive searches are out of question in a practical amount of time, numerous search strategies have been designed. Some optimal are under particular hypothesis \cite{narendra1977branch} and other suboptimal but easier to set up \cite{whitney1971direct}\cite{somol1999adaptive}. Such methods have the advantage to tune the selection to make the most of a particular classifier but require the training of multiple models to test various set of variables which can make them slow if the training is not optimized.
+% Several strategy have been explored to perform feature selection and, among them, wrapper methods receive a certain interest of the community. Wrapper methods can be seen as a search method to determine the best subset of variables for a given learning model. As exhaustive searches are out of question in a practical amount of time, numerous search strategies have been designed. Some optimal are under particular hypothesis \cite{narendra1977branch} and other suboptimal but easier to set up \cite{whitney1971direct}\cite{somol1999adaptive}. Such methods have the advantage to tune the selection to make the most of a particular classifier but require the training of multiple models to test various set of variables which can make them slow if the training is not optimized.
 
 This work proposes to develop a forward feature selection method using GMM in continuation of \cite{fauvel2015fast} and an upgraded floating forward method. The basic method selects iteratively the meaningful features. At each step, the pool of selected features is used to train a GMM which allows to compute a criterion function then used to rank features at the next iteration. The upgraded method introduces possible backward steps after each addition of a feature. An efficient implementation of the method is presented in order to handle large amount of data. Moreover, the developed algorithm is made available as a remote module of the C++ Orfeo Toolbox \cite{christophe2008orfeo}. Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox.
 
-The remaining of this article is organized as follows. Section~\ref{sec:gmm-hd} presents Gaussian Mixture Model classifiers and the features selection methods used to make them suitable for high-dimension space. The work done to develop a smart implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. And finally, the tests conducted to explore variations of the algorithm and to compare it to other standard classifiers are detailed in Section~\ref{sec:test}.
+The remaining of this article is organized as follows. Section~\ref{sec:gmm-hd} presents Gaussian Mixture Model classifiers and the problems link to high-dimensionality. The features selection methods used to make them suitable for high-dimension space is detailed in Section~\ref{sec:selection}. The work done to develop an efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. And finally, after introducing the two datasets in Section~\ref{sec:datasets}, the tests conducted to explore variations of the algorithm and to compare it to other standard classifiers are shown and commented in Section~\ref{sec:test}.
 
 \section{Gaussian Mixture Models in high dimensional space}
 \label{sec:gmm-hd}
@@ -167,7 +167,6 @@ samples of class $c$.
         \hat{\boldsymbol{\mu}}_c &= \frac{1}{n_c} \sum_{\{i|y_i = c\}} \mathbf{x}_i ,\\
         \hat{\boldsymbol{\Sigma}}_c &= \frac{1}{(n_c - 1)} \sum_{\{i|y_i = c\}} (\mathbf{x}_i - \boldsymbol{\mu}_c) (\boldsymbol{}x_i - \boldsymbol{\mu}_c)^t.
     \end{align}
-
     To predict the  class of a new unseen sample,  the maximum \emph{a
       posteriori}  rule  is  used:
     \begin{equation*}
@@ -185,20 +184,20 @@ samples of class $c$.
     \label{sec:curse:gmm}
 
     The computation of~\ref{eq:decision} requires the inversion of the
-    covariance matrix and and the  computation of the logarithm of the
-    determinant.  The estimations of these terms suffer from the curse
+    covariance matrix and the  computation of the logarithm of the
+    determinant.  The estimation of these terms suffers from the curse
     of  dimensionality\cite{bouveyron2014model}, because  in practice,
     the  number of  parameters  $\eta_c$ to  estimate  for each  class
     increases quadratically with respect to the number of features, as
     illustrated in Figure~\ref{fig:nb-param}.  Hence, if the number of
-    observation  $n_c$ is  small  compared to  the  number of  samples
-    $n_c$, the  estimated covariance  matrix is badly  conditioned and
+    observation  $n_c$ is  small  compared to  the  number of parameters
+    $\eta_c$, the  estimated covariance  matrix is badly  conditioned and
     thus the computation  of its inverse and its  determinant would be
     unstable.   The worst  situation  is $n_c<\eta_c$  which leads  to
-    singular covariance matrix.  Unfortunately, this situation happens
+    a singular covariance matrix.  Unfortunately, this situation happens
     regularly in remote sensing.   For instance in hyperspectral image
     classification,  very few  labeled samples  are usually  available
-    because of the difficulty and the cost to collect ground-truth.
+    because of the difficulty and the high cost to collect ground-truth.
 
     \begin{figure}[!t]
         \centering
@@ -256,7 +255,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         High  value  of  theses  indices  correspond  to  an  accurate
         classification.
 
-        The classification rate is  estimated by a $k$- cross-validation ($k$-CV)~\cite{opac-b1127878}.  To compute  the $k$-CV, a subset is removed  from $\mathcal{S}$ and  the GMM is learned  with the remaining training samples.   A test error is  computed with the removed  training  samples  used  as  validation  samples.   The process is  iterated $k$ times and  the estimated classification rate is computed as the mean  test error over the $k$ subsets of $\mathcal{S}$.
+        The classification rate is  estimated by a $n_{cv}$- cross-validation ($n_{cv}$-CV)~\cite{opac-b1127878}.  To compute the $n_{cv}$-CV, a subset is removed  from $\mathcal{S}$ and  the GMM is learned with the remaining training samples. A test error is computed with the removed  training  samples  used  as  validation  samples.   The process is  iterated $n_{cv}$ times and  the estimated classification rate is computed as the mean  test error over the $n_{cv}$ subsets of $\mathcal{S}$.
 
         \hspace{0pt} \\
 
@@ -266,8 +265,8 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         of correct  classification, divergences are  computed directly
         on the trained model, with no need of validation samples.  Two
         particular   divergences   are   used  in   this   work:   the
-        \emph{Kullback–Leibler}        divergence       and        the
-        \emph{Jeffries–Matusita}  distance.  The  advantage  of  these
+        \emph{Kullback-Leibler}        divergence       and        the
+        \emph{Jeffries-Matusita}  distance.  The  advantage  of  these
         divergences is  that they have  an explicit expression  in the
         case of Gaussian models. The  simplification allows to get rid
         of  any integration  calculus which  is a  major problem  when
@@ -279,25 +278,25 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         one\cite{kullback1987letter}. It can be explicitly computed in
         the case of Gaussian distributions:
         \begin{align}
-            &KL_{ij} = \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j}) \nonumber \\
-            & + (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t \boldsymbol{\Sigma}_{c_i}^{-1} (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - d + \log \left( \frac{|\boldsymbol{\Sigma}_{c_i}|}{|\boldsymbol{\Sigma}_{c_j}|} \right) \biggr),
+            &KL_{ij} = \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j) \nonumber \\
+            & + (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \boldsymbol{\Sigma}_i^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - d + \log \left( \frac{|\boldsymbol{\Sigma}_i|}{|\boldsymbol{\Sigma}_j|} \right) \biggr),
         \end{align}
         where Tr is the trace operator and $d$ the dimension of the distribution.
 
         The    KL   divergence    is   not    symmetric,   \emph{i.e.}
-        $KL_{ij} \ne KL_{i,j}$.  A the symmetrized version  is used to
+        $KL_{ij} \ne KL_{ji}$.  A symmetrized version  is used to
         compute the criterion function:
         \begin{align}
           SKL_{ij} &=KL_{ij} + KL_{i,j} \nonumber \\
-            &= \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_{c_i}^{-1} \boldsymbol{\Sigma}_{c_j} + \boldsymbol{\Sigma}_{c_j}^{-1} \boldsymbol{\Sigma}_{c_i}) \nonumber \\
-            &~~+ (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j})^t (\boldsymbol{\Sigma}_{c_i}^{-1} + \boldsymbol{\Sigma}_{c_j}^{-1}) (\boldsymbol{\mu}_{c_i} - \boldsymbol{\mu}_{c_j}) - 2d \biggr).
+            &= \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j + \boldsymbol{\Sigma}_j^{-1} \boldsymbol{\Sigma}_i) \nonumber \\
+            &~~+ (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t (\boldsymbol{\Sigma}_i^{-1} + \boldsymbol{\Sigma}_j^{-1}) (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - 2d \biggr).
         \end{align}
 
         The extension  to the multiclass  situation is done  by taking
         the weighted mean  of the KL divergences computed  on all pair
         of classes~\cite{bruzzone1995extension}:
         \begin{equation}
-            C_{SKL} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} SKL_{ij}.
+            C_{SKL} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_i \pi_j SKL_{ij}.
         \end{equation}
 
         \emph{The Bhattacharyya distance} is defined in the case of Gaussian model as
@@ -315,7 +314,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         between two classes is computed to aggregate the measures in a
         single value:
         \begin{equation}
-            {C}_{JM} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_{c_i} \pi_{c_j} {JM}_{ij}.
+            {C}_{JM} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_i \pi_j {JM}_{ij}.
         \end{equation}
 
         \vspace{10 mm}
@@ -327,9 +326,9 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \begin{table}[!t]
             \centering
             \caption{Summary of the different criterion functions.\label{tab:crit}}
-            \begin{tabular}[b]{lccc}
+            \begin{tabular}[b]{lcc}
               \toprule
-              Criterion & Type Divergence & Complexity \\
+              Criterion & Type & Complexity \\
               \midrule
               Overall accuracy            & Accuracy   & High \\
               Cohen's kappa               & Accuracy   & High\\
@@ -343,7 +342,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         \subsection{Selection method}
         \label{sec:selection:method}
-        Two  sequential  search  functions were  implemented  in  this
+        Two  sequential  search  algorithms were  implemented  in  this
         work~\cite{Guyon:2006:FEF:1208773}:  the   sequential  forward
         selection and the sequential  floating forward.  The later one
         is  an   extension  of   the  former.  Both   select  features
@@ -352,7 +351,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \subsubsection{Sequential forward features selection}
         \label{sec:forward-presentation}
 
-        The Sequential Forward Selection (SFS) starts with an empty set of selected features.  At each  step, the feature that most  improves one selected criterion function $J$ selected in Table~\ref{tab:crit} is added  to the set. This feature is definitively added to the pool of selected features and the algorithm stops when a given number of variables \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sfs} presents the process in details.
+        The Sequential Forward Selection (SFS) starts with an empty set of selected features.  At each  step, the feature that most  improves the criterion function $J$ selected in Table~\ref{tab:crit} is added  to the set. This feature is definitively added to the pool of selected features and the algorithm stops when a given number of variables \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sfs} presents the process in details.
 
         \begin{algorithm}
         \caption{Sequential forward features selection\label{alg:sfs}}
@@ -379,7 +378,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         The Sequential Floating Forward Selection (SFFS)\cite{somol1999adaptive} is based on two algorithms: the SFS described above and the Sequential Backward Selection (SBS). The SBS is the backward equivalent of SFS. The difference is that it starts with every features in the pool of selected features and tries at each step to remove the less significant one in term of the given criterion function.
 
-        The SFFS works like the SFS but between each step of the SFS algorithm, a backward selection is operated to identify the less important feature. If the criterion function is higher than the best value value ever obtained with a set of same size, the identified feature is picked out. The SBS step is repeated while removing the less important feature leads to an increase of the criterion function. Then SFS is going back. The algorithm stops when a given number of features \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sffs} provides details of the process.
+        The SFFS works like the SFS but between each step of the SFS algorithm, a backward selection is operated to identify the less important feature. If the criterion value is higher than the best value ever obtained with a set of same size, the identified feature is picked out. The SBS step is repeated while removing the less important feature leads to an increase of the criterion value. Then SFS is called again. The algorithm stops when a given number of features \emph{maxVarNb} has been selected. The Algorithm~\ref{alg:sffs} provides details of the process.
 
         This SFFS algorithm eventually tests more solutions than the SFS algorithm. The results are expected to be better but the trade-off is an increased computational time which is dependent on the complexity of the dataset.
 
@@ -424,18 +423,18 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 \label{sec:implementation}
 
     \subsection{Statistical update rules}
-    In the presented method, the most costly operation is the evaluation of the criterion function which needs to be done for each possible subset of variables augmented by one of the candidate variable. To compute these values, the most costly operation are the inversion of the covariance matrix and the computation of its determinant. Both of these operations have a $O(n^3)$ computational complexity. Additionaly, the estimation of classification rate with cross-validation is a heavy process which take a consequent amount of time.
+    In the presented method, the most time-consuming operation is the evaluation of the criterion function which needs to be done for each possible subset of variables composed of the selected set augmented by one of the candidate variable. To compute these values, the most costly operations are the inversion of the covariance matrix and the computation of its determinant. Both of these operations have a $O(n^3)$ computational complexity. Additionally, the estimation of classification rate with cross-validation is a heavy process which takes a substantial amount of time.
 
-    A major contribution of this work is the optimization in term of computational efficiency. More precisely, three steps of the proposed method has been upgraded in order to reduce computational time. First of all, the GMM model is learned only once using samples. When a covariance matrix or a mean vector of a reduced set of variables is required, it is obtained from the global model learned at the beginning by marginalization.
+    A major contribution of this work is the optimization in term of computational efficiency. More precisely, three steps of the proposed method have been upgraded in order to reduce computational time. First of all, the GMM model is learned only once using samples. When a covariance matrix or a mean vector of a reduced set of variables is required, it is obtained from the global model learned at the beginning by marginalization.
 
-    Secondly, when a cross-validation is performed, submodels, i.e. GMM model trained with $(n_{cv}-1)$ folds, are not learned using the $(n_{cv}-1)$ folds but, instead, are derived from the global model and from the covariance matrices and mean vectors of the fold used for validation for the given submodel. The process is described in details in Section~\ref{sec:update-cv}.
+    Secondly, when a cross-validation is performed, submodels, i.e. GMM trained with $(n_{cv}-1)$ folds, are not learned using the $(n_{cv}-1)$ folds but, instead, are derived from the global model and from the covariance matrices and mean vectors of the fold used for validation for the given submodel. The process is described in details in Section~\ref{sec:update-cv}.
 
-    Finally and most importantly, when variables are tested one by one during a selection step, costly operations are made when computing criterion functions for each variable especially the computation of the inverse of covariance matrices and its determinant. Several update rules are set up which allow to compute this inverse and determinant only once to test all variables. These update rules are presented in Section~\ref{sec:update-crit}.
+    Finally and most importantly, when variables are tested one by one during a selection step, costly operations are made when computing criterion functions for each candidate set especially the computation of the inverse of covariance matrices and its determinant. Several update rules are set up which allow to compute this inverse and determinant only once to test all sets. These update rules are presented in Section~\ref{sec:update-crit}.
 
         \subsubsection{Update for cross validation}
         \label{sec:update-cv}
 
-        Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM model with the whole training set once and then, instead of training models on $(n_{cv}-1)$ folds, parameters of the complete model are used to derive those of submodels.
+        Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM with the whole training set once and then, instead of training models on $(n_{cv}-1)$ folds, parameters of the complete model are used to derive those of submodels.
 
         The following formulae can be obtained
         \begin{prop}
@@ -453,7 +452,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
                 &- \frac{n_c \nu_c}{(n_c-\nu_c)} (\boldsymbol{\mu}_c^{\nu_c}-\boldsymbol{\mu}_c^{n_c})(\boldsymbol{\mu}_c^{\nu_c}-\boldsymbol{\mu}_c^{n_c})^t \biggr) \nonumber
             \end{align*}
         \end{prop}
-        where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exposants on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\nu}_c$ denotes the set of samples used to compute them.
+        \noindent where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exposants on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\nu}_c$ denotes the set of samples used to compute them.
 
         \subsubsection{Criterion function computation}
         \label{sec:update-crit}
@@ -479,12 +478,12 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
             \begin{equation*}
                 (\boldsymbol{\Sigma}^{(k)})^{-1} =
                 \bigg[\begin{array}{cc}
-                A & v \\
-                v^t  & \frac{1}{\alpha} \\
+                \mathbf{A} & \mathbf{v} \\
+                \mathbf{v}^t  & \frac{1}{\alpha} \\
                 \end{array}\bigg]
             \end{equation*}
         \end{prop}
-        where $A = (\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $v = - \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$ and $ \alpha = \sigma_{kk} - \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$. Then, $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ is computed only once and this update update formulae is used to obtain all the $(\boldsymbol{\Sigma}^{(k)})^{-1}$ corresponding to all the possible augmented set of a given selection iteration.
+        \noindent where $\mathbf{A} = (\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $\mathbf{v} = - \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$ and $ \alpha = \sigma_{kk} - \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$. Then, $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ is computed only once and this update formulae is used to obtain all the $(\boldsymbol{\Sigma}^{(k)})^{-1}$ corresponding to all the possible augmented set of a given selection iteration.
 
         In the case of a backward step in SFFS algorithm, the formula is inverted in order to compute $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ knowing $(\boldsymbol{\Sigma}^{(k)})^{-1}$. The update rule becomes (proof in Appendix~\ref{app:proof-update})
         \begin{prop}
@@ -524,12 +523,12 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         \begin{align}
         \label{eq:skl-update}
-            &\text{SKL}_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_{c_i}^{(k)})^{-1} \boldsymbol{\Sigma}_{c_j}^{(k)} + (\boldsymbol{\Sigma}_{c_j}^{(k)})^{-1} \boldsymbol{\Sigma}_{c_i}^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_{c_i}^{(k)} - \boldsymbol{\mu}_{c_j}^{(k)}) )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_{c_i}^{(k)} - \boldsymbol{\mu}_{c_j}^{(k)}) )^2 - 2k}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-            &+ \underbrace{(\boldsymbol{\mu}_{c_i}^{(k-1)} - \boldsymbol{\mu}_{c_j}^{(k-1)})^t ((\boldsymbol{\Sigma}_{c_i}^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_{c_j}^{(k-1)})^{-1}) (\boldsymbol{\mu}_{c_i}^{(k-1)} - \boldsymbol{\mu}_{c_j}^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr),
+            &\text{SKL}_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2 - 2k}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+            &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ((\boldsymbol{\Sigma}_i^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_j^{(k-1)})^{-1}) (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr),
         \end{align}
-        with $(\boldsymbol{\Sigma}_{c_i}^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
+        with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
 
         \begin{align}
         \label{eq:jm-update}
@@ -596,17 +595,17 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
     \subsection{OTB external module}
     \label{sec:otb-module}
 
-    The developed method has been made available as a remote module of Orfeo toolbox called \emph{otbFFSforGMM} and can be download on Github\footnote{\url{https://github.com/Laadr/otbExternalFastFeaturesSelection}}.
+    The developed method has been made available as a remote module of Orfeo toolbox called \emph{otbFFSforGMM} and can be download on Github\footnote{\url{https://github.com/Laadr/otbFFSforGMM}}.
 
-    The Orfeo Toolbox is an open-source library for remote sensing image processing. This library allows developers to code external modules and make them available to the community. It is to note that the toolbox already implements several classifiers inherited mostly from OpenCV. Nevertheless, the GMM classifier currently in place is not robust to high dimensionality and that is why a new GMM model has been developed.
+    The Orfeo Toolbox is an open-source library for remote sensing image processing. This library allows developers to code external modules and make them available to the community. It is to note that the toolbox already implements several classifiers inherited mostly from OpenCV. Nevertheless, the GMM classifier currently in place is not robust to high dimensionality and that is why a new GMM model has been developed in the module.
 
-    In addition of the C++ class directly available to develop C++ code, three command line application has been produced. These applications allow the user to use and parametrize the algorithm as desire.
+    In addition of the C++ class directly available to develop C++ code, three commandline applications have been produced. These applications allow the user to use and parametrize the algorithm as desired.
 
-    The first application \emph{otbcli\_TrainGMMApp} trains a GMM classifier from multiple pairs of images and training vector data and creates a model file. It also allows to perform ridge regularization with an embedded selection of the regularization parameter among a list of proposed values. The regularization values is chosen by maximizing a criterion function (Cohen's kappa, overall accuracy or mean of F1 scores) estimated by cross-validation.
+    The first application \emph{otbcli\_TrainGMMApp} trains a GMM classifier from multiple pairs of images and training vector data and creates a model file. It also allows to perform ridge regularization with an embedded selection of the regularization parameter among a list of values proposed by the user. The regularization value is chosen by maximizing a criterion function (Cohen's kappa, overall accuracy or mean of F1 scores) estimated by cross-validation.
 
-    The second application \emph{otbcli\_TrainGMMSelectionApp} also trains a GMM classifier and in addition perform a feature selection algorithm (SFS, SFFS) with various possible criterion (Jeffries-Matusita dist., Kullback-Lieber div., Cohen’s kappa, overall accuracy, mean F1-score).
+    The second application \emph{otbcli\_TrainGMMSelectionApp} also trains a GMM classifier and in addition performs a feature selection algorithm (SFS, SFFS) with various possible criterion (Jeffries-Matusita dist., Kullback-Lieber div., Cohen’s kappa, overall accuracy, mean F1-score).
 
-    The third application \emph{otbcli\_PredictGMMApp} takes a raster image as input and a model file and perform the classification of the image. It generates a classification map in an image file and optionally a confidence map. It also allows to precise manually the number of features to use for prediction if the number automatically set does not fit the user requirement (evolution of criterion function is available in model file).
+    The third application \emph{otbcli\_PredictGMMApp} takes a raster image and a model file as input and performs the classification of the image. It generates a classification map in an image file and optionally a confidence map. It also allows to precise manually the number of features to use for prediction if the number automatically set does not fit the user requirement (evolution of criterion function is available in model file).
 
 \section{Datasets}
 \label{sec:datasets}
@@ -772,7 +771,7 @@ resolution multispectral airborne image.
     with $DJ_k = \frac{J(\Omega_k) - J(\Omega_{k-1})}{\max_k (J(\Omega_k) - J(\Omega_{k-1}))}$.
 
     The classification  rate is presented  using Cohen's kappa  but it
-    has to  be noticed the  results were  similar when looking  at the
+    has to  be noticed that the  results were  similar when looking  at the
     mean F1-score.  Processing time  has been  evaluated on  a desktop
     computer  with 4Gb  of RAM  and  Intel(R) Core(TM)  i5-3570 CPU  @
     3.40GHz $\times$ 4 processors.
@@ -846,9 +845,9 @@ resolution multispectral airborne image.
 
     The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples. The GMM classifier with ridge regularization and the kNN classifier are both outperformed.
 
-    In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can explain by the dimensional reduction. Actually, the decision rule corresponding to Equation~\ref{eq:decision} has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
+    In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~\ref{eq:decision} has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
 
-    The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because the classification rate estimation needed. For the kNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be more deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
+    The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because of the classification rate estimation needed. For the kNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be more deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
     % The computation of the kappa seems  to suffer from  a lack of  parallelization   which could be  improved. ->  plus tard dans la conclusion.
 
     \subsection{Potsdam dataset}
@@ -887,9 +886,9 @@ resolution multispectral airborne image.
         \end{tabular}
     \end{table}
 
-    With this second dataset, the Random Forest classifier and the GMM classifier with kappa as selection criterion distinguished themselves by good performance. When using 1000 samples, no significant difference of classification rate has been observed on test set. But, with 50,000 samples, the Random Forest classifier better significantly better.
+    With this second dataset, the Random Forest classifier and the GMM classifier with kappa as selection criterion distinguished themselves by good performance. When using 1000 samples, no significant difference of classification rate has been observed on test set. But, with 50,000 samples, the Random Forest classifier becomes significantly better.
 
-    It can be guessed that the fact that the Gaussian hypothesis is unlikely to be verified explains the difficulty to extract the finer information available in a larger dataset. The JM distance has stressed in Table~\ref{tab:crit} has a strong Gaussian hypothesis and the same hypotheses could also explain the drop of the classification rate of GMM classifiers with Jeffries-Matusita distance as criterion.
+    It can be guessed that the fact that the Gaussian hypothesis is unlikely to be verified explains the difficulty to extract the finer information available in a larger dataset. The JM distance has stressed in Table~\ref{tab:crit} has a strong Gaussian hypothesis and the same hypotheses could also explain the drop of the classification rate of GMM classifiers with JM distance as criterion.
 
     The KNN classifier and the GMM classifier with ridge regularization are again outperformed even if they get more stable results than GMM classifiers with JM as criterion.
 
@@ -901,11 +900,11 @@ resolution multispectral airborne image.
 
 An algorithm for the classification of high dimension data as hyperspectral image has been presented. The classifier uses GMM model to select iteratively the most relevant features. Several variation of the algorithms has been explored. Experimentations show that allowing backward step in the selection to discard already selected features do not give significant advantages.
 
-Additionally, from the comparison between all the measures used to rank the features, it has been shown that the Jeffries-Matusita distance can be a fast and accurate solution in some case but suffer from some limitations which remain to be determine. A possible explaination could be that this distance does not perform well when data distribution is not similar to a Gaussian distribution. More investigation is needed to confirm this hypothesis. In any case, it is possible to use directly kappa as criterion function even if it implies a loss of time.
+Additionally, from the comparison between all the measures used to rank the features, it has been shown that the Jeffries-Matusita distance can be a fast and accurate solution in some case but suffer from some limitations which remain to be determine more precisely. A possible explanation could be that this distance does not perform well when data distribution is not similar to a Gaussian distribution. More investigation is needed to confirm this hypothesis. In any case, it is possible to use directly kappa as criterion function even if it implies a loss of time.
 
-Finally, experiments show that the developed GMM classifier performs at least as best as standard classifiers without features selection in particular Random Forest and even outperforms all of them in term of classification time. The next step would be to compare to other feature selection methods.
+Finally, experiments show that the developed GMM classifier performs, in most cases, at least as best as standard classifiers without features selection in particular Random Forest and even outperforms all of them in term of classification time.
 
-The second achievement of this work is the development of an efficient implementation using GMM properties to derive fast update rules of the model. The resulting code is available as a remote module of the Orfeo toolbox on Github and make it possible to process huge quantity of high dimension data.
+The second achievement of this work is the development of an efficient implementation using GMM properties to derive fast update rules of the model. The resulting code is available as a remote module of the Orfeo toolbox on Github and makes it possible to process huge quantity of high dimension data.
 
 Finally, an improvement could be made to increase the stability of the selected features. For example, with hyperspectral data, a selection of continuous intervals and not band is a possible solution which has already been explored in \cite{serpico2007extraction}.
 
