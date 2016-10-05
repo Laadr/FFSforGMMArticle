@@ -581,18 +581,55 @@ GMM models for each fold.
             \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
             &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
             &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for} \\ \text{each augmented set}}},
-        \end{align}
-        where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
-      \end{prop}
-
-
-        The Algorithm~\ref{alg:sffs-update} illustrates the optimization of the Algorithm~\ref{alg:sffs} developed using these formulae.
-
+      \end{align}
+      where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
+    \end{prop}
+    
+    
+    The Algorithm~\ref{alg:sffs-update} illustrates the optimization of the Algorithm~\ref{alg:sffs} developed using these formulae.
+    
     \subsection{Numerical issues}
+    For each  iteration $k$, after  the selection of  optimal features
+    w.r.t  the  selected criterion,  the  inverses  of the  covariance
+    matrices and their log-determinant  needs to be computed. However,
+    the lack of training samples or the highly correlated features may
+    induce  a  badly-conditioned  matrix  with  very  small,  or  even
+    negative, eigenvalues.   Such values will degrade  drastically the
+    estimation of the  inverse and of the log-determinant,  and so the
+    numerical stability.
 
-    During the selection process, numerical issues needs to be handled due to the computation of the inverse and determinant of the covariance matrix. As pointed out before, the lack of training samples can induce a badly-conditioned matrix with very small eigenvalues. Even with a well-estimated covariance matrix, it is still possible to encounter very correlated features resulting also in very low eigenvalues. The issue with these very small eigenvalues is that they reach the computational precision allowed by the computer especially when computing the logarithm of the determinant.
+    To deal with this limitation, the choice has been made to perform an eigendecomposition of the covariance matrix $\boldsymbol{\Sigma}^{(k)}$:
 
-    In order to deal with this limitation, the choice has been made to perform an explicit decomposition in eigenvalues and eigenvectors of the covariance matrix s.t. $\boldsymbol{\Sigma} = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$ with $\boldsymbol{\Lambda}$ the diagonal matrix of eigenvalues and $\mathbf{Q}$ the matrix of eigenvectors. The advantage of an explicit decomposition is the possibility to check the eigenvalues and, if some appears to be below computational precision, to threshold them at EPS\_FLT which is the computer precision for a floating number. For the same reason, the constant $\alpha$ used in update rules is also thresholded to EPS\_FLT. Algorithm~\ref{alg:sffs-update} details when computational stability is checked.
+    \begin{eqnarray}
+    \boldsymbol{\Sigma}^{(k)} = \mathbf{Q}^{(k)} \boldsymbol{\Lambda}^{(k)} (\mathbf{Q}^{(k)})^t\label{eq:eigendecomp}
+    \end{eqnarray}
+
+
+    where  $\boldsymbol{\Lambda}^{(k)}$ and  $\mathbf{Q}^{(k)}$ are  the
+    diagonal matrix  of eigenvalues of  the covariance matrix  and the
+    orthonormal matrix of corresponding eigenvectors, respectively. To
+    prevent numerical instability, the  eigenvalues are thresholded to
+    EPS\_FLT. In our  implementation, EPS\_FLT is set  to the floating
+    machine precision.
+
+    Then, the inverse of the covariance matrix can be computed as
+
+    \begin{eqnarray}
+      \boldsymbol{\Sigma}^{(k)} = \mathbf{Q}^{(k)} (\tilde{\boldsymbol{\Lambda}}^{(k)})^{-1} (\mathbf{Q}^{(k)})^t\label{eq:eigendecomp:inv}
+    \end{eqnarray}
+
+    and the log-determinant as
+
+    \begin{eqnarray}
+      \label{eq:log:det}
+      \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \sum_{i=1}^d\log(\tilde{\lambda}_i^{(k)}),
+    \end{eqnarray}
+    where the \textasciitilde{} indicated thresholded values.
+
+    Same reasoning applied  to the term $\alpha$ in  the update rules:
+    it       is       also        thresholded       to       EPS\_FLT.
+    Algorithm~\ref{alg:sffs-update}    details   when    computational
+    stability is enforced (lines 6, 10, 20 and 24).
 
     \begin{algorithm}
     \caption{Sequential floating forward features selection with updates\label{alg:sffs-update}}
