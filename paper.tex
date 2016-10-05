@@ -173,7 +173,7 @@ samples of class $c$.
         \mathbf{x} \text{ belongs to } c \Leftrightarrow c = \text{arg} \max_{c \in C} p(c) p(\mathbf{x}|c).
     \end{equation*}
     Under the GMM,  and identifying $p(c)$ as $\pi_c$  and $p(\mathbf{x}|c)$ as
-    $f_c(\mathbf{x}|\theta)$ and by taking the log, a decision rule is obtained
+    $f_c(\mathbf{x}|\theta)$ and by taking the log, a decision function is obtained
     \begin{eqnarray}\label{eq:decision}
       Q_c(\mathbf{x}) &=& 2 \log \left( p(c) p(\mathbf{x}|c) \right) \nonumber \\
                       &=& - (\mathbf{x} - \boldsymbol{\mu}_c)^t \boldsymbol{\Sigma}_c^{-1} (\mathbf{x} - \boldsymbol{\mu}_c) \nonumber \\
@@ -286,7 +286,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         The    KL   divergence    is   not    symmetric,   \emph{i.e.}
         $KL_{ij} \ne KL_{ji}$.  A symmetrized version  is used to
         compute the criterion function:
-        \begin{align}
+        \begin{align}\label{eq:skl}
           SKL_{ij} &=KL_{ij} + KL_{i,j} \nonumber \\
             &= \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j + \boldsymbol{\Sigma}_j^{-1} \boldsymbol{\Sigma}_i) \nonumber \\
             &~~+ (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t (\boldsymbol{\Sigma}_i^{-1} + \boldsymbol{\Sigma}_j^{-1}) (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - 2d \biggr).
@@ -306,7 +306,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \end{align}
 
         The \emph{Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases~\cite{bruzzone2009novel}. The JM distance is defined as
-        \begin{equation}
+        \begin{equation}\label{eq:jm}
             {JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}[-B_{ij}]\} }.
         \end{equation}
 
@@ -421,22 +421,28 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
 \section{Efficient implementation}
 \label{sec:implementation}
+The most  demanding part  of the  algorithm is  the evaluation  of the
+criterion  for  all   the  remaining  variables  (see   lines  5-7  in
+Algorithm~\ref{alg:sfs}). Calculus are based on linear algebra, and the
+numerical  complexity is  on average  $O(d^3)$.  Furthermore,  for the
+\emph{accuracy}-type  criterion the  complexity  is  augmented by  the
+cross-validation procedure.
 
-    \subsection{Statistical update rules}
-    In the presented method, the most time-consuming operation is the evaluation of the criterion function which needs to be done for each possible subset of variables composed of the selected set augmented by one of the candidate variable. To compute these values, the most costly operations are the inversion of the covariance matrix and the computation of its determinant. Both of these operations have a $O(n^3)$ computational complexity. Additionally, the estimation of classification rate with cross-validation is a heavy process which takes a substantial amount of time.
+An efficient implementation of the criterion optimization is proposed.
+It based on  the symmetry property of the covariance  matrix and block
+inverse  formula~\cite{IMM2012-03274}. In  the following  it is  shown
+that the criterion  can be split into  two part: one that  needs to be
+computed for each  tested variable, and one that needs  to be computed
+only once per  selection step. For the  cross-validation part, updates
+rules are given to derive sub-models  without the necessity to learn a
+GMM models for each fold.
 
-    A major contribution of this work is the optimization in term of computational efficiency. More precisely, three steps of the proposed method have been upgraded in order to reduce computational time. First of all, the GMM model is learned only once using samples. When a covariance matrix or a mean vector of a reduced set of variables is required, it is obtained from the global model learned at the beginning by marginalization.
-
-    Secondly, when a cross-validation is performed, submodels, i.e. GMM trained with $(n_{cv}-1)$ folds, are not learned using the $(n_{cv}-1)$ folds but, instead, are derived from the global model and from the covariance matrices and mean vectors of the fold used for validation for the given submodel. The process is described in details in Section~\ref{sec:update-cv}.
-
-    Finally and most importantly, when variables are tested one by one during a selection step, costly operations are made when computing criterion functions for each candidate set especially the computation of the inverse of covariance matrices and its determinant. Several update rules are set up which allow to compute this inverse and determinant only once to test all sets. These update rules are presented in Section~\ref{sec:update-crit}.
-
+\subsection{Statistical update rules}
         \subsubsection{Update for cross validation}
         \label{sec:update-cv}
-
         Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM with the whole training set once and then, instead of training models on $(n_{cv}-1)$ folds, parameters of the complete model are used to derive those of submodels.
 
-        The following formulae can be obtained
+        A sub-GMM model can be estimated at a reduced complexity when one fold is remove from the training set. From~\cite{fauvel2015fast}, the following formulae for unbiased estimators can be derived: %% TODO: rajouter des \hat{} partout: ce sont des estimateurs.
         \begin{prop}
             \label{eq:update-cv1}
             (Cross-validation mean update)
@@ -456,87 +462,129 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         \subsubsection{Criterion function computation}
         \label{sec:update-crit}
+        At iteration $k$, depending on the criterion, three terms have
+        to  be computed:  the inverse  of the  covariance matrix,  the
+        logarithm of the determinant of  the covariance matrix and the
+        quadratical term in  eq.~\ref{eq:decision}. However, all these
+        terms  have already  been computed  for iteration  $(k-1)$. By
+        using  the  fact that  the  covariance  matrix is  a  positive
+        definite     symmetric    matrix     and    block     matrices
+        formulae~\cite[Chapter   9.2]{webb2003statistical},    it   is
+        possible to factorize these terms at iteration $k$.
 
-        At each iteration the SFS and SFFS algorithms compute the value of a criterion function for every possible set of features composed of the selected ones augmented by one of the remaining features. One of the main achievements of this work is to reduce the computational time in factorizing the computation of the inverse and determinant of the covariance matrix..
+        In the  remaining of the  paper, $\boldsymbol{\Sigma}^{(k-1)}$
+        denotes the  covariance matrix of the  $(k-1)^{th}$ iteration,
+        \emph{i.e.}, the  covariance matrix  of the  selected features
+        and $\boldsymbol{\Sigma}^{(k)}$ denotes a covariance matrix at
+        the $k^{th}$ iteration, \emph{i.e.},  the covariance matrix of
+        an augmented set. Then, since $\boldsymbol{\Sigma}^{(k)}$ is a
+        positive definite symmetric matrix,  the covariance matrix can
+        be written as
 
-        In the remaining of the paper, $\boldsymbol{\Sigma}^{(k-1)}$ is the covariance matrix of the $(k-1)^{th}$ iteration, i.e., the covariance matrix of the selected features and $\boldsymbol{\Sigma}^{(k)}$ is a covariance matrix at the $k^{th}$ iteration, i.e., the covariance matrix of an augmented set. Then, the inverse of the covariance matrix $(\boldsymbol{\Sigma}^{(k)})^{-1}$, the quadratical term $(\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}$ and the determinant $\log |\boldsymbol{\Sigma}^{(k)}|$ can be expressed in function of terms of the $(k-1)^{th}$ iteration. These calculi use the fact that the covariance matrix is a positive definite symmetric matrix to simplify formulae using block matrices \cite{webb2003statistical} (chapter 9.2). These update rules are summed up hereafter.
+        % Then, the inverse of  the covariance matrix
+        % $(\boldsymbol{\Sigma}^{(k)})^{-1}$,   the   quadratical   term
+        % $(\mathbf{x}^{(k)})^t         (\boldsymbol{\Sigma}^{(k)})^{-1}
+        % \mathbf{x}^{(k)}$        and        the        log-determinant
+        % $\log   |\boldsymbol{\Sigma}^{(k)}|$  can   be  expressed   in
+        % function of terms of the $(k-1)^{th}$ iteration.
 
-        As $\boldsymbol{\Sigma}^{(k)}$ is a positive definite symmetric matrix, the following notation can be used
-        \begin{equation*}
+        \begin{equation}\label{eq:cov}
             \boldsymbol{\Sigma}^{(k)} =
             \bigg[\begin{array}{cc}
             \boldsymbol{\Sigma}^{(k-1)} & \mathbf{u}      \\
             \mathbf{u}^t          & \sigma_{kk} \\
             \end{array}\bigg],
-        \end{equation*}
-        where $\mathbf{u}$ is the $k^{th}$ column of the matrix without the diagonal element i.e. $\mathbf{u}_{i} = \boldsymbol{\Sigma}^{(k)}_{i,k}$ with $i \in [1,k-1]$.
-
-        Using the formula of the inverse of a block matrix, the following formula expressing $(\boldsymbol{\Sigma}^{(k)})^{-1}$ in function of $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ is obtained
+        \end{equation}
+        where  $\mathbf{u}$  is  the  $k^{th}$ column  of  the  matrix
+        without      the      diagonal      element,      \emph{i.e.},
+        $\mathbf{u}_{i}   =    \boldsymbol{\Sigma}^{(k)}_{i,k}$   with
+        $i  \in [1,k-1]$.  Using  block matrix  inverse formulae,  the
+        following proposition holds:
         \begin{prop}
         \label{eq:update-inv}
             (Forward update rule for inverse of covariance matrix)
-            \begin{equation*}
+            \begin{equation}\label{eq:cov:inv}
                 (\boldsymbol{\Sigma}^{(k)})^{-1} =
                 \bigg[\begin{array}{cc}
                 \mathbf{A} & \mathbf{v} \\
                 \mathbf{v}^t  & \frac{1}{\alpha} \\
                 \end{array}\bigg]
-            \end{equation*}
+            \end{equation}
         \end{prop}
-        \noindent where $\mathbf{A} = (\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $\mathbf{v} = - \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$ and $ \alpha = \sigma_{kk} - \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}$. Then, $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ is computed only once and this update formulae is used to obtain all the $(\boldsymbol{\Sigma}^{(k)})^{-1}$ corresponding to all the possible augmented set of a given selection iteration.
+        \noindent                                                where
+        $\mathbf{A}     =     (\boldsymbol{\Sigma}^{(k-1)})^{-1}     +
+        \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}
+        \mathbf{u}^t              (\boldsymbol{\Sigma}^{(k-1)})^{-1}$,
+        $\mathbf{v}           =           -           \frac{1}{\alpha}
+        (\boldsymbol{\Sigma}^{(k-1)})^{-1}       \mathbf{u}$       and
+        $      \alpha      =      \sigma_{kk}      -      \mathbf{u}^t
+        (\boldsymbol{\Sigma}^{(k-1)})^{-1}  \mathbf{u}$.  This  update
+        formulae      is     used      to      obtain     all      the
+        $(\boldsymbol{\Sigma}^{(k)})^{-1}$  corresponding  to all  the
+        possible augmented set of a given selection iteration. Similar
+        update formulae can be written for the backward step.
 
-        In the case of a backward step in SFFS algorithm, the formula is inverted in order to compute $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ knowing $(\boldsymbol{\Sigma}^{(k)})^{-1}$. The update rule becomes (proof in Appendix~\ref{app:proof-update})
-        \begin{prop}
-        \label{eq:update-inv-back}
-            (Backward update rule for inverse of covariance matrix)
-            \begin{equation*}
-                (\boldsymbol{\Sigma}^{(k-1)})^{-1} = \underbrace{\mathbf{A}}_{\substack{\text{computed once}\\ \text{per selection step}}} - \underbrace{\alpha \mathbf{v} \mathbf{v}^t}_{\substack{\text{computed for} \\ \text{each augmented set}}}
-            \end{equation*}
-        \end{prop}
+        % In the case of a backward step in SFFS algorithm, the formula is inverted in order to compute $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ knowing $(\boldsymbol{\Sigma}^{(k)})^{-1}$. The update rule becomes (proof in Appendix~\ref{app:proof-update})
+        % \begin{prop}
+        % \label{eq:update-inv-back}
+        %     (Backward update rule for inverse of covariance matrix)
+        %     \begin{equation*}
+        %         (\boldsymbol{\Sigma}^{(k-1)})^{-1} = \underbrace{\mathbf{A}}_{\substack{\text{computed once}\\ \text{per selection step}}} - \underbrace{\alpha \mathbf{v} \mathbf{v}^t}_{\substack{\text{computed for} \\ \text{each augmented set}}}
+        %     \end{equation*}
+        % \end{prop}
 
-        A formula can also be deduced for the quadratical term of the decision function. Noting $(\mathbf{x}^{(k)})^t = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x^k \end{array}\right]$, the following proposition is obtained (proof in Appendix~\ref{app:proof-update})
+        Using eq.~\ref{eq:cov} and~\ref{eq:cov:inv}, it is possible to
+        deduce  the   following  propositions  (proof  are   given  in
+        Appendix~\ref{app:proof-update}).
         \begin{prop}
         \label{eq:update-quad}
             (Update rule for quadratical term)
-            \begin{align*}
-                (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once}\\ \text{per selection step}}} \\
-                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}}
-            \end{align*}
+            \begin{align}
+                (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
+            \end{align}
         \end{prop}
-
-        Finally, using the formula of the determinant of a block matrix and after taking the log, a last formula is produced
         \begin{prop}
         \label{eq:update-log}
             (Update rule for logdet)
-            \begin{equation*}
-                \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)}_{\substack{\text{computed once}\\ \text{per selection step}}} + \underbrace{\log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}
-            \end{equation*}
+            \begin{equation}
+                \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)}_{\substack{\text{computed once}\\ \text{per selection step}}} + \underbrace{\log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
+            \end{equation}
         \end{prop}
 
-        Now using all update rules, criterion functions can be rewritten as follows
+        From these update rules, it is now possible to split each criterion into two parts: one computed once per selection step and one computed for each augmented set.
+        
+        \begin{prop}[Decision function~\ref{eq:decision}]
         \begin{align}
         \label{eq:q-update}
             Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
             &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-            &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}};
+            &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
         \end{align}
+      \end{prop}
 
+
+      \begin{prop}[Kullback-Leibler divergence~\ref{eq:skl}]
         \begin{align}
         \label{eq:skl-update}
-            &\text{SKL}_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+            & SKL_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
             &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
             &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2 - 2k}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-            &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ((\boldsymbol{\Sigma}_i^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_j^{(k-1)})^{-1}) (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr),
+            &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ((\boldsymbol{\Sigma}_i^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_j^{(k-1)})^{-1}) (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr).
         \end{align}
         with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
+      \end{prop}
 
-        \begin{align}
+      \begin{prop}[Jeffries-Matusita distance~\ref{eq:jm}]
+      \begin{align}
         \label{eq:jm-update}
             \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
             &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
             &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for} \\ \text{each augmented set}}},
         \end{align}
         where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
+      \end{prop}
+
 
         The Algorithm~\ref{alg:sffs-update} illustrates the optimization of the Algorithm~\ref{alg:sffs} developed using these formulae.
 
@@ -911,42 +959,40 @@ Finally, an improvement could be made to increase the stability of the selected 
 The python and C++ code are available freely for download: \url{https://github.com/Laadr/FFFS}, \url{https://github.com/Laadr/otbExternalFastFeaturesSelection}.
 
 \appendices
-\section{}
+\section{Proof of update rules}
 \label{app:proof-update}
-\subsection{Proof of update rules}
-    \subsubsection{Proposition~\ref{eq:update-inv-back}}
-        \begin{proof}
-            \begin{align*}
-                \mathbf{A} - \alpha \mathbf{v} \mathbf{v}^t
-                &= (\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \\
-                &~~~- \alpha (- \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}) (- \frac{1}{\alpha} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1})) \\
-                &= (\boldsymbol{\Sigma}^{(k-1)})^{-1}
-            \end{align*}
-        \end{proof}
+    % \subsubsection{Proposition~\ref{eq:update-inv-back}}
+    %     \begin{proof}
+    %         \begin{align*}
+    %             \mathbf{A} - \alpha \mathbf{v} \mathbf{v}^t
+    %             &= (\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \\
+    %             &~~~- \alpha (- \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}) (- \frac{1}{\alpha} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1})) \\
+    %             &= (\boldsymbol{\Sigma}^{(k-1)})^{-1}
+    %         \end{align*}
+    %     \end{proof}
 
-    \subsubsection{Proposition~\ref{eq:update-quad}}
-        \begin{proof}
-            \begin{align*}
-                (&\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}
-                = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
-                \left[\begin{array}{cc}
-                \mathbf{A}   & \mathbf{v} \\
-                \mathbf{v}^t & \frac{1}{\alpha}
-                \end{array}\right]
-                \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
-                &= \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A} + x_k \mathbf{v}^t & (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} \end{array}\right]
-                \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
-                &= (\mathbf{x}^{(k-1)})^t \mathbf{A} \mathbf{x}^{(k-1)} + x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v} x_k + \frac{(x_k)^2}{\alpha} \\
-                &= (\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
-                &~~~+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
-                &= (\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \alpha \mathbf{v} \mathbf{v}^t) \mathbf{x}^{(k-1)}\\
-                &~~~+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
-                &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} \mathbf{v}^t \mathbf{x}^{(k-1)} \\
-                &~~~+ 2 \frac{x_k}{\alpha} \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha^2}) \\
-                &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} )^2 \\
-                &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2
-            \end{align*}
-        \end{proof}
+\begin{proof}[Proof of proposition~\ref{eq:update-quad}]
+  \begin{align*}
+    (&\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}
+       = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
+                                                            \left[\begin{array}{cc}
+                                                                    \mathbf{A}   & \mathbf{v} \\
+                                                                    \mathbf{v}^t & \frac{1}{\alpha}
+                                                                  \end{array}\right]
+                                                                                   \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
+     &= \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A} + x_k \mathbf{v}^t & (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} \end{array}\right]
+                                                                                       \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
+     &= (\mathbf{x}^{(k-1)})^t \mathbf{A} \mathbf{x}^{(k-1)} + x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v} x_k + \frac{(x_k)^2}{\alpha} \\
+     &= (\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
+     &~~~+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
+     &= (\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \alpha \mathbf{v} \mathbf{v}^t) \mathbf{x}^{(k-1)}\\
+     &~~~+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
+     &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} \mathbf{v}^t \mathbf{x}^{(k-1)} \\
+     &~~~+ 2 \frac{x_k}{\alpha} \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha^2}) \\
+     &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} )^2 \\
+     &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2
+  \end{align*}
+\end{proof}
 
 % \section*{Acknowledgment}
 
