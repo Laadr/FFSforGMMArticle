@@ -442,20 +442,18 @@ GMM models for each fold.
         \label{sec:update-cv}
         Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM with the whole training set once and then, instead of training models on $(n_{cv}-1)$ folds, parameters of the complete model are used to derive those of submodels.
 
-        A sub-GMM model can be estimated at a reduced complexity when one fold is remove from the training set. From~\cite{fauvel2015fast}, the following formulae for unbiased estimators can be derived: %% TODO: rajouter des \hat{} partout: ce sont des estimateurs.
-        \begin{prop}
+        A sub-GMM model can be estimated at a reduced complexity when one fold is remove from the training set. From~\cite{fauvel2015fast}, the following formulae for unbiased estimators can be derived:
+        \begin{prop}[Cross-validation mean update]
             \label{eq:update-cv1}
-            (Cross-validation mean update)
             \begin{equation*}
-                \boldsymbol{\mu}_c^{n_c-\nu_c} = \frac{n_c \boldsymbol{\mu}_c^{n_c} - \nu_c \boldsymbol{\mu}_c^{\nu_c}}{n_c - \nu_c} \nonumber
+                \boldsymbol{\hat{\mu}}_c^{n_c-\nu_c} = \frac{n_c \boldsymbol{\hat{\mu}}_c^{n_c} - \nu_c \boldsymbol{\hat{\mu}}_c^{\nu_c}}{n_c - \nu_c} \nonumber
             \end{equation*}
         \end{prop}
-        \begin{prop}
+        \begin{prop}[Cross-validation covariance matrix update]
             \label{eq:update-cv2}
-            (Cross-validation covariance matrix update)
             \begin{align*}
-                \boldsymbol{\Sigma}_c^{n_c-\nu_c} = &\frac{1}{n_c-\nu_c-1} \biggl( (n_c-1) \boldsymbol{\Sigma}_c^{n_c} - (\nu_c-1) \boldsymbol{\Sigma}_c^{\nu_c} \nonumber \\
-                &- \frac{n_c \nu_c}{(n_c-\nu_c)} (\boldsymbol{\mu}_c^{\nu_c}-\boldsymbol{\mu}_c^{n_c})(\boldsymbol{\mu}_c^{\nu_c}-\boldsymbol{\mu}_c^{n_c})^t \biggr) \nonumber
+                \boldsymbol{\hat{\Sigma}}_c^{n_c-\nu_c} = &\frac{1}{n_c-\nu_c-1} \biggl( (n_c-1) \boldsymbol{\hat{\Sigma}}_c^{n_c} - (\nu_c-1) \boldsymbol{\hat{\Sigma}}_c^{\nu_c} \nonumber \\
+                &- \frac{n_c \nu_c}{(n_c-\nu_c)} (\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})(\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})^t \biggr) \nonumber
             \end{align*}
         \end{prop}
         \noindent where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exposants on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\nu}_c$ denotes the set of samples used to compute them.
@@ -500,9 +498,8 @@ GMM models for each fold.
         $\mathbf{u}_{i}   =    \boldsymbol{\Sigma}^{(k)}_{i,k}$   with
         $i  \in [1,k-1]$.  Using  block matrix  inverse formulae,  the
         following proposition holds:
-        \begin{prop}
+        \begin{prop}[Forward update rule for inverse of covariance matrix]
         \label{eq:update-inv}
-            (Forward update rule for inverse of covariance matrix)
             \begin{equation}\label{eq:cov:inv}
                 (\boldsymbol{\Sigma}^{(k)})^{-1} =
                 \bigg[\begin{array}{cc}
@@ -525,9 +522,8 @@ GMM models for each fold.
         update formulae can be written for the backward step.
 
         % In the case of a backward step in SFFS algorithm, the formula is inverted in order to compute $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ knowing $(\boldsymbol{\Sigma}^{(k)})^{-1}$. The update rule becomes (proof in Appendix~\ref{app:proof-update})
-        % \begin{prop}
+        % \begin{prop}[Backward update rule for inverse of covariance matrix]
         % \label{eq:update-inv-back}
-        %     (Backward update rule for inverse of covariance matrix)
         %     \begin{equation*}
         %         (\boldsymbol{\Sigma}^{(k-1)})^{-1} = \underbrace{\mathbf{A}}_{\substack{\text{computed once}\\ \text{per selection step}}} - \underbrace{\alpha \mathbf{v} \mathbf{v}^t}_{\substack{\text{computed for} \\ \text{each augmented set}}}
         %     \end{equation*}
@@ -536,58 +532,56 @@ GMM models for each fold.
         Using eq.~\ref{eq:cov} and~\ref{eq:cov:inv}, it is possible to
         deduce  the   following  propositions  (proof  are   given  in
         Appendix~\ref{app:proof-update}).
-        \begin{prop}
+        \begin{prop}[Update rule for quadratical term]
         \label{eq:update-quad}
-            (Update rule for quadratical term)
             \begin{align}
                 (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
                 &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
             \end{align}
         \end{prop}
-        \begin{prop}
+        \begin{prop}[Update rule for logdet]
         \label{eq:update-log}
-            (Update rule for logdet)
             \begin{equation}
                 \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)}_{\substack{\text{computed once}\\ \text{per selection step}}} + \underbrace{\log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
             \end{equation}
         \end{prop}
 
         From these update rules, it is now possible to split each criterion into two parts: one computed once per selection step and one computed for each augmented set.
-        
+
         \begin{prop}[Decision function~\ref{eq:decision}]
-        \begin{align}
-        \label{eq:q-update}
-            Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-            &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-            &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
-        \end{align}
-      \end{prop}
+            \begin{align}
+            \label{eq:q-update}
+                Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+                &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+                &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
+            \end{align}
+        \end{prop}
 
 
-      \begin{prop}[Kullback-Leibler divergence~\ref{eq:skl}]
-        \begin{align}
-        \label{eq:skl-update}
-            & SKL_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2 - 2k}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-            &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ((\boldsymbol{\Sigma}_i^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_j^{(k-1)})^{-1}) (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr).
-        \end{align}
-        with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
-      \end{prop}
+        \begin{prop}[Kullback-Leibler divergence~\ref{eq:skl}]
+            \begin{align}
+            \label{eq:skl-update}
+                & SKL_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2 - 2k}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
+                &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ((\boldsymbol{\Sigma}_i^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_j^{(k-1)})^{-1}) (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr).
+            \end{align}
+            with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
+        \end{prop}
 
-      \begin{prop}[Jeffries-Matusita distance~\ref{eq:jm}]
-      \begin{align}
-        \label{eq:jm-update}
-            \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-            &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-            &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for} \\ \text{each augmented set}}},
-      \end{align}
-      where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
-    \end{prop}
-    
-    
+        \begin{prop}[Jeffries-Matusita distance~\ref{eq:jm}]
+            \begin{align}
+            \label{eq:jm-update}
+                \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+                &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
+                &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for} \\ \text{each augmented set}}},
+            \end{align}
+        where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
+        \end{prop}
+
+
     The Algorithm~\ref{alg:sffs-update} illustrates the optimization of the Algorithm~\ref{alg:sffs} developed using these formulae.
-    
+
     \subsection{Numerical issues}
     For each  iteration $k$, after  the selection of  optimal features
     w.r.t  the  selected criterion,  the  inverses  of the  covariance
@@ -960,7 +954,7 @@ resolution multispectral airborne image.
     \begin{table}[!t]
         \centering
         \caption{Kappa coefficient and processing time for 50,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu-big}}
-        \begin{tabular}{|lcccccc}\toprule
+        \begin{tabular}{lcccccc}\toprule
             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-7}
             GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 0.531 (0.005) & 20000 & 340 & 29 \\
             GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6 & 330 & 10 \\
@@ -1009,26 +1003,62 @@ The python and C++ code are available freely for download: \url{https://github.c
     %     \end{proof}
 
 \begin{proof}[Proof of proposition~\ref{eq:update-quad}]
-  \begin{align*}
-    (&\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}
+    \begin{alignat*}{3}
+    (&\mathbf{x}^{(k)})^t && (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}
        = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
                                                             \left[\begin{array}{cc}
                                                                     \mathbf{A}   & \mathbf{v} \\
                                                                     \mathbf{v}^t & \frac{1}{\alpha}
                                                                   \end{array}\right]
                                                                                    \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
-     &= \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A} + x_k \mathbf{v}^t & (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} \end{array}\right]
+     &= &&\left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A} + x_k \mathbf{v}^t & (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} \end{array}\right]
                                                                                        \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
-     &= (\mathbf{x}^{(k-1)})^t \mathbf{A} \mathbf{x}^{(k-1)} + x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v} x_k + \frac{(x_k)^2}{\alpha} \\
-     &= (\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
-     &~~~+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
-     &= (\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \alpha \mathbf{v} \mathbf{v}^t) \mathbf{x}^{(k-1)}\\
-     &~~~+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
-     &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} \mathbf{v}^t \mathbf{x}^{(k-1)} \\
-     &~~~+ 2 \frac{x_k}{\alpha} \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha^2}) \\
-     &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} )^2 \\
-     &= (\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2
-  \end{align*}
+     &= &&(\mathbf{x}^{(k-1)})^t \mathbf{A} \mathbf{x}^{(k-1)} + x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v} x_k + \frac{(x_k)^2}{\alpha} \\
+     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
+     & &&+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
+     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \alpha \mathbf{v} \mathbf{v}^t) \mathbf{x}^{(k-1)}\\
+     & &&+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
+     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} \mathbf{v}^t \mathbf{x}^{(k-1)} \\
+     & &&+ 2 \frac{x_k}{\alpha} \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha^2}) \\
+     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} )^2 \\
+     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2
+    \end{alignat*}
+\end{proof}
+
+\begin{proof}[Proof of proposition~\ref{eq:update-log}]
+    \begin{align*}
+        \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) =
+        &\log \left(\left|
+            \bigg[\begin{array}{cc}
+                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{u}      \\
+                \mathbf{u}^t          & \sigma_{kk} \\
+            \end{array}\bigg]
+        \right|\right) \\
+        &\log \left(\left|
+            \bigg[\begin{array}{cc}
+                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
+                \mathbf{u}^t          & 1 \\
+            \end{array}\bigg]
+            \bigg[\begin{array}{cc}
+                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
+                \mathbf{0}_{k-1,1}^t          & \sigma_{kk} - \mathbf{u}^t(\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}\\
+            \end{array}\bigg]
+        \right|\right) \\
+        &\log \left(\left|
+            \bigg[\begin{array}{cc}
+                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
+                \mathbf{u}^t          & 1 \\
+            \end{array}\bigg]
+        \right|\right)
+        +\log \left(\left|
+            \bigg[\begin{array}{cc}
+                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
+                \mathbf{0}_{k-1,1}^t          & \alpha \\
+            \end{array}\bigg]
+        \right|\right) \\
+        &\log \left( |\boldsymbol{\Sigma}^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha| \right)\\
+        &\log \left( |\boldsymbol{\Sigma}^{(k-1)}| \right) + \log ( \alpha )
+    \end{align*}
 \end{proof}
 
 % \section*{Acknowledgment}
