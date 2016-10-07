@@ -694,25 +694,23 @@ GMM models for each fold.
     of image  size. The Figure~\ref{fig:otb:ffs} shows  a code excerpt
     to run the application.
 
-    \begin{figure}\centering
-      
-    \begin{minted}[fontsize=\scriptsize,bgcolor=bg]{sh}
-otbcli_TrainGMMSelectionApp -io.il hyper.tif \
-			    -io.vd reference.shp \
-			    -gmm.varnb 20 \
-                            -gmm.method forward \
-                            -gmm.crit jm \
-			    -gmm.best 1 -gmm.seed 0 \
-			    -io.out model.txt
+    \begin{figure}
+        \centering
+        \begin{minted}[fontsize=\tiny,bgcolor=bg]{sh}
+            otbcli_TrainGMMSelectionApp -io.il hyper.tif \
+                            -io.vd reference.shp \
+                            -gmm.varnb 20 -gmm.method forward -gmm.crit jm\
+                            -gmm.best 1 -gmm.seed 0\
+                            -io.out model.txt
 
-otbcli_PredictGMMApp -in hyper.tif \
-                     -model model.txt \
-                     -modeltype selection \
-		     -out ThematicMap.tif
-    \end{minted}
-    \caption{OTB Module: The feature selection is done on the image \emph{hyper.tif} using the training set from \emph{reference.shp}. The feature selection algorithm is the forward search used with the Jeffries-Matusita criterion, 20 features are extracted and the corresponding GMM model is saved in \emph{model.txt}. Then the whole image is classified using the model and the results is saved in the geotiff \emph{ThematicMap.tif}.}
-    \label{fig:otb:ffs}
-  \end{figure}
+            otbcli_PredictGMMApp -in hyper.tif \
+                         -model model.txt -modeltype selection\
+                         -out ThematicMap.tif
+        \end{minted}
+        \caption{OTB Module: The feature selection is done on the image \emph{hyper.tif} using the training set from \emph{reference.shp}. The feature selection algorithm is the forward search used with the Jeffries-Matusita criterion, 20 features are extracted and the corresponding GMM model is saved in \emph{model.txt}. Then the whole image is classified using the model and the results is saved in the geotiff \emph{ThematicMap.tif}.}
+        \label{fig:otb:ffs}
+    \end{figure}
+
 \section{Data-sets}
 \label{sec:datasets}
 Numerical experiments  have been conducted on  two different data-sets.
@@ -974,7 +972,7 @@ resolution multispectral airborne image.
             GMM SFS JM &    0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2   & 310  & 11 \\
             GMM SFFS JM &   0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2.6 & 310  & 11 \\
             GMM ridge &     0.632 (0.007)             & 0.592 (0.010)             & 0.433 (0.008)             & 10  & 2000 & all \\
-            KNN &           0.637 (0.005)             & 0.607 (0.005)             & 0.478 (0.002)             &     &      & all \\
+            KNN &           0.637 (0.005)             & 0.607 (0.005)             & 0.478 (0.002)             & 0.7 & 9500 & all \\
             Random Forest & {\bfseries 0.729 (0.004)} & {\bfseries 0.673 (0.005)} & {\bfseries 0.529 (0.009)} & 20  & 840  & all \\
             \bottomrule
         \end{tabular}
