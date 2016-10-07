@@ -1,5 +1,5 @@
-\documentclass[journal,peerreview,onecolumn]{IEEEtran}
-% \documentclass[journal]{IEEEtran}
+%\documentclass[journal,peerreview,onecolumn]{IEEEtran}
+\documentclass[journal]{IEEEtran}
 \usepackage{etex}
 \usepackage{cite}
 \usepackage[pdftex]{graphicx}
@@ -20,7 +20,7 @@
 \usepackage{empheq}
 \usepackage{hyperref}
 \usepackage{booktabs}
-
+\usepackage{minted}\definecolor{bg}{rgb}{0.95,0.95,0.95}
 \newcommand\MyBox[2]{
   \fbox{\lower0.75cm
     \vbox to 1.2cm{\vfil
@@ -30,8 +30,8 @@
 }
 
 % for peerreview
-\usepackage{setspace}
-\onehalfspacing
+% \usepackage{setspace}
+% \onehalfspacing
 
 \newtheorem{prop}{Proposition}
 
@@ -70,8 +70,8 @@ DYNAFOR, France.}
 % make the title area
 \maketitle
 
-\tableofcontents
-\clearpage
+% \tableofcontents
+% \clearpage
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
@@ -79,7 +79,7 @@ This article presents a forward feature selection algorithm based on Gaussian mi
 
 An important effort is made in exploiting GMM properties to implement a fast algorithm. In particular, update rules of the GMM model are used to compute the criterion function with various sets of features. The result is a C++ remote module for the remote sensing processing toolbox Orfeo (OTB) developed by CNES.
 
-Finally, the method is compared to standard classifiers using two different datasets, one of hyperspectral images with a lot of spectral variables and one with heterogeneous spatial features. The results validate the fact that the method performs well in terms of processing time and classification accuracy in comparison to the standard classifiers available in OTB.\\
+Finally, the method is compared to standard classifiers using two different data-sets, one of hyperspectral images with a lot of spectral variables and one with heterogeneous spatial features. The results validate the fact that the method performs well in terms of processing time and classification accuracy in comparison to the standard classifiers available in OTB.\\
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -112,7 +112,7 @@ The objective of feature selection is to retrieve the most compact representatio
 
 There are two ways to reduce dimension \cite{Guyon:2006:FEF:1208773}: features extraction and feature selection. Feature extraction means reformulate and summarize the information by creating new features in combining the existing ones. Linear combinations of the initial features can be extracted using for example in Principal Component Analysis \cite{jimenez1998supervised} or Independent Component Analysis \cite{villa2011hyperspectral}. Supervised extraction method has also been investigate such as Fischer discriminant analysis. To the contrary, features selection selects a subset of existing features identified as the most relevant for a given criterion. It has the advantage to be much more interpretable for the end-user. The selected subset of features corresponds to the most important features for the given task.
 
-Features selection/extraction algorithms can be divided into three types. The first type, called \emph{filter methods}, is based uniquely on data analysis in the sense that the method is independant of any classifier. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. A filter based on the Pearson $\chi^2$ statistical test has been used on biomedical data\cite{biesiada2007feature}. The use of correlation between bands has been explored with hyperspectral data\cite{demir2008phase}. In general, these methods have the advantage to be fast and usable with any classifier but they do not take into account the strength and weakness of the chosen classifier and do not optimize directly the classification process.
+Features selection/extraction algorithms can be divided into three types. The first type, called \emph{filter methods}, is based uniquely on data analysis in the sense that the method is independent of any classifier. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. A filter based on the Pearson $\chi^2$ statistical test has been used on bio-medical data\cite{biesiada2007feature}. The use of correlation between bands has been explored with hyperspectral data\cite{demir2008phase}. In general, these methods have the advantage to be fast and usable with any classifier but they do not take into account the strength and weakness of the chosen classifier and do not optimize directly the classification process.
 
 The second sort are known as \emph{wrapper methods} which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are too expensive in terms of processing time, several search strategies have been designed. Some are optimal under particular hypothesis as the branch and bound algorithm \cite{narendra1977branch} optimal under the condition of a monotonic criterion function. Others are sub-optimal but easier to set up. Whitney \cite{whitney1971direct} proposed a forward search adding feature one by one \cite{whitney1971direct} when Marill and Green \cite{marill1963effectiveness} use a backward search eliminating features one by one. Some papers propose to combine these two search method \cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be more time consuming. The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
 
@@ -124,7 +124,7 @@ Despite a large diversity of methods, feature selection algorithms usually do no
 
 This work proposes to develop a forward feature selection method using GMM in continuation of \cite{fauvel2015fast} and an upgraded floating forward method. The basic method selects iteratively the meaningful features. At each step, the pool of selected features is used to train a GMM which allows to compute a criterion function then used to rank features at the next iteration. The upgraded method introduces possible backward steps after each addition of a feature. An efficient implementation of the method is presented in order to handle large amount of data. Moreover, the developed algorithm is made available as a remote module of the C++ Orfeo Toolbox \cite{christophe2008orfeo}. Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox.
 
-The remaining of this article is organized as follows. Section~\ref{sec:gmm-hd} presents Gaussian Mixture Model classifiers and the problems link to high-dimensionality. The features selection methods used to make them suitable for high-dimension space is detailed in Section~\ref{sec:selection}. The work done to develop an efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. And finally, after introducing the two datasets in Section~\ref{sec:datasets}, the tests conducted to explore variations of the algorithm and to compare it to other standard classifiers are shown and commented in Section~\ref{sec:test}.
+The remaining of this article is organized as follows. Section~\ref{sec:gmm-hd} presents Gaussian Mixture Model classifiers and the problems link to high-dimensionality. The features selection methods used to make them suitable for high-dimension space is detailed in Section~\ref{sec:selection}. The work done to develop an efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. And finally, after introducing the two data-sets in Section~\ref{sec:datasets}, the tests conducted to explore variations of the algorithm and to compare it to other standard classifiers are shown and commented in Section~\ref{sec:test}.
 
 \section{Gaussian Mixture Models in high dimensional space}
 \label{sec:gmm-hd}
@@ -202,9 +202,9 @@ samples of class $c$.
     \begin{figure}[!t]
         \centering
         \begin{tikzpicture}
-          \begin{semilogyaxis}[xmin=0,xmax=200,ymin=0,width=0.5*\columnwidth,grid,axis x line=left ,axis y line=left, tick align=outside,xlabel = $d$,ylabel = $\eta_c$]
+          \begin{axis}[ymode=log,xmin=0,xmax=200,ymin=0,width=0.8\columnwidth,grid,axis x line=left ,axis y line=left, tick align=outside,xlabel = $d$,ylabel = $\eta_c$,small]
             \addplot+[very thick,mark=none,smooth,domain=0:200,samples=200] (\x,{\x*(\x+3)/2+1});
-            \end{semilogyaxis}
+            \end{axis}
         \end{tikzpicture}
         \caption{Number of parameters $\eta_c$ by class in function of dimension $d$: $\eta_c=d(d+3)/2+1$.\label{fig:nb-param}}
     \end{figure}
@@ -278,8 +278,8 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         one\cite{kullback1987letter}. It can be explicitly computed in
         the case of Gaussian distributions:
         \begin{align}
-            &KL_{ij} = \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j) \nonumber \\
-            & + (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \boldsymbol{\Sigma}_i^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - d + \log \left( \frac{|\boldsymbol{\Sigma}_i|}{|\boldsymbol{\Sigma}_j|} \right) \biggr),
+            &KL_{ij} = \frac{1}{2} \biggl\{ \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j) \nonumber \\
+            & + (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \boldsymbol{\Sigma}_i^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - d + \log \left( \frac{|\boldsymbol{\Sigma}_i|}{|\boldsymbol{\Sigma}_j|} \right) \biggr\},
         \end{align}
         where Tr is the trace operator and $d$ the dimension of the distribution.
 
@@ -288,8 +288,8 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         compute the criterion function:
         \begin{align}\label{eq:skl}
           SKL_{ij} &=KL_{ij} + KL_{i,j} \nonumber \\
-            &= \frac{1}{2} \biggl( \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j + \boldsymbol{\Sigma}_j^{-1} \boldsymbol{\Sigma}_i) \nonumber \\
-            &~~+ (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t (\boldsymbol{\Sigma}_i^{-1} + \boldsymbol{\Sigma}_j^{-1}) (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - 2d \biggr).
+            &= \frac{1}{2} \biggl\{ \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j + \boldsymbol{\Sigma}_j^{-1} \boldsymbol{\Sigma}_i) \nonumber \\
+            &~~+ (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t (\boldsymbol{\Sigma}_i^{-1} + \boldsymbol{\Sigma}_j^{-1}) (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - 2d \biggr\}.
         \end{align}
 
         The extension  to the multiclass  situation is done  by taking
@@ -307,7 +307,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         The \emph{Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases~\cite{bruzzone2009novel}. The JM distance is defined as
         \begin{equation}\label{eq:jm}
-            {JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}[-B_{ij}]\} }.
+            {JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}(-B_{ij})\} }.
         \end{equation}
 
         Similar to the KL divergence,  a weighted mean of the distance
@@ -334,7 +334,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
               Cohen's kappa               & Accuracy   & High\\
               F1 mean                     & Accuracy   & High\\
               \midrule
-              Kullback-Leibler divergence & Divergence & Low \\
+              Kullback-Leibler divergences & Divergence & Low \\
               Jeffries-Matusita distance  & Divergence & Low \\
               \bottomrule
             \end{tabular}
@@ -440,7 +440,7 @@ GMM models for each fold.
 \subsection{Statistical update rules}
         \subsubsection{Update for cross validation}
         \label{sec:update-cv}
-        Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM with the whole training set once and then, instead of training models on $(n_{cv}-1)$ folds, parameters of the complete model are used to derive those of submodels.
+        Based on \cite{fauvel2015fast}, a method to accelerate the $n_{cv}$-fold cross-validation process in the case of criterion functions based on correct classification measures was implemented. The idea is to estimate the GMM with the whole training set once and then, instead of training models on $(n_{cv}-1)$ folds, parameters of the complete model are used to derive those of sub-models.
 
         A sub-GMM model can be estimated at a reduced complexity when one fold is remove from the training set. From~\cite{fauvel2015fast}, the following formulae for unbiased estimators can be derived:
         \begin{prop}[Cross-validation mean update]
@@ -452,18 +452,18 @@ GMM models for each fold.
         \begin{prop}[Cross-validation covariance matrix update]
             \label{eq:update-cv2}
             \begin{align*}
-                \boldsymbol{\hat{\Sigma}}_c^{n_c-\nu_c} = &\frac{1}{n_c-\nu_c-1} \biggl( (n_c-1) \boldsymbol{\hat{\Sigma}}_c^{n_c} - (\nu_c-1) \boldsymbol{\hat{\Sigma}}_c^{\nu_c} \nonumber \\
-                &- \frac{n_c \nu_c}{(n_c-\nu_c)} (\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})(\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})^t \biggr) \nonumber
+              \boldsymbol{\hat{\Sigma}}_c^{n_c-\nu_c} = &\frac{1}{n_c-\nu_c-1} \biggl\{ (n_c-1) \boldsymbol{\hat{\Sigma}}_c^{n_c} - (\nu_c-1)\boldsymbol{\hat{\Sigma}}_c^{\nu_c} \nonumber \\
+                                                        &- \frac{n_c \nu_c}{(n_c-\nu_c)} (\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})(\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})^t \biggr\} \nonumber
             \end{align*}
         \end{prop}
-        \noindent where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exposants on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\nu}_c$ denotes the set of samples used to compute them.
+        \noindent where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exponents on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\nu}_c$ denotes the set of samples used to compute them.
 
         \subsubsection{Criterion function computation}
         \label{sec:update-crit}
         At iteration $k$, depending on the criterion, three terms have
         to  be computed:  the inverse  of the  covariance matrix,  the
         logarithm of the determinant of  the covariance matrix and the
-        quadratical term in  eq.~\ref{eq:decision}. However, all these
+        quadratic  term in  eq.~\ref{eq:decision}. However,  all these
         terms  have already  been computed  for iteration  $(k-1)$. By
         using  the  fact that  the  covariance  matrix is  a  positive
         definite     symmetric    matrix     and    block     matrices
@@ -498,9 +498,9 @@ GMM models for each fold.
         $\mathbf{u}_{i}   =    \boldsymbol{\Sigma}^{(k)}_{i,k}$   with
         $i  \in [1,k-1]$.  Using  block matrix  inverse formulae,  the
         following proposition holds:
-        \begin{prop}[Forward update rule for inverse of covariance matrix]
+        \begin{prop}[Forward update rule for the inverse of the covariance matrix]
         \label{eq:update-inv}
-            \begin{equation}\label{eq:cov:inv}
+        \begin{equation}\label{eq:cov:inv}
                 (\boldsymbol{\Sigma}^{(k)})^{-1} =
                 \bigg[\begin{array}{cc}
                 \mathbf{A} & \mathbf{v} \\
@@ -532,11 +532,11 @@ GMM models for each fold.
         Using eq.~\ref{eq:cov} and~\ref{eq:cov:inv}, it is possible to
         deduce  the   following  propositions  (proof  are   given  in
         Appendix~\ref{app:proof-update}).
-        \begin{prop}[Update rule for quadratical term]
+        \begin{prop}[Update rule for the quadratical term]
         \label{eq:update-quad}
             \begin{align}
-                (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
+              (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once per selection step}}} \nonumber \\
+                                                                                       &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for each augmented set}}}.
             \end{align}
         \end{prop}
         \begin{prop}[Update rule for logdet]
@@ -557,30 +557,30 @@ GMM models for each fold.
             \end{align}
         \end{prop}
 
+      \begin{prop}[Kullback-Leibler divergence~\ref{eq:skl}]
+        \begin{align}
+        \label{eq:skl-update}
+            & SKL_{ij} = \frac{1}{2} \biggl\{ \underbrace{\text{\normalfont Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2}_{\substack{\text{computed for each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2 - 2k}_{\substack{\text{computed for each augmented set}}} \nonumber \\
+            &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t (\boldsymbol{\Sigma}_i^{(k-1)})^{-1}(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber\\
+          & + \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t(\boldsymbol{\Sigma}_j^{(k-1)})^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once per selection step}}} \biggr\}.
+        \end{align}
+        with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
+      \end{prop}
 
-        \begin{prop}[Kullback-Leibler divergence~\ref{eq:skl}]
-            \begin{align}
-            \label{eq:skl-update}
-                & SKL_{ij} = \frac{1}{2} \biggl( \underbrace{\text{Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-                &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2 - 2k}_{\substack{\text{computed for} \\ \text{each augmented set}}} \nonumber \\
-                &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ((\boldsymbol{\Sigma}_i^{(k-1)})^{-1} + (\boldsymbol{\Sigma}_j^{(k-1)})^{-1}) (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \biggr).
-            \end{align}
-            with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
-        \end{prop}
-
-        \begin{prop}[Jeffries-Matusita distance~\ref{eq:jm}]
-            \begin{align}
-            \label{eq:jm-update}
-                \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-                &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-                &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for} \\ \text{each augmented set}}},
-            \end{align}
-        where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
-        \end{prop}
-
-
-    The Algorithm~\ref{alg:sffs-update} illustrates the optimization of the Algorithm~\ref{alg:sffs} developed using these formulae.
+      \begin{prop}[Jeffries-Matusita distance~\ref{eq:jm}]
+      \begin{align}
+        \label{eq:jm-update}
+            \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
+            &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once per selection step}}} \nonumber \\
+            &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for each augmented set}}},
+      \end{align}
+      where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$.
+    \end{prop}
+    
+    The  Algorithm~\ref{alg:sffs-update} illustrates  the optimization
+    of the Algorithm~\ref{alg:sffs} using these formulae.
 
     \subsection{Numerical issues}
     For each  iteration $k$, after  the selection of  optimal features
@@ -671,24 +671,48 @@ GMM models for each fold.
     }
     \end{algorithm}
 
-    \subsection{OTB external module}
+    \subsection{Implementation}
     \label{sec:otb-module}
 
-    The developed method has been made available as a remote module of Orfeo toolbox called \emph{otbFFSforGMM} and can be download on Github\footnote{\url{https://github.com/Laadr/otbFFSforGMM}}.
+    The proposed  method has been implemented  in \texttt{C++} through
+    the  Orfeo  Toolbox (OTB)~\cite{christophe2008orfeo}.   The  Orfeo
+    Toolbox  is  an  open-source  library  for  remote  sensing  image
+    processing,  developed by  the  French Space  Agency (CNES).   The
+    feature selection algorithm  can be installed as  a remote module,
+    the           source            code           is           freely
+    available\footnote{\url{https://github.com/Laadr/otbFFSforGMM}}.
 
-    The Orfeo Toolbox is an open-source library for remote sensing image processing. This library allows developers to code external modules and make them available to the community. It is to note that the toolbox already implements several classifiers inherited mostly from OpenCV. Nevertheless, the GMM classifier currently in place is not robust to high dimensionality and that is why a new GMM model has been developed in the module.
+    Following OTB framework, two application are available. The first,
+    called  \texttt{otbcli\_TrainGMMSelectionApp}, performs  a feature
+    selection algorithm (SFS or SFFS) with the one given criterion (to
+    choose  between  Jeffries-Matusita  dist.,  Kullback-Lieber  div.,
+    Cohen’s  kappa, overall  accuracy,  mean  F1-score).  The  second,
+    called \texttt{otbcli\_PredictGMMApp}, generates the thematic maps
+    according to the  learn model. The only  technical limitation that
+    the  training set  must  fit  in the  RAM  of  the computer.   The
+    classification step is streamed and there is no limitation in term
+    of image  size. The Figure~\ref{fig:otb:ffs} shows  a code excerpt
+    to run the application.
 
-    In addition of the C++ class directly available to develop C++ code, three commandline applications have been produced. These applications allow the user to use and parametrize the algorithm as desired.
+    \begin{figure}\centering
+      
+    \begin{minted}[fontsize=\tiny,bgcolor=bg]{sh}
+otbcli_TrainGMMSelectionApp -io.il hyper.tif \
+			    -io.vd reference.shp \
+			    -gmm.varnb 20 -gmm.method forward -gmm.crit jm\
+			    -gmm.best 1 -gmm.seed 0\
+			    -io.out model.txt
 
-    The first application \emph{otbcli\_TrainGMMApp} trains a GMM classifier from multiple pairs of images and training vector data and creates a model file. It also allows to perform ridge regularization with an embedded selection of the regularization parameter among a list of values proposed by the user. The regularization value is chosen by maximizing a criterion function (Cohen's kappa, overall accuracy or mean of F1 scores) estimated by cross-validation.
-
-    The second application \emph{otbcli\_TrainGMMSelectionApp} also trains a GMM classifier and in addition performs a feature selection algorithm (SFS, SFFS) with various possible criterion (Jeffries-Matusita dist., Kullback-Lieber div., Cohen’s kappa, overall accuracy, mean F1-score).
-
-    The third application \emph{otbcli\_PredictGMMApp} takes a raster image and a model file as input and performs the classification of the image. It generates a classification map in an image file and optionally a confidence map. It also allows to precise manually the number of features to use for prediction if the number automatically set does not fit the user requirement (evolution of criterion function is available in model file).
-
-\section{Datasets}
+otbcli_PredictGMMApp -in hyper.tif \
+		     -model model.txt -modeltype selection\
+		     -out ThematicMap.tif
+    \end{minted}
+    \caption{OTB Module: The feature selection is done on the image \emph{hyper.tif} using the training set from \emph{reference.shp}. The feature selection algorithm is the forward search used with the Jeffries-Matusita criterion, 20 features are extracted and the corresponding GMM model is saved in \emph{model.txt}. Then the whole image is classified using the model and the results is saved in the geotiff \emph{ThematicMap.tif}.}
+    \label{fig:otb:ffs}
+  \end{figure}
+\section{Data-sets}
 \label{sec:datasets}
-Numerical experiments  have been conducted on  two different datasets.
+Numerical experiments  have been conducted on  two different data-sets.
 The first  dataset, called  \emph{Aisa}, is an  airborne hyperspectral
 dataset  and  the  second,  called \emph{Potsdam},  is  an  very  high
 resolution multispectral airborne image.
@@ -700,7 +724,7 @@ resolution multispectral airborne image.
     ranging from  395 to 975  nm. 16 classes  have been defined  for a
     total of 361,971  referenced pixels, Table~\ref{tab:aisa} presents
     the number of pixel per  class.  The Figure~\ref{fig:aisa} shows a
-    colored composition of the image and the groundtruth.
+    colored composition of the image and the ground-truth.
 
     \begin{figure}[!t]
         \centering
@@ -710,12 +734,12 @@ resolution multispectral airborne image.
             \includegraphics[width=0.7\columnwidth]{Fig/aisa_gt.png} \\
             {\bfseries{(b)}} \\
         \end{tabular}
-        \caption{Aisa dataset: {\bfseries{(a)}} colored composition of the image (R: 634nm, G: 519nm, B: 477nm), {\bfseries{(b)}} groundtruth.\label{fig:aisa}}
+        \caption{Aisa dataset: {\bfseries{(a)}} colored composition of the image (R: 634nm, G: 519nm, B: 477nm), {\bfseries{(b)}} ground-truth.\label{fig:aisa}}
     \end{figure}
 
     \begin{table}[!t]
         \centering
-        \caption{Repartition of classes in Aisa dataset.\label{tab:aisa}}
+        \caption{Information classes for the Aisa dataset.\label{tab:aisa}}
         \begin{tabular}[b]{lc}\toprule
           Class & Number of samples \\ \midrule
           Winter wheat & 136,524 \\
@@ -758,7 +782,7 @@ resolution multispectral airborne image.
 
     \begin{figure}[!t]
         \centering
-        \begin{tabular}{ccc}
+        \begin{tabular}{c@{~}c@{~}c}
             \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_5_11_RGB.jpg} &
             \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_5_12_RGB.jpg} &
             \includegraphics[width=0.3\columnwidth]{Fig/top_potsdam_3_10_RGB.jpg} \\
@@ -775,9 +799,11 @@ resolution multispectral airborne image.
 
     \begin{table}[!t]
         \centering
-        \caption{Repartition of classes in Aisa dataset.\label{tab:potsdam}}
+        \caption{Information classes for the three tiles of the Postdam dataset.\label{tab:potsdam}}
         \begin{tabular}[b]{lrrr}\toprule
-          Class & \# of samples in 5\_11  & \#  of samples in 5\_12  & \#  of samples in 3\_10 \\
+          & \multicolumn{3}{c}{Number of samples per tile}\\
+            \cmidrule{2-4}
+            Class &   5\_11  &   5\_12  & 3\_10 \\
           \midrule
           Clutter             & 1,078,611  & 812,038    & 1,890,467 \\
           Trees               & 4,493,295  & 2,132,368  & 8,780,245 \\
@@ -822,8 +848,8 @@ resolution multispectral airborne image.
     The following classifiers are tested:
     \begin{itemize}
         \item A k-nearest-neighbors classifier (KNN) with OTB default parameters (32 as number of neighbors).
-        \item A Random Forest classifier with parameters optimized by gridsearch (200 trees, 40 as max depth, 50 as size of the randomly selected subset of features at each tree node)
-        \item A GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by gridsearch.
+        \item A Random Forest classifier with parameters optimized by grid search (200 trees, 40 as max depth, 50 as size of the randomly selected subset of features at each tree node)
+        \item A GMM classifier with ridge regularization (GMM ridge) with regularization constant optimized by grid search.
     \end{itemize}
     The GMM classifier is part of the external module described in Section~\ref{sec:otb-module}.
 
@@ -889,7 +915,7 @@ resolution multispectral airborne image.
         \centering
         \caption{Average classification accuracy 20 trials (standard deviation in parenthesis).\label{tab:aisa-otbsimu}}
         \begin{tabular}{lccc}\toprule
-             & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cline{2-4}
+             & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
             \# samples by class & 250 & 500 & 1000 \\ \midrule
 
             GMM SFS kappa & 0.684 (0.025) & 0.698 (0.027) & 0.711 (0.028) \\
@@ -907,7 +933,7 @@ resolution multispectral airborne image.
         \caption{Mean processing time for training and classification for results in Table \ref{tab:aisa-otbsimu}.\label{tab:aisa-otbsimu-time}}
         \begin{tabularx}{\columnwidth}{l*{6}{>{\centering\arraybackslash}X}}
             \toprule
-             & \multicolumn{3}{c}{\bfseries Training time (s)} & \multicolumn{3}{c}{\bfseries Classification time (s)} \\ \cline{2-7}
+             & \multicolumn{3}{c}{\bfseries Training time (s)} & \multicolumn{3}{c}{\bfseries Classification time (s)} \\ \cmidrule{2-7}
             \# samples by class & 250 & 500 & 1000 & 250 & 500 & 1000 \\ \midrule
 
             GMM SFS kappa & 257 & 496 & 955 & 7.7 & 8.6 & 8.7 \\
@@ -922,11 +948,11 @@ resolution multispectral airborne image.
 
     The results show that, on this  dataset, GMM classifiers with feature selection get the best classification rate. Among the three variations of the selection algorithm, none appears to perform better than the others. Using kappa or Jeffries-Matusita distance as criterion is equal and using SFFS does not give any advantage.
 
-    The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples. The GMM classifier with ridge regularization and the kNN classifier are both outperformed.
+    The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples. The GMM classifier with ridge regularization and the KNN classifier are both outperformed.
 
     In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~\ref{eq:decision} has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
 
-    The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because of the classification rate estimation needed. For the kNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be more deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
+    The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because of the classification rate estimation needed. For the KNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be more deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
     % The computation of the kappa seems  to suffer from  a lack of  parallelization   which could be  improved. ->  plus tard dans la conclusion.
 
     \subsection{Potsdam dataset}
@@ -936,11 +962,11 @@ resolution multispectral airborne image.
     5\_12  or  3\_10.  Table~\ref{tab:potsdam-otbsimu}  presents  the
     results.
 
-    \begin{table}[!t]
+    \begin{table*}[!t]
         \centering
         \caption{Kappa coefficient and processing time for 1,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu}}
         \begin{tabular}{lcccccc}\toprule
-            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-7}
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cmidrule{2-7}
             GMM SFS kappa & 0.694 (0.002)             & {\bfseries 0.669 (0.005)} & {\bfseries 0.533 (0.008)} & 400 & 310  & 13.2 \\
             GMM SFS JM &    0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2   & 310  & 11 \\
             GMM SFFS JM &   0.624 (0.028)             & 0.631 (0.034)             & 0.461 (0.027)             & 2.6 & 310  & 11 \\
@@ -949,13 +975,13 @@ resolution multispectral airborne image.
             Random Forest & {\bfseries 0.729 (0.004)} & {\bfseries 0.673 (0.005)} & {\bfseries 0.529 (0.009)} & 20  & 840  & all \\
             \bottomrule
         \end{tabular}
-    \end{table}
+    \end{table*}
 
-    \begin{table}[!t]
+    \begin{table*}[!t]
         \centering
         \caption{Kappa coefficient and processing time for 50,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu-big}}
         \begin{tabular}{lcccccc}\toprule
-            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cline{2-7}
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cmidrule{2-7}
             GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 0.531 (0.005) & 20000 & 340 & 29 \\
             GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6 & 330 & 10 \\
             GMM SFFS JM &   0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6.6 & 340 & 10 \\
@@ -963,7 +989,7 @@ resolution multispectral airborne image.
             Random Forest & {\bfseries 0.851 (0.001)} & {\bfseries 0.715 (0.001)} & {\bfseries 0.573 (0.002)} & 2000 & 2000 & all \\
             \bottomrule
         \end{tabular}
-    \end{table}
+    \end{table*}
 
     With this second dataset, the Random Forest classifier and the GMM classifier with kappa as selection criterion distinguished themselves by good performance. When using 1000 samples, no significant difference of classification rate has been observed on test set. But, with 50,000 samples, the Random Forest classifier becomes significantly better.
 
@@ -1079,14 +1105,14 @@ The python and C++ code are available freely for download: \url{https://github.c
 %\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
 % or if you just want to reserve a space for a photo:
 
-\begin{IEEEbiography}{Michael Shell}
-Biography text here.
-\end{IEEEbiography}
+% \begin{IEEEbiography}{Michael Shell}
+% Biography text here.
+% \end{IEEEbiography}
 
-% if you will not have a photo at all:
-\begin{IEEEbiographynophoto}{John Doe}
-Biography text here.
-\end{IEEEbiographynophoto}
+% % if you will not have a photo at all:
+% \begin{IEEEbiographynophoto}{John Doe}
+% Biography text here.
+% \end{IEEEbiographynophoto}
 
 % insert where needed to balance the two columns on the last page with
 % biographies
