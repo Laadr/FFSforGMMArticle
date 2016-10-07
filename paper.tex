@@ -551,9 +551,9 @@ GMM models for each fold.
         \begin{prop}[Decision function~\ref{eq:decision}]
             \begin{align}
             \label{eq:q-update}
-                Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-                &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once}\\ \text{per selection step}}} \nonumber \\
-                &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
+                Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
+                &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once per selection step}}} \nonumber \\
+                &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for each augmented set}}}.
             \end{align}
         \end{prop}
 
@@ -696,15 +696,18 @@ GMM models for each fold.
 
     \begin{figure}\centering
       
-    \begin{minted}[fontsize=\tiny,bgcolor=bg]{sh}
+    \begin{minted}[fontsize=\scriptsize,bgcolor=bg]{sh}
 otbcli_TrainGMMSelectionApp -io.il hyper.tif \
 			    -io.vd reference.shp \
-			    -gmm.varnb 20 -gmm.method forward -gmm.crit jm\
-			    -gmm.best 1 -gmm.seed 0\
+			    -gmm.varnb 20 \
+                            -gmm.method forward \
+                            -gmm.crit jm \
+			    -gmm.best 1 -gmm.seed 0 \
 			    -io.out model.txt
 
 otbcli_PredictGMMApp -in hyper.tif \
-		     -model model.txt -modeltype selection\
+                     -model model.txt \
+                     -modeltype selection \
 		     -out ThematicMap.tif
     \end{minted}
     \caption{OTB Module: The feature selection is done on the image \emph{hyper.tif} using the training set from \emph{reference.shp}. The feature selection algorithm is the forward search used with the Jeffries-Matusita criterion, 20 features are extracted and the corresponding GMM model is saved in \emph{model.txt}. Then the whole image is classified using the model and the results is saved in the geotiff \emph{ThematicMap.tif}.}
