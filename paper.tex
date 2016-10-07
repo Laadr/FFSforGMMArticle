@@ -694,18 +694,18 @@ GMM models for each fold.
     of image  size. The Figure~\ref{fig:otb:ffs} shows  a code excerpt
     to run the application.
 
-    \begin{figure}
-        \centering
-        \begin{minted}[fontsize=\tiny,bgcolor=bg]{sh}
-            otbcli_TrainGMMSelectionApp -io.il hyper.tif \
+    \begin{figure} 
+        \centering %Pas touche l'indentation !
+        \begin{minted}[fontsize=\tiny,bgcolor=bg]{sh} 
+otbcli_TrainGMMSelectionApp -io.il hyper.tif \
                             -io.vd reference.shp \
                             -gmm.varnb 20 -gmm.method forward -gmm.crit jm\
                             -gmm.best 1 -gmm.seed 0\
                             -io.out model.txt
 
-            otbcli_PredictGMMApp -in hyper.tif \
-                         -model model.txt -modeltype selection\
-                         -out ThematicMap.tif
+otbcli_PredictGMMApp -in hyper.tif \
+                     -model model.txt -modeltype selection\
+                     -out ThematicMap.tif
         \end{minted}
         \caption{OTB Module: The feature selection is done on the image \emph{hyper.tif} using the training set from \emph{reference.shp}. The feature selection algorithm is the forward search used with the Jeffries-Matusita criterion, 20 features are extracted and the corresponding GMM model is saved in \emph{model.txt}. Then the whole image is classified using the model and the results is saved in the geotiff \emph{ThematicMap.tif}.}
         \label{fig:otb:ffs}
@@ -770,16 +770,17 @@ resolution multispectral airborne image.
     and                         Remote                         Sensing
     (ISPRS)\footnote{\url{http://www2.isprs.org/commissions/comm3/wg4/2d-sem-label-potsdam.html}}. The
     dataset is composed of aerial images of the urban area of Potsdam.
-    The area is cut into 38  patches of 6000$\times$6000 pixels with a
-    resolution  of 5cm  by pixel  and 4  channels are  available: Red,
-    Blue, Green  and Infrared (RGBIR).   A Digital Surface  Model with
-    the same  resolution is also  provided and a  so-called normalized
-    DSM representing the height above  ground. The ground-truth for 24
-    tiles  are   provided  with   6  classes:  Low   vegetation,  High
-    vegetation, Impervious surfaces,  Buildings, Cars, Clutter.  Three
-    tiles  have  been  used  in  this  work,  they  are  displayed  in
-    Figure~\ref{fig:potsdam-expl}.  Table~\ref{tab:potsdam} summarizes
-    the  number of  samples of  each class.
+    The area  is divided  into 38  patches of  6000$\times$6000 pixels
+    with a  resolution of 5cm by  pixel and 4 channels  are available:
+    Red, Blue,  Green and Infrared  (RGBIR).  A Digital  Surface Model
+    with  the  same  resolution  is  also  provided  and  a  so-called
+    normalized  DSM   representing  the   height  above   ground.  The
+    ground-truth  for  24  tiles  are provided  with  6  classes:  Low
+    vegetation, High vegetation, Impervious surfaces, Buildings, Cars,
+    Clutter.   Three tiles  have  been  used in  this  work, they  are
+    displayed             in            Figure~\ref{fig:potsdam-expl}.
+    Table~\ref{tab:potsdam} summarizes  the number of samples  of each
+    class.
 
     \begin{figure}[!t]
         \centering
@@ -822,7 +823,9 @@ resolution multispectral airborne image.
         \item Morphological profile with reconstruction of each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features)~\cite{fauvel2013advances};
         \item Attribute profile of each band with area as attribute and 1000, 2000, 5000, 10000 and 15000 as thresholds (40 features)~\cite{dalla2010morphological}.
         \item Attribute profile of each band with diagonal of bounding box as attribute and 100, 200, 500, 1000 and 20000 as thresholds (40 features)~\cite{dalla2010morphological}.
-        \item Textural features with neighborhood of 19x19 pixels: mean, standard deviation, range and entropy (16 features)~\cite{otb}.
+        \item Textural features for  each channel with neighborhood of
+          19x19 pixels:  mean, standard  deviation, range  and entropy
+          (16 features)~\cite{otb}.
     \end{itemize}
     The normalized DSM and the raw  RGBIR image are added to these 191
     features and  then then  stacked to  create a  new image  with 196
@@ -841,7 +844,7 @@ resolution multispectral airborne image.
     some   standard  classifiers   used   in   operational  land   map
     production~\cite{rs70912356}. A non-optimized  previous version of
     the method has been already compared to other selection methods in
-    \cite{fauvel2015fast}.  Hence,  the primary  objective is  to test
+    \cite{fauvel2015fast}.  Hence, the primary  objective is to assess
     the  operational  efficiency  and  it is  compared  to  other  OTB
     classifiers   used  operationally   through  their   command  line
     applications\footnote{\url{http://otbcb.readthedocs.io/en/latest/OTB-Applications.html}}.
@@ -856,31 +859,45 @@ resolution multispectral airborne image.
 
     All these classifiers are compared with 3 configurations of the proposed GMM classifier:
     \begin{itemize}
-        \item one with forward selection and JM distance as criterion (GMM SFS JM);
-        \item one with forward selection and Cohen's kappa as criterion (GMM SFS kappa);
-        \item one with floating forward selection and JM distance as criterion (GMM SFFS JM).
+    \item one with forward selection and JM distance as criterion (GMM SFS JM);
+    \item one with forward selection and Cohen's kappa as criterion (GMM SFS kappa);
+    \item one with floating forward selection and JM distance as criterion (GMM SFFS JM).
     \end{itemize}
+    Other configurations  have been  investigated and  performs either
+    equally     or     lower     in    terms     of     classification
+    accuracy~\cite{al:report}. For the sake of clarity, only the three
+    aforementioned configurations are discussed here.
 
     The training set has been created  with an equal number of samples
     for each class and additionally  a spatial stratification has been
     performed, \emph{i.e.}, each training  sample belongs to a spatial
     polygon  that  does  not  intersect  spatially  with  any  spatial
     polygons used  for the validation.   Several size of  training set
-    have been tested investigated.   For the Aisa dataset, experiments
-    have been conducted  using 250, 500 and 1000 samples  by class and
-    for the Potsdam dataset, 1000 and 50000 samples by class.
+    have been  tested.  For  the Aisa  dataset, experiments  have been
+    conducted using  250, 500 and  1000 samples  by class and  for the
+    Potsdam dataset, 1000 and 50000 samples by class.
 
-    For SFS and  SFFS selection, the number of variables to select is set to 30 for the Aisa dataset and 60 for the Potsdam dataset. Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.001\% in this experiment,
-    \begin{equation*}
-        \Omega^{*} = \Omega_{\min \{k|DJ_k<th\}}
-    \end{equation*}
-    with $DJ_k = \frac{J(\Omega_k) - J(\Omega_{k-1})}{\max_k (J(\Omega_k) - J(\Omega_{k-1}))}$.
+    For SFS and  SFFS selection, the number of variables  to select is
+    set to  30 for the  Aisa dataset and  60 for the  Potsdam dataset.
+    After  the selection  procedure,  the optimal  number of  selected
+    variable is selected  as follow. Rather than  selecting the number
+    of variables corresponding to the  highest value oft he criterion,
+    the number of  retained variables is set when  the criterion stops
+    to increase significantly.  It is found by  computing the discrete
+    derivative of the criteria. See  %%TODO: faire une figure avec une
+                                    %%courbe réelle et montrer où l'on
+                                    %%s'arrete et où est le max.
 
-    The classification  rate is presented  using Cohen's kappa  but it
-    has to  be noticed that the  results were  similar when looking  at the
-    mean F1-score.  Processing time  has been  evaluated on  a desktop
-    computer  with 4Gb  of RAM  and  Intel(R) Core(TM)  i5-3570 CPU  @
-    3.40GHz $\times$ 4 processors.
+    % Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.001\% in this experiment,
+    % \begin{equation*}
+    %     \Omega^{*} = \Omega_{\min \{k|DJ_k<th\}}
+    % \end{equation*}
+    % with $DJ_k = \frac{J(\Omega_k) - J(\Omega_{k-1})}{\max_k (J(\Omega_k) - J(\Omega_{k-1}))}$.
+
+    The    classification   rate    is    presented   using    Cohen's
+    kappa. Processing  time has been  evaluated on a  desktop computer
+    with  8Gb of  RAM  and  Intel(R) Core(TM)  i5-3570  CPU @  3.40GHz
+    $\times$ 4 processors.
 
     \subsection{Aisa dataset}
     \label{sec:aisa}
@@ -953,7 +970,7 @@ resolution multispectral airborne image.
 
     In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~\ref{eq:decision} has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
 
-    The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because of the classification rate estimation needed. For the KNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be more deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
+    The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because of the classification rate estimation needed. For the KNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
     % The computation of the kappa seems  to suffer from  a lack of  parallelization   which could be  improved. ->  plus tard dans la conclusion.
 
     \subsection{Potsdam dataset}
@@ -961,7 +978,7 @@ resolution multispectral airborne image.
     For the Potsdam  dataset, training samples were  selected from one
     tile (5\_11)  and validation  samples were all  the pixel  of tile
     5\_12  or  3\_10.  Table~\ref{tab:potsdam-otbsimu}  presents  the
-    results.
+    results in terms of classification accuracy and processing time.
 
     \begin{table*}[!t]
         \centering
@@ -992,7 +1009,7 @@ resolution multispectral airborne image.
         \end{tabular}
     \end{table*}
 
-    With this second dataset, the Random Forest classifier and the GMM classifier with kappa as selection criterion distinguished themselves by good performance. When using 1000 samples, no significant difference of classification rate has been observed on test set. But, with 50,000 samples, the Random Forest classifier becomes significantly better.
+    With this second dataset, the Random Forest classifier and the GMM classifier with kappa as selection criterion perform the best in terms of classification accuracy. When using 1000 samples per class, no significant difference of classification rate has been observed on test set. But, with 50,000 samples per class, the Random Forest classifier becomes significantly better.
 
     It can be guessed that the fact that the Gaussian hypothesis is unlikely to be verified explains the difficulty to extract the finer information available in a larger dataset. The JM distance has stressed in Table~\ref{tab:crit} has a strong Gaussian hypothesis and the same hypotheses could also explain the drop of the classification rate of GMM classifiers with JM distance as criterion.
 
@@ -1195,3 +1212,6 @@ The python and C++ code are available freely for download: \url{https://github.c
 %%% mode: latex
 %%% TeX-master: t
 %%% End:
+
+
+working...
