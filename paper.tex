@@ -694,22 +694,23 @@ GMM models for each fold.
     of image  size. The Figure~\ref{fig:otb:ffs} shows  a code excerpt
     to run the application.
 
-    \begin{figure}\centering
-      
-    \begin{minted}[fontsize=\tiny,bgcolor=bg]{sh}
-otbcli_TrainGMMSelectionApp -io.il hyper.tif \
-			    -io.vd reference.shp \
-			    -gmm.varnb 20 -gmm.method forward -gmm.crit jm\
-			    -gmm.best 1 -gmm.seed 0\
-			    -io.out model.txt
+    \begin{figure}
+        \centering
+        \begin{minted}[fontsize=\tiny,bgcolor=bg]{sh}
+            otbcli_TrainGMMSelectionApp -io.il hyper.tif \
+                            -io.vd reference.shp \
+                            -gmm.varnb 20 -gmm.method forward -gmm.crit jm\
+                            -gmm.best 1 -gmm.seed 0\
+                            -io.out model.txt
 
-otbcli_PredictGMMApp -in hyper.tif \
-		     -model model.txt -modeltype selection\
-		     -out ThematicMap.tif
-    \end{minted}
-    \caption{OTB Module: The feature selection is done on the image \emph{hyper.tif} using the training set from \emph{reference.shp}. The feature selection algorithm is the forward search used with the Jeffries-Matusita criterion, 20 features are extracted and the corresponding GMM model is saved in \emph{model.txt}. Then the whole image is classified using the model and the results is saved in the geotiff \emph{ThematicMap.tif}.}
-    \label{fig:otb:ffs}
-  \end{figure}
+            otbcli_PredictGMMApp -in hyper.tif \
+                         -model model.txt -modeltype selection\
+                         -out ThematicMap.tif
+        \end{minted}
+        \caption{OTB Module: The feature selection is done on the image \emph{hyper.tif} using the training set from \emph{reference.shp}. The feature selection algorithm is the forward search used with the Jeffries-Matusita criterion, 20 features are extracted and the corresponding GMM model is saved in \emph{model.txt}. Then the whole image is classified using the model and the results is saved in the geotiff \emph{ThematicMap.tif}.}
+        \label{fig:otb:ffs}
+    \end{figure}
+
 \section{Data-sets}
 \label{sec:datasets}
 Numerical experiments  have been conducted on  two different data-sets.
