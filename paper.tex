@@ -183,7 +183,7 @@ samples of class $c$.
     \subsection{Curse of dimensionality in GMM}
     \label{sec:curse:gmm}
 
-    The computation of~\ref{eq:decision} requires the inversion of the
+    The computation of eq.~(\ref{eq:decision}) requires the inversion of the
     covariance matrix and the  computation of the logarithm of the
     determinant.  The estimation of these terms suffers from the curse
     of  dimensionality\cite{bouveyron2014model}, because  in practice,
@@ -463,7 +463,7 @@ GMM models for each fold.
         At iteration $k$, depending on the criterion, three terms have
         to  be computed:  the inverse  of the  covariance matrix,  the
         logarithm of the determinant of  the covariance matrix and the
-        quadratic  term in  eq.~\ref{eq:decision}. However,  all these
+        quadratic  term in  eq.(~\ref{eq:decision}). However,  all these
         terms  have already  been computed  for iteration  $(k-1)$. By
         using  the  fact that  the  covariance  matrix is  a  positive
         definite     symmetric    matrix     and    block     matrices
@@ -529,7 +529,7 @@ GMM models for each fold.
         %     \end{equation*}
         % \end{prop}
 
-        Using eq.~\ref{eq:cov} and~\ref{eq:cov:inv}, it is possible to
+        Using eq.~(\ref{eq:cov}) and~(\ref{eq:cov:inv}), it is possible to
         deduce  the   following  propositions  (proof  are   given  in
         Appendix~\ref{app:proof-update}).
         \begin{prop}[Update rule for the quadratical term]
@@ -548,7 +548,7 @@ GMM models for each fold.
 
         From these update rules, it is now possible to split each criterion into two parts: one computed once per selection step and one computed for each augmented set.
 
-        \begin{prop}[Decision function~\ref{eq:decision}]
+        \begin{prop}[Decision function~(\ref{eq:decision})]
             \begin{align}
             \label{eq:q-update}
                 Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
@@ -557,7 +557,7 @@ GMM models for each fold.
             \end{align}
         \end{prop}
 
-      \begin{prop}[Kullback-Leibler divergence~\ref{eq:skl}]
+      \begin{prop}[Kullback-Leibler divergence~(\ref{eq:skl})]
         \begin{align}
         \label{eq:skl-update}
             & SKL_{ij} = \frac{1}{2} \biggl\{ \underbrace{\text{\normalfont Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for each augmented set}}} \nonumber \\
@@ -569,7 +569,7 @@ GMM models for each fold.
         with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
       \end{prop}
 
-      \begin{prop}[Jeffries-Matusita distance~\ref{eq:jm}]
+      \begin{prop}[Jeffries-Matusita distance~(\ref{eq:jm})]
       \begin{align}
         \label{eq:jm-update}
             \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
@@ -636,11 +636,11 @@ GMM models for each fold.
     \WHILE{$k \neq \text{maxVarNb}$}
     \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)} = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$
     \STATE {\bfseries for all} $\Lambda_{i,i}$ {\bfseries do} $\Lambda_{i,i} = \max (\text{EPS\_FLT},\Lambda_{i,i})$
-    \STATE Precompute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions \ref{eq:update-inv}, \ref{eq:update-quad} and \ref{eq:update-log}
+    \STATE Precompute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions (\ref{eq:update-inv}), (\ref{eq:update-quad}) and (\ref{eq:update-log})
     \FORALL{$f_i \in F$}
     \STATE Compute update constant $\alpha$
     \STATE $\alpha = \max (\text{EPS\_FLT},\alpha)$
-    \STATE $R_i = J(\{\Omega_k + f_i\})$ using Equations \ref{eq:q-update}, \ref{eq:skl-update} or \ref{eq:jm-update}
+    \STATE $R_i = J(\{\Omega_k + f_i\})$ using Equations (\ref{eq:q-update}), (\ref{eq:skl-update}) or (\ref{eq:jm-update})
     \ENDFOR
     \STATE $j=\text{arg} \max_{i} R_i$
     \STATE $k=k+1$
@@ -650,11 +650,11 @@ GMM models for each fold.
     \WHILE{$k > 2 \text{ and } \text{flag}=1$}
     \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)} = = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$
     \STATE {\bfseries for all} $\Lambda_{i,i}$ {\bfseries do} $\Lambda_{i,i} = \max (\text{EPS\_FLT},\Lambda_{i,i})$
-    \STATE Compute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions \ref{eq:update-inv}, \ref{eq:update-quad} and \ref{eq:update-log}
+    \STATE Compute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions (\ref{eq:update-inv}), (\ref{eq:update-quad}) and (\ref{eq:update-log})
     \FORALL{$f_i \in \Omega_k$}
     \STATE Compute update constant $\alpha$
     \STATE $\alpha = \max (\text{EPS\_FLT},\alpha)$
-    \STATE $R_i = J(\{\Omega_k \setminus f_i\})$ using Equations \ref{eq:q-update}, \ref{eq:skl-update} or \ref{eq:jm-update}
+    \STATE $R_i = J(\{\Omega_k \setminus f_i\})$ using Equations (\ref{eq:q-update}), (\ref{eq:skl-update}) or (\ref{eq:jm-update})
     \ENDFOR
     \STATE $j=\text{arg} \max_{i} R_i$
     \IF{$R_j > J(\Omega_{k-1})$}
@@ -881,14 +881,29 @@ resolution multispectral airborne image.
     set to  30 for the  Aisa dataset and  60 for the  Potsdam dataset.
     After  the selection  procedure,  the optimal  number of  selected
     variable is selected  as follow. Rather than  selecting the number
-    of variables corresponding to the  highest value oft he criterion,
+    of variables corresponding to the  highest value of the criterion,
     the number of  retained variables is set when  the criterion stops
     to increase significantly.  It is found by  computing the discrete
-    derivative of the criteria. See  %%TODO: faire une figure avec une
-                                    %%courbe réelle et montrer où l'on
-                                    %%s'arrete et où est le max.
+    derivative of the criteria. See \ref{fig:crit-evol}.
+    
+    \begin{figure}[!t]
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
+                \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
+                \draw[thick,red] (axis cs:15,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:15,\pgfkeysvalueof{/pgfplots/ymax});
+                \draw[thick,black] (axis cs:47,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:47,\pgfkeysvalueof{/pgfplots/ymax});
+            \end{axis};
+            % \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
+            %     \addplot[thick,black] table[x=nb,y=crit] {criterion_50000spl.txt};
+            %     \draw[thick,red] (axis cs:31,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:31,\pgfkeysvalueof{/pgfplots/ymax});
+            %     \draw[thick,black] (axis cs:31,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:31,\pgfkeysvalueof{/pgfplots/ymax});
+            % \end{axis};
+        \end{tikzpicture}
+        \caption{Criterion evolution in function of the number of selected variables. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.\label{fig:crit-evol}}
+    \end{figure}                                    
 
-    % Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.001\% in this experiment,
+    % Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.1\% in this experiment,
     % \begin{equation*}
     %     \Omega^{*} = \Omega_{\min \{k|DJ_k<th\}}
     % \end{equation*}
@@ -968,7 +983,7 @@ resolution multispectral airborne image.
 
     The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples. The GMM classifier with ridge regularization and the KNN classifier are both outperformed.
 
-    In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~\ref{eq:decision} has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
+    In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~(\ref{eq:decision}) has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
 
     The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because of the classification rate estimation needed. For the KNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
     % The computation of the kappa seems  to suffer from  a lack of  parallelization   which could be  improved. ->  plus tard dans la conclusion.
@@ -1036,7 +1051,7 @@ The python and C++ code are available freely for download: \url{https://github.c
 \appendices
 \section{Proof of update rules}
 \label{app:proof-update}
-    % \subsubsection{Proposition~\ref{eq:update-inv-back}}
+    % \subsubsection{Proposition~(\ref{eq:update-inv-back})}
     %     \begin{proof}
     %         \begin{align*}
     %             \mathbf{A} - \alpha \mathbf{v} \mathbf{v}^t
@@ -1046,7 +1061,7 @@ The python and C++ code are available freely for download: \url{https://github.c
     %         \end{align*}
     %     \end{proof}
 
-\begin{proof}[Proof of proposition~\ref{eq:update-quad}]
+\begin{proof}[Proof of proposition~(\ref{eq:update-quad})]
     \begin{alignat*}{3}
     (&\mathbf{x}^{(k)})^t && (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}
        = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
@@ -1069,7 +1084,7 @@ The python and C++ code are available freely for download: \url{https://github.c
     \end{alignat*}
 \end{proof}
 
-\begin{proof}[Proof of proposition~\ref{eq:update-log}]
+\begin{proof}[Proof of proposition~(\ref{eq:update-log})]
     \begin{align*}
         \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) =
         &\log \left(\left|
