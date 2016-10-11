@@ -61,8 +61,9 @@
 \author{Adrien~Lagrange,~Mathieu~Fauvel~and~Manuel~Grizonnet% <-this % stops a space
 \thanks{A. Lagrange and M. Fauvel are with the Universit\'{e} de Toulouse,
 INP-ENSAT, UMR 1201 DYNAFOR, France and with the INRA, UMR 1201
-DYNAFOR, France.}
-\thanks{M. Grizonnet is with Centre National d'\'{E}tudes Spatiales, French Space Agency, Toulouse, France.}}
+DYNAFOR, France.}%
+\thanks{M. Grizonnet is with Centre National d'\'{E}tudes Spatiales, French Space Agency, Toulouse, France.}%
+\thanks{This  work was  supported  by the  French National  Research Agency  (ANR)  under  Project Grant  ANR-13-JS02-0005-01  (Asterix project).}}
 
 % The paper headers
 \markboth{Transactions on Computational Imaging,~Special Issue on Computational Imaging for Earth Sciences, September~2016}{}
@@ -100,31 +101,90 @@ Finally, the method is compared to standard classifiers using two different data
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of data available for a given landscape becomes larger and larger. Several missions are about to produce huge amount of data or have already produced it. After 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites missioned by the German space agency will produce images with 244 spectral bands with a resolution of 30x30m and revisit every 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also take images with 212 spectral bands every 5 days. Additionally to hyperspectral data, hypertemporal data are also developping. The European satellites Sentinel-2 were launched successfully recently and the hypertemporal data produced by this mission will be fully available at the end of 2016\cite{drusch2012sentinel}.
+\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites missioned by the German space agency will produce images with 244 spectral bands with a resolution of 30x30m with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched successfully recently and 2 Terabytes of data will be released every days~\cite{drusch2012sentinel}. This high volume of earth observation data provides an accurate information of land state and functioning, and help to improve the understanding of the earth~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
 
-However, processing such data is more and more challenging because of statistical and computational issues. This statistical issues are often referred as the \emph{curse of dimensionality}. The Hughes phenomenon \cite{hughes1968mean} states that with a given number of samples, prediction accuracy will decays when the complexity, \emph{i.e.} the dimension, is higher than some optimum value. The problem is the fast increase of the number of parameters to estimate in order to build a model when dimension expands \cite{bouveyron2014model}. Thus, an important number of labeled samples is needed to perform learning. For example, in the case of Gaussian Mixture Models, the number of parameters progresses quadratically with the dimension, e.g. with 200 describing variables, the model estimation requires at least around 20,000 samples by class.
+In the spectral or temporal domain, a pixel is represented by a vector
+for   wich  each   component   corresponds   to  a   spectral/temporal
+measurement.  The  size of  the vector  is the  number of  spectral or
+temporal  measurements.   For  hyperspectral images,  this  number  is
+typically   about   several   hundreds  while   for   the   Sentinel-2
+multitemporal images, the number of spectro-temporal measurement for a
+given  year  is approximately  one  thousand.   When working  in  high
+dimensional  space,  statistical  methods  made for  low  or  moderate
+dimensional  space do  not  adapt  well.  For  instance,  the rate  of
+convergence of the statistical estimation decreases when the dimension
+grows while conjointly the number of parameters to estimate increases,
+making    the    estimation    of   the    model    parameters    very
+difficult~\cite{donoho}.  Consequently,  with a limited  training set,
+beyond a certain limit, the classification accuracy actually decreases
+as the number of features increases~\cite{hughes}.  For the purpose of
+classification,  these  problems are  related  to  the \emph{curse  of
+  dimensionality}. This is a major drawback in remote sensing since it
+is  difficult to  collect a  large and  an accurate  ground-truth.  An
+intensive work has  been performed in the remote  sensing community to
+build  accurate classifiers  for  high  dimensional images.   Bayesian
+models~\cite{book:landgrebe}, feature extraction and feature reduction
+techniques~\cite{book:landgrebe,DR:guided:tour},                random
+forest~\cite{1396322},   neural  networks~\cite{5411821}   and  kernel
+methods~\cite{kernel:methods:rs}  have   been  investigated   for  the
+classification of such images.
 
-The computational issues are also multiple. The computing infrastructure needed to process data is more and more expensive because the processing might requires a GPU and a large amount of RAM to load images which can weight a dozen of gigabytes \cite{christophe2011remote}\cite{plaza2011high}. The processing time is also limiting and requires to use parallelize computing (GPU, multi-threading).
+The  size of  the data  is increasing  with respect  to the  number of
+measurement per  pixel. The data  volume of an hyperspectral  image is
+typically    several    Gigabytes     per    acquisition    ($\approx$
+300km$^2$). Multitemporal data are  now available freely from internet
+stream    (see    for    instance     the    Copernicus    data    hub
+\url{https://cophub.copernicus.eu/}).  This very  large volume of data
+requires   specific   computing  infrastructure.    High   performance
+computing   is   actually   investigated   by   the   remote   sensing
+community~\cite{christophe2011remote,plaza2011high}.  Main  issues are
+related to the use of  parallel approach (multicore, CPU, clusters) to
+improve the  processing time, and  to the use of  streaming techniques
+when data  does not fit in  memory.  One popular open  source software
+solution  is  the Orfeo  Toolbox,  developed  by the  French  National
+Agency~\cite{christophe2008orfeo}.   Streaming and  parallel computing
+are  convenientely  proposed  to  the  user  through  several  modules
+``\emph{ready to use}''.
 
-A possible method to solve these issues is to perform a reduction of dimension. It is possible to extract a set of relevant features to get a parsimonious representation of the data \cite{jimenez1998supervised}. For instance, in land-cover classification, given a set of spatial, temporal and spectral features, it is possible to extract those which are the most discriminant for the purpose of classification \cite{fassnacht2014comparison}. In hyperspectral data, from the hundreds of available spectral channels, it is possible to reduce the number of channels to make the processing more efficient in terms of statistical complexity because of the reduction of the number of parameters to estimate and thus also in term of computational time.
+A method  to reduce  both statistical and  computational issues  is to
+perform a reduction of the dimension. In fact, with the \emph{curse of
+  dimensionality}     comes     the      \emph{blessing     of     the
+  dimensionality}~\cite{bouveyron2014model}:  high   dimensional  data
+space   exhibits  interesting   properties   for  the   classification
+purpose. In  particular, it is possible  to extract a set  of relevant
+features    to   get    a   parsimonious    representation   of    the
+data~\cite{jimenez1998supervised}.    For   instance,  in   land-cover
+classification,  given  a  set   of  spatial,  temporal  and  spectral
+features,  it  is  possible  to  extract  those  which  are  the  most
+discriminant      for      the     purpose      of      classification
+\cite{fassnacht2014comparison}.   In  hyperspectral   data,  from  the
+hundreds of available spectral channels,  it is possible to reduce the
+number of channels  to make the processing more efficient  in terms of
+statistical complexity  and computational load. In  short, by reducing
+the dimension better classification results is expected with a reduced
+computational load.
 
-The objective of feature selection is to retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.
+% Among the various dimension reduction techniques, feature selection demonstrates several appealing for practical situation. The objective of feature selection is to find a subset of the original features with a minimum loss according the objective. Thus, 
 
-There are two ways to reduce dimension \cite{Guyon:2006:FEF:1208773}: features extraction and feature selection. Feature extraction means reformulate and summarize the information by creating new features in combining the existing ones. Linear combinations of the initial features can be extracted using for example in Principal Component Analysis \cite{jimenez1998supervised} or Independent Component Analysis \cite{villa2011hyperspectral}. Supervised extraction method has also been investigate such as Fischer discriminant analysis. To the contrary, features selection selects a subset of existing features identified as the most relevant for a given criterion. It has the advantage to be much more interpretable for the end-user. The selected subset of features corresponds to the most important features for the given task.
+% retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.
 
-Features selection/extraction algorithms can be divided into three types. The first type, called \emph{filter methods}, is based uniquely on data analysis in the sense that the method is independent of any classifier. Features are ranked according to a statistical analysis of the data. For example, the Principal Component Analysis (PCA) described in \cite{jimenez1998supervised} is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. A filter based on the Pearson $\chi^2$ statistical test has been used on bio-medical data\cite{biesiada2007feature}. The use of correlation between bands has been explored with hyperspectral data\cite{demir2008phase}. In general, these methods have the advantage to be fast and usable with any classifier but they do not take into account the strength and weakness of the chosen classifier and do not optimize directly the classification process.
+There are two ways to reduce dimension~\cite[Chapter 1]{Guyon:2006:FEF:1208773}: features extraction and feature selection. Feature extraction means reformulate and summarize the information by creating new features in combining the existing ones, it is sometimes referred to \emph{feature construction}. Linear combination of the initial features can be extracted using Principal Component Analysis (PCA)~\cite{jimenez1998supervised} or Independent Component Analysis \cite{villa2011hyperspectral}. Supervised extraction method has also been investigated such as Fischer discriminant analysis and decision boundary feature extraction~\cite{book:landgrebe}. To the contrary, features selection selects a subset of existing features identified as the most relevant for a given criterion. It has the additional advantage to be much more interpretable for the end-user. 
 
-The second sort are known as \emph{wrapper methods} which can be seen as search method to determine the best subset of variables for a given learning model. As exhaustive searches are too expensive in terms of processing time, several search strategies have been designed. Some are optimal under particular hypothesis as the branch and bound algorithm \cite{narendra1977branch} optimal under the condition of a monotonic criterion function. Others are sub-optimal but easier to set up. Whitney \cite{whitney1971direct} proposed a forward search adding feature one by one \cite{whitney1971direct} when Marill and Green \cite{marill1963effectiveness} use a backward search eliminating features one by one. Some papers propose to combine these two search method \cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model but on the other hand, as they require the training of multiple models to test various set of variables, they tend to be more time consuming. The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
+Features selection/extraction algorithms can be divided into three classes. The first class is called \emph{filter methods}. They select features independently of the classifier. Features are ranked according to some statistical measures (correlation, independence). For example, the PCA is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. The use of correlation between bands has been explored with hyperspectral data\cite{demir2008phase}. In general, these methods have the advantage to be fast and usable with any classifier but they do not take into account the strength and weakness of the chosen classifier and do not optimize directly the classification process.
 
-The third type corresponds to the \emph{embedded method} which do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene,weston2003use}.
+The second class are known as \emph{wrapper methods}. They search for the best subset of variables for a given learning model. Since exhaustive searches are too expensive in terms of processing time, several sub-optimal search strategies have been designed, mainly iterative forward or backward search~\cite{whitney1971direct,marill1963effectiveness} or a combination of both~\cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model and to a particular learning problem. On the other hand, as they require the training of multiple models to test various set of variables, they tend to be more time consuming.
 
-Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed \cite{fauvel2015fast}. Nevertheless, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
+% The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
 
-% Several strategy have been explored to perform feature selection and, among them, wrapper methods receive a certain interest of the community. Wrapper methods can be seen as a search method to determine the best subset of variables for a given learning model. As exhaustive searches are out of question in a practical amount of time, numerous search strategies have been designed. Some optimal are under particular hypothesis \cite{narendra1977branch} and other suboptimal but easier to set up \cite{whitney1971direct}\cite{somol1999adaptive}. Such methods have the advantage to tune the selection to make the most of a particular classifier but require the training of multiple models to test various set of variables which can make them slow if the training is not optimized.
+The third class corresponds to the \emph{embedded method}. They do not separate the features selection process from the learning algorithm and allow interaction between the two processes. The basic example of such method is the decision tree algorithm in which a feature is selected for the creation of each node. Embedded methods also exist for other models, e.g. SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
 
-This work proposes to develop a forward feature selection method using GMM in continuation of \cite{fauvel2015fast} and an upgraded floating forward method. The basic method selects iteratively the meaningful features. At each step, the pool of selected features is used to train a GMM which allows to compute a criterion function then used to rank features at the next iteration. The upgraded method introduces possible backward steps after each addition of a feature. An efficient implementation of the method is presented in order to handle large amount of data. Moreover, the developed algorithm is made available as a remote module of the C++ Orfeo Toolbox \cite{christophe2008orfeo}. Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox.
+Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed~\cite{fauvel2015fast}. The training computational load is too important to compensate the reduced prediction computational load. Hence, feature selection is not so used in operational situation. However, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
 
-The remaining of this article is organized as follows. Section~\ref{sec:gmm-hd} presents Gaussian Mixture Model classifiers and the problems link to high-dimensionality. The features selection methods used to make them suitable for high-dimension space is detailed in Section~\ref{sec:selection}. The work done to develop an efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. And finally, after introducing the two data-sets in Section~\ref{sec:datasets}, the tests conducted to explore variations of the algorithm and to compare it to other standard classifiers are shown and commented in Section~\ref{sec:test}.
+The contribution of the paper is a forward feature selection method using GMM in continuation of~\cite{fauvel2015fast}. An efficient implementation of the method, using linear algebra on block matrix, is presented in order to handle large amount of data. Furthermore, a floating version of the algorithm is proposed. Several criteria are proposed to handle unbalanced training set.  Finally, the developed algorithm is made available as a remote module of the C++ Orfeo Toolbox~\cite{christophe2008orfeo}.
+
+% Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox .
+
+The remaining of this article is organized as follows. Section~\ref{sec:gmm-hd} presents GMM classifiers and the problems related to high-dimensional feature space. The features selection methods are detailed in Section~\ref{sec:selection}. The efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. Experimental results on two real high dimensional data set are given Section~\ref{sec:test}. Conclusion and perspectives conclude the paper in Section~\ref{sec:conclusion}.
 
 \section{Gaussian Mixture Models in high dimensional space}
 \label{sec:gmm-hd}
@@ -321,7 +381,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         % According to \cite{bruzzone2009novel}, it is interesting to notice that the KL divergence increases quadratically with respect to the distance between the mean vectors of the class distributions whereas the measures of correct classification asymptotically tends to one when distributions are perfectly separable. On the contrary, the JM distance tends to saturate as the measures of correct classification.
 
-        Table~\ref{tab:crit} summarized the presented criterion functions and their characteristics.
+        Table~\ref{tab:crit} summarizes the presented criterion functions and their characteristics.
 
         \begin{table}[!t]
             \centering
@@ -889,7 +949,7 @@ resolution multispectral airborne image.
     \begin{figure}[!t]
         \centering
         \begin{tikzpicture}
-            \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
+            \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
                 \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
                 \draw[thick,red] (axis cs:15,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:15,\pgfkeysvalueof{/pgfplots/ymax});
                 \draw[thick,black] (axis cs:47,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:47,\pgfkeysvalueof{/pgfplots/ymax});
@@ -1034,7 +1094,8 @@ resolution multispectral airborne image.
 
     In term of processing time, results are similar than with the Aisa dataset. GMM classifiers with selection are very fast for prediction. For example, the GMM classifier with kappa as criterion is 63\% faster than the Random Forest classifier for prediction with 1000 samples and 83\% faster with 50,000 samples.
 
-\section{Conclusion}
+\section{Conclusion and perspectives}
+\label{sec:conclusion}
 
 An algorithm for the classification of high dimension data as hyperspectral image has been presented. The classifier uses GMM model to select iteratively the most relevant features. Several variation of the algorithms has been explored. Experimentations show that allowing backward step in the selection to discard already selected features do not give significant advantages.
 
@@ -1125,7 +1186,7 @@ The python and C++ code are available freely for download: \url{https://github.c
 % The authors would like to thank...
 
 \bibliographystyle{IEEEtran}
-\bibliography{biblio}
+\bibliography{IEEEabrv,biblio}
 
 % biography section
 %
@@ -1227,6 +1288,3 @@ The python and C++ code are available freely for download: \url{https://github.c
 %%% mode: latex
 %%% TeX-master: t
 %%% End:
-
-
-working...
