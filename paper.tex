@@ -1107,7 +1107,7 @@ The second achievement of this work is the development of an efficient implement
 
 Finally, an improvement could be made to increase the stability of the selected features. For example, with hyperspectral data, a selection of continuous intervals and not band is a possible solution which has already been explored in \cite{serpico2007extraction}.
 
-The python and C++ code are available freely for download: \url{https://github.com/Laadr/FFFS}, \url{https://github.com/Laadr/otbExternalFastFeaturesSelection}.
+The python and C++ code are available freely for download: \url{https://github.com/Laadr/FFFS}, \url{https://github.com/Laadr/otbFFSforGMM}.
 
 \appendices
 \section{Proof of update rules}
@@ -1123,16 +1123,17 @@ The python and C++ code are available freely for download: \url{https://github.c
     %     \end{proof}
 
 \begin{proof}[Proof of proposition~(\ref{eq:update-quad})]
+    {\footnotesize
     \begin{alignat*}{3}
     (&\mathbf{x}^{(k)})^t && (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}
        = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
-                                                            \left[\begin{array}{cc}
-                                                                    \mathbf{A}   & \mathbf{v} \\
-                                                                    \mathbf{v}^t & \frac{1}{\alpha}
-                                                                  \end{array}\right]
-                                                                                   \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
+        \left[\begin{array}{cc}
+            \mathbf{A}   & \mathbf{v} \\
+            \mathbf{v}^t & \frac{1}{\alpha}
+        \end{array}\right]
+        \left[\begin{array}{c} \mathbf{x}^{(k-1)} \\ x_k \end{array}\right] \\
      &= &&\left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A} + x_k \mathbf{v}^t & (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} \end{array}\right]
-                                                                                       \left[\begin{array}{c} \mathbf{v} \\ x_k \end{array}\right] \\
+            \left[\begin{array}{c} \mathbf{x}^{(k-1)} \\ x_k \end{array}\right] \\
      &= &&(\mathbf{x}^{(k-1)})^t \mathbf{A} \mathbf{x}^{(k-1)} + x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v} x_k + \frac{(x_k)^2}{\alpha} \\
      &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
      & &&+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
@@ -1143,18 +1144,20 @@ The python and C++ code are available freely for download: \url{https://github.c
      &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} )^2 \\
      &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2
     \end{alignat*}
+    }
 \end{proof}
 
 \begin{proof}[Proof of proposition~(\ref{eq:update-log})]
+    {\footnotesize
     \begin{align*}
-        \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) =
-        &\log \left(\left|
+        \log &\left(|\boldsymbol{\Sigma}^{(k)}|\right) =
+        \log \left(\left|
             \bigg[\begin{array}{cc}
                 \boldsymbol{\Sigma}^{(k-1)} & \mathbf{u}      \\
                 \mathbf{u}^t          & \sigma_{kk} \\
             \end{array}\bigg]
         \right|\right) \\
-        &\log \left(\left|
+        =&\log \left(\left|
             \bigg[\begin{array}{cc}
                 \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
                 \mathbf{u}^t          & 1 \\
@@ -1164,7 +1167,7 @@ The python and C++ code are available freely for download: \url{https://github.c
                 \mathbf{0}_{k-1,1}^t          & \sigma_{kk} - \mathbf{u}^t(\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}\\
             \end{array}\bigg]
         \right|\right) \\
-        &\log \left(\left|
+        =&\log \left(\left|
             \bigg[\begin{array}{cc}
                 \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
                 \mathbf{u}^t          & 1 \\
@@ -1176,9 +1179,12 @@ The python and C++ code are available freely for download: \url{https://github.c
                 \mathbf{0}_{k-1,1}^t          & \alpha \\
             \end{array}\bigg]
         \right|\right) \\
-        &\log \left( |\boldsymbol{\Sigma}^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha| \right)\\
-        &\log \left( |\boldsymbol{\Sigma}^{(k-1)}| \right) + \log ( \alpha )
+        =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha| \right)\\
+        =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| \right) + \log ( \alpha )
     \end{align*}
+    }
+    \noindent where $\mathbf{I}_{k-1}$ is the $(k-1) \times (k-1)$ identity matrix and $\mathbf{0}_{k-1,1}$ is the $(k-1) \times 1$ null vector.
+
 \end{proof}
 
 % \section*{Acknowledgment}
