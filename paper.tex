@@ -338,43 +338,43 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         one\cite{kullback1987letter}. It can be explicitly computed in
         the case of Gaussian distributions:
         \begin{align}
-            &KL_{ij} = \frac{1}{2} \biggl\{ \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j) \nonumber \\
-            & + (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \boldsymbol{\Sigma}_i^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - d + \log \left( \frac{|\boldsymbol{\Sigma}_i|}{|\boldsymbol{\Sigma}_j|} \right) \biggr\},
+            &KL_{cc^\prime} = \frac{1}{2} \biggl\{ \text{Tr} (\boldsymbol{\Sigma}_c^{-1} \boldsymbol{\Sigma}_{c^\prime}) \nonumber \\
+            & + (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime})^t \boldsymbol{\Sigma}_c^{-1} (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime}) - d + \log \left( \frac{|\boldsymbol{\Sigma}_c|}{|\boldsymbol{\Sigma}_{c^\prime}|} \right) \biggr\},
         \end{align}
         where Tr is the trace operator and $d$ the dimension of the distribution.
 
         The    KL   divergence    is   not    symmetric,   \emph{i.e.}
-        $KL_{ij} \ne KL_{ji}$.  A symmetrized version  is used to
+        $KL_{cc^\prime} \ne KL_{c^\prime c}$.  A symmetrized version  is used to
         compute the criterion function:
         \begin{align}\label{eq:skl}
-          SKL_{ij} &=KL_{ij} + KL_{i,j} \nonumber \\
-            &= \frac{1}{2} \biggl\{ \text{Tr} (\boldsymbol{\Sigma}_i^{-1} \boldsymbol{\Sigma}_j + \boldsymbol{\Sigma}_j^{-1} \boldsymbol{\Sigma}_i) \nonumber \\
-            &~~+ (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t (\boldsymbol{\Sigma}_i^{-1} + \boldsymbol{\Sigma}_j^{-1}) (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) - 2d \biggr\}.
+          SKL_{cc^\prime} &=KL_{cc^\prime} + KL_{c^\prime c} \nonumber \\
+            &= \frac{1}{2} \biggl\{ \text{Tr} (\boldsymbol{\Sigma}_c^{-1} \boldsymbol{\Sigma}_{c^\prime} + \boldsymbol{\Sigma}_{c^\prime}^{-1} \boldsymbol{\Sigma}_c) \nonumber \\
+            &~~+ (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime})^t (\boldsymbol{\Sigma}_c^{-1} + \boldsymbol{\Sigma}_{c^\prime}^{-1}) (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime}) - 2d \biggr\}.
         \end{align}
 
         The extension  to the multiclass  situation is done  by taking
         the weighted mean  of the KL divergences computed  on all pair
         of classes~\cite{bruzzone1995extension}:
         \begin{equation}
-            C_{SKL} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_i \pi_j SKL_{ij}.
+            C_{SKL} = \sum_{c=1}^{C} \sum_{c^\prime = c + 1}^{C} \pi_c \pi_{c^\prime} SKL_{cc^\prime}.
         \end{equation}
 
         \emph{The Bhattacharyya distance} is defined in the case of Gaussian model as
         \begin{align}
-            {B}_{ij} = &\frac{1}{8} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j)^t \left( \frac{\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j}{2} \right)^{-1} (\boldsymbol{\mu}_i - \boldsymbol{\mu}_j) \nonumber \\
-            &+ \frac{1}{2} \ln \left( \frac{|\boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j|}{\sqrt{|\boldsymbol{\Sigma}_i| |\boldsymbol{\Sigma}_j|}} \right).
+            {B}_{cc^\prime} = &\frac{1}{8} (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime})^t \left( \frac{\boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}}{2} \right)^{-1} (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime}) \nonumber \\
+            &+ \frac{1}{2} \ln \left( \frac{|\boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}|}{\sqrt{|\boldsymbol{\Sigma}_c| |\boldsymbol{\Sigma}_{c^\prime}|}} \right).
         \end{align}
 
         The \emph{Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases~\cite{bruzzone2009novel}. The JM distance is defined as
         \begin{equation}\label{eq:jm}
-            {JM}_{ij} = \sqrt{ 2 \{1 - \text{exp}(-B_{ij})\} }.
+            {JM}_{cc^\prime} = \sqrt{ 2 \{1 - \text{exp}(-B_{cc^\prime})\} }.
         \end{equation}
 
         Similar to the KL divergence,  a weighted mean of the distance
         between two classes is computed to aggregate the measures in a
         single value:
         \begin{equation}
-            {C}_{JM} = \sum_{i=1}^{C} \sum_{j=i + 1}^{C} \pi_i \pi_j {JM}_{ij}.
+            {C}_{JM} = \sum_{c=1}^{C} \sum_{c^{\prime} = c + 1}^{C} \pi_c \pi_{c^\prime} {JM}_{cc^\prime}.
         \end{equation}
 
         \vspace{10 mm}
@@ -530,12 +530,12 @@ GMM models for each fold.
         formulae~\cite[Chapter   9.2]{webb2003statistical},    it   is
         possible to factorize these terms at iteration $k$.
 
-        In the  remaining of the  paper, $\boldsymbol{\Sigma}^{(k-1)}$
+        In the  remaining of the  paper, $\boldsymbol{\Sigma}_c^{(k-1)}$
         denotes the  covariance matrix of the  $(k-1)^{th}$ iteration,
         \emph{i.e.}, the  covariance matrix  of the  selected features
-        and $\boldsymbol{\Sigma}^{(k)}$ denotes a covariance matrix at
+        and $\boldsymbol{\Sigma}_c^{(k)}$ denotes a covariance matrix at
         the $k^{th}$ iteration, \emph{i.e.},  the covariance matrix of
-        an augmented set. Then, since $\boldsymbol{\Sigma}^{(k)}$ is a
+        an augmented set. Then, since $\boldsymbol{\Sigma}_c^{(k)}$ is a
         positive definite symmetric matrix,  the covariance matrix can
         be written as
 
@@ -549,13 +549,13 @@ GMM models for each fold.
         \begin{equation}\label{eq:cov}
             \boldsymbol{\Sigma}^{(k)} =
             \bigg[\begin{array}{cc}
-            \boldsymbol{\Sigma}^{(k-1)} & \mathbf{u}      \\
-            \mathbf{u}^t          & \sigma_{kk} \\
+            \boldsymbol{\Sigma}^{(k-1)}_c & \mathbf{u}_c      \\
+            \mathbf{u}_c^t          & \sigma^{(k)}_c \\
             \end{array}\bigg],
         \end{equation}
-        where  $\mathbf{u}$  is  the  $k^{th}$ column  of  the  matrix
+        where  $\mathbf{u}_c$  is  the  $k^{th}$ column  of  the  matrix
         without      the      diagonal      element,      \emph{i.e.},
-        $\mathbf{u}_{i}   =    \boldsymbol{\Sigma}^{(k)}_{i,k}$   with
+        $\mathbf{u}_{c}(i)   =    \boldsymbol{\Sigma}^{(k)}_{c}(i,k)$   with
         $i  \in [1,k-1]$.  Using  block matrix  inverse formulae,  the
         following proposition holds:
         \begin{prop}[Forward update rule for the inverse of the covariance matrix]
@@ -563,21 +563,21 @@ GMM models for each fold.
         \begin{equation}\label{eq:cov:inv}
                 (\boldsymbol{\Sigma}^{(k)})^{-1} =
                 \bigg[\begin{array}{cc}
-                \mathbf{A} & \mathbf{v} \\
-                \mathbf{v}^t  & \frac{1}{\alpha} \\
+                \mathbf{A}_c & \mathbf{v}_c \\
+                \mathbf{v}_c^t  & \frac{1}{\alpha_c} \\
                 \end{array}\bigg]
             \end{equation}
         \end{prop}
         \noindent                                                where
-        $\mathbf{A}     =     (\boldsymbol{\Sigma}^{(k-1)})^{-1}     +
-        \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}
-        \mathbf{u}^t              (\boldsymbol{\Sigma}^{(k-1)})^{-1}$,
-        $\mathbf{v}           =           -           \frac{1}{\alpha}
-        (\boldsymbol{\Sigma}^{(k-1)})^{-1}       \mathbf{u}$       and
-        $      \alpha      =      \sigma_{kk}      -      \mathbf{u}^t
-        (\boldsymbol{\Sigma}^{(k-1)})^{-1}  \mathbf{u}$.  This  update
+        $\mathbf{A}_c     =     (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1}     +
+        \frac{1}{\alpha_c} (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1} \mathbf{u}_c
+        \mathbf{u}_c^t              (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1}$,
+        $\mathbf{v}_c           =           -           \frac{1}{\alpha_c}
+        (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1}       \mathbf{u}_c$       and
+        $      \alpha_c      =      \sigma^{(k)}_c      -      \mathbf{u}_c^t
+        (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1}  \mathbf{u}_c$.  This  update
         formulae      is     used      to      obtain     all      the
-        $(\boldsymbol{\Sigma}^{(k)})^{-1}$  corresponding  to all  the
+        $(\boldsymbol{\Sigma}^{(k)}_c)^{-1}$  corresponding  to all  the
         possible augmented set of a given selection iteration. Similar
         update formulae can be written for the backward step.
 
@@ -595,14 +595,14 @@ GMM models for each fold.
         \begin{prop}[Update rule for the quadratical term]
         \label{eq:update-quad}
             \begin{align}
-              (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once per selection step}}} \nonumber \\
-                                                                                       &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for each augmented set}}}.
+              (\mathbf{x}^{(k)})^t (\boldsymbol{\Sigma}^{(k)}_c)^{-1} \mathbf{x}^{(k)} = &\underbrace{(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1} \mathbf{x}^{(k-1)}}_{\substack{\text{computed once per selection step}}} \nonumber \\
+                                                                                       &+ \underbrace{\alpha_c ( \left[\begin{array}{cc} \mathbf{v}_c^t & \frac{1}{\alpha_c} \end{array}\right] \mathbf{x}^{(k)} )^2}_{\substack{\text{computed for each augmented set}}}.
             \end{align}
         \end{prop}
         \begin{prop}[Update rule for logdet]
         \label{eq:update-log}
             \begin{equation}
-                \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)}_{\substack{\text{computed once}\\ \text{per selection step}}} + \underbrace{\log \alpha}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
+                \log \left(|\boldsymbol{\Sigma}^{(k)}_c|\right) = \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}_c|\right)}_{\substack{\text{computed once}\\ \text{per selection step}}} + \underbrace{\log \alpha_c}_{\substack{\text{computed for} \\ \text{each augmented set}}}.
             \end{equation}
         \end{prop}
 
@@ -611,33 +611,33 @@ GMM models for each fold.
         \begin{prop}[Decision function~(\ref{eq:decision})]
             \begin{align}
             \label{eq:q-update}
-                Q(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
-                &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once per selection step}}} \nonumber \\
-                &- \underbrace{\alpha \left( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}^{(k)}) \right)^2 - \log \alpha}_{\substack{\text{computed for each augmented set}}}.
+                Q_c(\mathbf{x}) = &- \underbrace{(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}_c^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1} (\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)}_c)}_{\substack{\text{computed once per selection step}}} \nonumber \\
+                &- \underbrace{\log \left(|\boldsymbol{\Sigma}^{(k-1)}_c|\right) + 2 \log (\pi_c) + k \log(2 \pi)}_{\substack{\text{computed once per selection step}}} \nonumber \\
+                &- \underbrace{\alpha_c \left( \left[\begin{array}{cc} \mathbf{v}_c^t & \frac{1}{\alpha_c} \end{array}\right] (\mathbf{x}^{(k)} - \boldsymbol{\mu}_c^{(k)}) \right)^2 - \log \alpha_c}_{\substack{\text{computed for each augmented set}}}.
             \end{align}
         \end{prop}
 
       \begin{prop}[Kullback-Leibler divergence~(\ref{eq:skl})]
         \begin{align}
         \label{eq:skl-update}
-            & SKL_{ij} = \frac{1}{2} \biggl\{ \underbrace{\text{\normalfont Tr} \left((\boldsymbol{\Sigma}_i^{(k)})^{-1} \boldsymbol{\Sigma}_j^{(k)} + (\boldsymbol{\Sigma}_j^{(k)})^{-1} \boldsymbol{\Sigma}_i^{(k)}\right)}_{\substack{\text{computed for each augmented set}}} \nonumber \\
-            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_i}^t & \frac{1}{\alpha_i} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2}_{\substack{\text{computed for each augmented set}}} \nonumber \\
-            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v_j}^t & \frac{1}{\alpha_j} \end{array}\right] (\boldsymbol{\mu}_i^{(k)} - \boldsymbol{\mu}_j^{(k)}) )^2 - 2k}_{\substack{\text{computed for each augmented set}}} \nonumber \\
-            &+ \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t (\boldsymbol{\Sigma}_i^{(k-1)})^{-1}(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber\\
-          & + \underbrace{(\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t(\boldsymbol{\Sigma}_j^{(k-1)})^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once per selection step}}} \biggr\}.
+            & SKL_{cc^\prime} = \frac{1}{2} \biggl\{ \underbrace{\text{\normalfont Tr} \left((\boldsymbol{\Sigma}_c^{(k)})^{-1} \boldsymbol{\Sigma}_{c^\prime}^{(k)} + (\boldsymbol{\Sigma}_{c^\prime}^{(k)})^{-1} \boldsymbol{\Sigma}_c^{(k)}\right)}_{\substack{\text{computed for each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}_c^t & \frac{1}{\alpha_c} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2}_{\substack{\text{computed for each augmented set}}} \nonumber \\
+            &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}_{c^\prime}^t & \frac{1}{\alpha_{c^\prime}} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2 - 2k}_{\substack{\text{computed for each augmented set}}} \nonumber \\
+            &+ \underbrace{(\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1}(\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber\\
+          & + \underbrace{(\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t(\boldsymbol{\Sigma}_{c^\prime}^{(k-1)})^{-1} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \biggr\}.
         \end{align}
-        with $(\boldsymbol{\Sigma}_i^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
+        with $(\boldsymbol{\Sigma}_c^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
       \end{prop}
 
       \begin{prop}[Jeffries-Matusita distance~(\ref{eq:jm})]
       \begin{align}
         \label{eq:jm-update}
-            \text{B}_{ij} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_i^{(k-1)} - \boldsymbol{\mu}_j^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
-            &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_i^{(k-1)}| |\boldsymbol{\Sigma}_j^{(k-1)}|}} \right)}_{\substack{\text{computed once per selection step}}} \nonumber \\
-            &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_{i}^{(k)} - \boldsymbol{\mu}_{j}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_i \alpha_j}} \right)}_{\substack{\text{computed for each augmented set}}},
+            \text{B}_{cc^\prime} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
+            &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_c^{(k-1)}| |\boldsymbol{\Sigma}_{c^\prime}^{(k-1)}|}} \right)}_{\substack{\text{computed once per selection step}}} \nonumber \\
+            &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_c \alpha_{c^\prime}}} \right)}_{\substack{\text{computed for each augmented set}}},
       \end{align}
-      where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_i + \boldsymbol{\Sigma}_j$ and $\tilde{\alpha}$ and $\mathbf{\tilde{v}}$ are defined as $\alpha$ and $\mathbf{v}$ but using $\boldsymbol{\tilde{\Sigma}}$ instead of $\boldsymbol{\Sigma}$.
     \end{prop}
+    \noindent where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}$ and $\tilde{\alpha}$ and $\mathbf{\tilde{v}}$ are defined as $\alpha_c$ and $\mathbf{v}_c$ but using $\boldsymbol{\tilde{\Sigma}}$ instead of $\boldsymbol{\Sigma}_c$.
     
     The  Algorithm~\ref{alg:sffs-update} illustrates  the optimization
     of the Algorithm~\ref{alg:sffs} using these formulae.
@@ -652,14 +652,14 @@ GMM models for each fold.
     estimation of the  inverse and of the log-determinant,  and so the
     numerical stability.
 
-    To deal with this limitation, the choice has been made to perform an eigendecomposition of the covariance matrix $\boldsymbol{\Sigma}^{(k)}$:
+    To deal with this limitation, the choice has been made to perform an eigendecomposition of the covariance matrix $\boldsymbol{\Sigma}^{(k)}_c$:
 
     \begin{eqnarray}
-    \boldsymbol{\Sigma}^{(k)} = \mathbf{Q}^{(k)} \boldsymbol{\Lambda}^{(k)} (\mathbf{Q}^{(k)})^t\label{eq:eigendecomp}
+    \boldsymbol{\Sigma}^{(k)}_c = \mathbf{P}^{(k)}_c \boldsymbol{\Lambda}^{(k)}_c (\mathbf{P}^{(k)}_c)^t\label{eq:eigendecomp}
     \end{eqnarray}
 
 
-    where  $\boldsymbol{\Lambda}^{(k)}$ and  $\mathbf{Q}^{(k)}$ are  the
+    where  $\boldsymbol{\Lambda}^{(k)}_c$ and  $\mathbf{P}^{(k)}_c$ are  the
     diagonal matrix  of eigenvalues of  the covariance matrix  and the
     orthonormal matrix of corresponding eigenvectors, respectively. To
     prevent numerical instability, the  eigenvalues are thresholded to
@@ -669,16 +669,16 @@ GMM models for each fold.
     Then, the inverse of the covariance matrix can be computed as
 
     \begin{eqnarray}
-      \boldsymbol{\Sigma}^{(k)} = \mathbf{Q}^{(k)} (\tilde{\boldsymbol{\Lambda}}^{(k)})^{-1} (\mathbf{Q}^{(k)})^t\label{eq:eigendecomp:inv}
+      (\boldsymbol{\Sigma}^{(k)}_c)^{-1} = \mathbf{P}^{(k)}_c (\tilde{\boldsymbol{\Lambda}}^{(k)}_c)^{-1} (\mathbf{P}^{(k)}_c)^t\label{eq:eigendecomp:inv}
     \end{eqnarray}
 
     and the log-determinant as
 
     \begin{eqnarray}
       \label{eq:log:det}
-      \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \sum_{i=1}^d\log(\tilde{\lambda}_i^{(k)}),
+      \log \left(|\boldsymbol{\Sigma}^{(k)}|\right) = \sum_{i=1}^d\log(\tilde{\lambda}_{c}^{(k)}(i)),
     \end{eqnarray}
-    where the \textasciitilde{} indicated thresholded values.
+    where the \textasciitilde{} indicated thresholded values and $\lambda_{c}(i)$ the ith eigenvalue.
 
     Same reasoning applied  to the term $\alpha$ in  the update rules:
     it       is       also        thresholded       to       EPS\_FLT.
@@ -694,12 +694,16 @@ GMM models for each fold.
     \STATE $F=\text{\{all variables\}}$
     \STATE $k=0$
     \WHILE{$k \neq \text{maxVarNb}$}
-    \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)} = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$
-    \STATE {\bfseries for all} $\Lambda_{i,i}$ {\bfseries do} $\Lambda_{i,i} = \max (\text{EPS\_FLT},\Lambda_{i,i})$
-    \STATE Precompute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions (\ref{eq:update-inv}), (\ref{eq:update-quad}) and (\ref{eq:update-log})
+    \FORALL{$c \in \{1,...,C\}$}
+    \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)}_c = \mathbf{P}_c \boldsymbol{\Lambda}_c \mathbf{P}_c^t$
+    \STATE {\bfseries for all} $\lambda_{c}(i)$ {\bfseries do} $\lambda_{c}(i) = \max (\text{EPS\_FLT},\lambda_{c}(i))$
+    \STATE Precompute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)}_c)^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)}_c)^t (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)}_c)$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}_c|\right)$} using Propositions (\ref{eq:update-inv}), (\ref{eq:update-quad}) and (\ref{eq:update-log})
+    \ENDFOR
     \FORALL{$f_i \in F$}
-    \STATE Compute update constant $\alpha$
-    \STATE $\alpha = \max (\text{EPS\_FLT},\alpha)$
+    \FORALL{$c \in \{1,...,C\}$}
+    \STATE Compute update constant $\alpha_c$
+    \STATE $\alpha_c = \max (\text{EPS\_FLT},\alpha_c)$
+    \ENDFOR
     \STATE $R_i = J(\{\Omega_k + f_i\})$ using Equations (\ref{eq:q-update}), (\ref{eq:skl-update}) or (\ref{eq:jm-update})
     \ENDFOR
     \STATE $j=\text{arg} \max_{i} R_i$
@@ -708,12 +712,16 @@ GMM models for each fold.
     \STATE $\Omega_k = \{\Omega_{k-1} + f_j\}$
     \STATE $\text{flag}=1$
     \WHILE{$k > 2 \text{ and } \text{flag}=1$}
-    \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)} = = \mathbf{Q} \boldsymbol{\Lambda} \mathbf{Q}^t$
-    \STATE {\bfseries for all} $\Lambda_{i,i}$ {\bfseries do} $\Lambda_{i,i} = \max (\text{EPS\_FLT},\Lambda_{i,i})$
-    \STATE Compute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)})$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}|\right)$} using Propositions (\ref{eq:update-inv}), (\ref{eq:update-quad}) and (\ref{eq:update-log})
+    \FORALL{$c \in \{1,...,C\}$}
+    \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)}_c = \mathbf{P}_c \boldsymbol{\Lambda}_c \mathbf{P}_c^t$
+    \STATE {\bfseries for all} $\lambda_{c}(i)$ {\bfseries do} $\lambda_{c}(i) = \max (\text{EPS\_FLT},\lambda_{c}(i))$
+    \STATE Precompute {\scriptsize $(\boldsymbol{\Sigma}^{(k-1)}_c)^{-1}$, $(\mathbf{x}^{(k-1)} - \boldsymbol{\mu}^{(k-1)}_c)^t (\boldsymbol{\Sigma}^{(k-1)}_c)^{-1} (\mathbf{x}^{(k-1)}- \boldsymbol{\mu}^{(k-1)}_c)$ and $\log \left(|\boldsymbol{\Sigma}^{(k-1)}_c|\right)$} using Propositions (\ref{eq:update-inv}), (\ref{eq:update-quad}) and (\ref{eq:update-log})
+    \ENDFOR
     \FORALL{$f_i \in \Omega_k$}
-    \STATE Compute update constant $\alpha$
-    \STATE $\alpha = \max (\text{EPS\_FLT},\alpha)$
+    \FORALL{$c \in \{1,...,C\}$}
+    \STATE Compute update constant $\alpha_c$
+    \STATE $\alpha_c = \max (\text{EPS\_FLT},\alpha_c)$
+    \ENDFOR
     \STATE $R_i = J(\{\Omega_k \setminus f_i\})$ using Equations (\ref{eq:q-update}), (\ref{eq:skl-update}) or (\ref{eq:jm-update})
     \ENDFOR
     \STATE $j=\text{arg} \max_{i} R_i$
@@ -949,18 +957,23 @@ resolution multispectral airborne image.
     \begin{figure}[!t]
         \centering
         \begin{tikzpicture}
-            \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
-                \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
-                \draw[thick,red] (axis cs:15,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:15,\pgfkeysvalueof{/pgfplots/ymax});
-                \draw[thick,black] (axis cs:47,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:47,\pgfkeysvalueof{/pgfplots/ymax});
+            \begin{axis}[ymin=0.2,ymax=0.9,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
+                \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl_aisa.txt};
+                % \draw[thick,red] (axis cs:15,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:15,\pgfkeysvalueof{/pgfplots/ymax});
+                % \draw[thick,black] (axis cs:30,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:30,\pgfkeysvalueof{/pgfplots/ymax});
             \end{axis};
+            % \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
+            %     \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
+            %     \draw[thick,red] (axis cs:15,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:15,\pgfkeysvalueof{/pgfplots/ymax});
+            %     \draw[thick,black] (axis cs:47,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:47,\pgfkeysvalueof{/pgfplots/ymax});
+            % \end{axis};
             % \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
             %     \addplot[thick,black] table[x=nb,y=crit] {criterion_50000spl.txt};
             %     \draw[thick,red] (axis cs:31,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:31,\pgfkeysvalueof{/pgfplots/ymax});
             %     \draw[thick,black] (axis cs:31,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:31,\pgfkeysvalueof{/pgfplots/ymax});
             % \end{axis};
         \end{tikzpicture}
-        \caption{Criterion evolution in function of the number of selected variables. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.\label{fig:crit-evol}}
+        \caption{Criterion evolution in function of the number of selected variables for first trial with Aisa dataset. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.\label{fig:crit-evol}}
     \end{figure}                                    
 
     % Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.1\% in this experiment,
@@ -1072,13 +1085,14 @@ resolution multispectral airborne image.
 
     \begin{table*}[!t]
         \centering
-        \caption{Kappa coefficient and processing time for 50,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second.\label{tab:potsdam-otbsimu-big}}
+        \caption{Kappa coefficient and processing time for 50,000 samples by class and averaged over 5 trials (standard deviation in parenthesis). Processing times are given in second. NB: the test has not been conduct with KNN because of a too long processing time for classification.\label{tab:potsdam-otbsimu-big}}
         \begin{tabular}{lcccccc}\toprule
             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} & {\bfseries Train. Time} & {\bfseries Classif. time} & {\bfseries \# of selected features} \\ \cmidrule{2-7}
             GMM SFS kappa & 0.713 (0.001) & 0.684 (0.001) & 0.531 (0.005) & 20000 & 340 & 29 \\
             GMM SFS JM &    0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6 & 330 & 10 \\
             GMM SFFS JM &   0.560 (0.111) & 0.576 (0.104) & 0.435 (0.085) & 6.6 & 340 & 10 \\
             GMM ridge &     0.641 (0.015) & 0.611 (0.026) & 0.440 (0.015) & 460 & 2000 & all \\
+            KNN &           /             & /             & /             & / & / & / \\
             Random Forest & {\bfseries 0.851 (0.001)} & {\bfseries 0.715 (0.001)} & {\bfseries 0.573 (0.002)} & 2000 & 2000 & all \\
             \bottomrule
         \end{tabular}
@@ -1125,24 +1139,24 @@ The python and C++ code are available freely for download: \url{https://github.c
 \begin{proof}[Proof of proposition~(\ref{eq:update-quad})]
     {\footnotesize
     \begin{alignat*}{3}
-    (&\mathbf{x}^{(k)})^t && (\boldsymbol{\Sigma}^{(k)})^{-1} \mathbf{x}^{(k)}
+    (&\mathbf{x}^{(k)})^t && (\boldsymbol{\Sigma}^{(k)}_c)^{-1} \mathbf{x}^{(k)}
        = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
         \left[\begin{array}{cc}
-            \mathbf{A}   & \mathbf{v} \\
-            \mathbf{v}^t & \frac{1}{\alpha}
+            \mathbf{A}_c   & \mathbf{v}_c \\
+            \mathbf{v}_c^t & \frac{1}{\alpha_c}
         \end{array}\right]
         \left[\begin{array}{c} \mathbf{x}^{(k-1)} \\ x_k \end{array}\right] \\
-     &= &&\left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A} + x_k \mathbf{v}^t & (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} \end{array}\right]
+     &= &&\left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A}_c + x_k \mathbf{v}_c^t & (\mathbf{x}^{(k-1)})^t \mathbf{v}_c + \frac{x_k}{\alpha_c} \end{array}\right]
             \left[\begin{array}{c} \mathbf{x}^{(k-1)} \\ x_k \end{array}\right] \\
-     &= &&(\mathbf{x}^{(k-1)})^t \mathbf{A} \mathbf{x}^{(k-1)} + x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v} x_k + \frac{(x_k)^2}{\alpha} \\
-     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
-     & &&+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
-     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}^{(k-1)})^{-1} + \alpha \mathbf{v} \mathbf{v}^t) \mathbf{x}^{(k-1)}\\
-     & &&+ 2 x_k \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha} \\
-     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} \mathbf{v}^t \mathbf{x}^{(k-1)} \\
-     & &&+ 2 \frac{x_k}{\alpha} \mathbf{v}^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha^2}) \\
-     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( (\mathbf{x}^{(k-1)})^t \mathbf{v} + \frac{x_k}{\alpha} )^2 \\
-     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha ( \left[\begin{array}{cc} \mathbf{v}^t & \frac{1}{\alpha} \end{array}\right] \mathbf{x}^{(k)} )^2
+     &= &&(\mathbf{x}^{(k-1)})^t \mathbf{A}_c \mathbf{x}^{(k-1)} + x_k \mathbf{v}_c^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v}_c x_k + \frac{(x_k)^2}{\alpha_c} \\
+     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}_c^{(k-1)})^{-1} + \frac{1}{\alpha_c} (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c \mathbf{u}_c^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
+     & &&+ 2 x_k \mathbf{v}_c^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha_c} \\
+     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}_c^{(k-1)})^{-1} + \alpha_c \mathbf{v}_c \mathbf{v}_c^t) \mathbf{x}^{(k-1)}\\
+     & &&+ 2 x_k \mathbf{v}_c^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha_c} \\
+     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha_c ( (\mathbf{x}^{(k-1)})^t \mathbf{v}_c \mathbf{v}_c^t \mathbf{x}^{(k-1)} \\
+     & &&+ 2 \frac{x_k}{\alpha_c} \mathbf{v}_c^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha_c^2}) \\
+     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha_c ( (\mathbf{x}^{(k-1)})^t \mathbf{v}_c + \frac{x_k}{\alpha_c} )^2 \\
+     &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha_c ( \left[\begin{array}{cc} \mathbf{v}_c^t & \frac{1}{\alpha_c} \end{array}\right] \mathbf{x}^{(k)} )^2
     \end{alignat*}
     }
 \end{proof}
@@ -1150,37 +1164,37 @@ The python and C++ code are available freely for download: \url{https://github.c
 \begin{proof}[Proof of proposition~(\ref{eq:update-log})]
     {\footnotesize
     \begin{align*}
-        \log &\left(|\boldsymbol{\Sigma}^{(k)}|\right) =
+        \log &\left(|\boldsymbol{\Sigma}_c^{(k)}|\right) =
         \log \left(\left|
             \bigg[\begin{array}{cc}
-                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{u}      \\
-                \mathbf{u}^t          & \sigma_{kk} \\
+                \boldsymbol{\Sigma}_c^{(k-1)} & \mathbf{u}_c      \\
+                \mathbf{u}_c^t          & \sigma^{(k)}_c \\
             \end{array}\bigg]
         \right|\right) \\
         =&\log \left(\left|
             \bigg[\begin{array}{cc}
-                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
-                \mathbf{u}^t          & 1 \\
+                \boldsymbol{\Sigma}_c^{(k-1)} & \mathbf{0}_{k-1,1}     \\
+                \mathbf{u}_c^t          & 1 \\
             \end{array}\bigg]
             \bigg[\begin{array}{cc}
-                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
-                \mathbf{0}_{k-1,1}^t          & \sigma_{kk} - \mathbf{u}^t(\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}\\
+                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c      \\
+                \mathbf{0}_{k-1,1}^t          & \sigma^{(k)}_c - \mathbf{u}_c^t(\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c\\
             \end{array}\bigg]
         \right|\right) \\
         =&\log \left(\left|
             \bigg[\begin{array}{cc}
-                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
-                \mathbf{u}^t          & 1 \\
+                \boldsymbol{\Sigma}_c^{(k-1)} & \mathbf{0}_{k-1,1}     \\
+                \mathbf{u}_c^t          & 1 \\
             \end{array}\bigg]
         \right|\right)
         +\log \left(\left|
             \bigg[\begin{array}{cc}
-                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
-                \mathbf{0}_{k-1,1}^t          & \alpha \\
+                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c      \\
+                \mathbf{0}_{k-1,1}^t          & \alpha_c \\
             \end{array}\bigg]
         \right|\right) \\
-        =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha| \right)\\
-        =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| \right) + \log ( \alpha )
+        =&\log \left( |\boldsymbol{\Sigma}_c^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha_c| \right)\\
+        =&\log \left( |\boldsymbol{\Sigma}_c^{(k-1)}| \right) + \log ( \alpha_c )
     \end{align*}
     }
     \noindent where $\mathbf{I}_{k-1}$ is the $(k-1) \times (k-1)$ identity matrix and $\mathbf{0}_{k-1,1}$ is the $(k-1) \times 1$ null vector.
