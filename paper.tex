@@ -953,14 +953,14 @@ resolution multispectral airborne image.
     the number of  retained variables is set when  the criterion stops
     to increase significantly.  It is found by  computing the discrete
     derivative of the criteria. See \ref{fig:crit-evol}.
-    
+
     \begin{figure}[!t]
         \centering
         \begin{tikzpicture}
             \begin{axis}[ymin=0.2,ymax=0.9,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
                 \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl_aisa.txt};
-                % \draw[thick,red] (axis cs:15,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:15,\pgfkeysvalueof{/pgfplots/ymax});
-                % \draw[thick,black] (axis cs:30,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:30,\pgfkeysvalueof{/pgfplots/ymax});
+                \draw[thick,red] (axis cs:18,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:18,\pgfkeysvalueof{/pgfplots/ymax});
+                \draw[thick,black] (axis cs:24,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:24,\pgfkeysvalueof{/pgfplots/ymax});
             \end{axis};
             % \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
             %     \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
@@ -973,8 +973,8 @@ resolution multispectral airborne image.
             %     \draw[thick,black] (axis cs:31,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:31,\pgfkeysvalueof{/pgfplots/ymax});
             % \end{axis};
         \end{tikzpicture}
-        \caption{Criterion evolution in function of the number of selected variables for first trial with Aisa dataset. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.\label{fig:crit-evol}}
-    \end{figure}                                    
+        \caption{Criterion evolution (kappa) in function of the number of selected variables for first trial with Aisa dataset with 500 samples by class. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.\label{fig:crit-evol}}
+    \end{figure}
 
     % Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.1\% in this experiment,
     % \begin{equation*}
@@ -1004,7 +1004,7 @@ resolution multispectral airborne image.
     presents  the results  of the  experiment with  mean and  standard
     deviation  of  the  Kappa  coefficient  over  the  20  trials  and
     Table~\ref{tab:aisa-otbsimu-time}  the   corresponding  processing
-    time.
+    time. Additionally, Figure~\ref{fig:meanNbVar-aisa} summarizes the mean of the number of selected variables for each variation of the GMM classifier with selection.
 
     \begin{figure}[!t]
         \centering
@@ -1033,6 +1033,25 @@ resolution multispectral airborne image.
             \bottomrule
         \end{tabular}
     \end{table}
+
+    \begin{figure}
+      \centering
+      \begin{tikzpicture}
+        \begin{axis}[ylabel=$\bar{n}_s$,ymax=250,
+          symbolic x coords={0,250,500,1000,1050},
+          enlargelimits=0.15,legend pos=outer north east,xtick=data,legend cell align=left,
+          ybar,
+          bar width=5pt,grid,xlabel=Number of training samples per class,small,area legend]
+          \addplot coordinates {(250,15.9) (500,21.85) (1000,26.65)};
+          \addplot coordinates {(250,11.95) (500,12) (1000,12.05)};
+          \addplot coordinates {(250,11.95) (500,12) (1000,12.05)};
+          \addplot[red,very thick,sharp plot,update limits=false]coordinates {(0,252) (1050,252)};
+          \legend{{\footnotesize SFS kappa},{\footnotesize SFS JM},{\footnotesize SFFS JM}}
+        \end{axis}
+      \end{tikzpicture}
+      \caption{Mean number $\bar{n}_s$ of selected features for the different variation of selection methods for Aisa data set. The red line indicates the original number of spectral features.}
+      \label{fig:meanNbVar-aisa}
+    \end{figure}
 
     \begin{table}[!t]
         \centering
