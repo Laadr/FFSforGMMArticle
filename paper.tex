@@ -1097,17 +1097,19 @@ resolution multispectral airborne image.
 \section{Conclusion and perspectives}
 \label{sec:conclusion}
 
-An algorithm for the classification of high dimension data as hyperspectral image has been presented. The classifier uses GMM model to select iteratively the most relevant features. Several variation of the algorithms has been explored. Experimentations show that allowing backward step in the selection to discard already selected features do not give significant advantages.
+An algorithm for the classification of high dimensional earth observation images has been proposed. The algorithm is based on Gaussian mixture model and a forward feature selection strategy to reduce the dimension of the data to be processed. From experimental results, this strategy has shown to be robust the \emph{curse of dimensionality}. As a side effect, the volume of data is reduced and the final classification processing time is reduced. 
 
-Additionally, from the comparison between all the measures used to rank the features, it has been shown that the Jeffries-Matusita distance can be a fast and accurate solution in some case but suffer from some limitations which remain to be determine more precisely. A possible explanation could be that this distance does not perform well when data distribution is not similar to a Gaussian distribution. More investigation is needed to confirm this hypothesis. In any case, it is possible to use directly kappa as criterion function even if it implies a loss of time.
+To cope with the large volume of data during the learning step, updates rules from the forward search have been split into two parts in order to save computation. One part is only computed once per iteration, and the other part needs to be computed for each tested features. Several criteria have been included, three based on classification accuracy and two based on divergence measures.
 
-Finally, experiments show that the developed GMM classifier performs, in most cases, at least as best as standard classifiers without features selection in particular Random Forest and even outperforms all of them in term of classification time.
+Experiments have been conducted on two real high dimensional data set, and the results have been compared to standards classifiers. Results show that the proposed approach  performs, in most cases, at least as best as classifiers (Random Forest) and even outperforms all of them in term of classification time.
 
-The second achievement of this work is the development of an efficient implementation using GMM properties to derive fast update rules of the model. The resulting code is available as a remote module of the Orfeo toolbox on Github and makes it possible to process huge quantity of high dimension data.
+The resulting code is available as a remote module of the Orfeo toolbox on Github and makes it possible to process large high dimensional images efficiently. The \texttt{C++} code is freely available for download: \url{https://github.com/Laadr/otbFFSforGMM}.
 
-Finally, an improvement could be made to increase the stability of the selected features. For example, with hyperspectral data, a selection of continuous intervals and not band is a possible solution which has already been explored in \cite{serpico2007extraction}.
+Perspectives of this work concern the selection of continuous interval of features rather than a single feature~\cite{serpico2007extraction,1468090}. It will be of  highest interest for continuous features, such as temporal feature or spectral feature.
 
-The python and C++ code are available freely for download: \url{https://github.com/Laadr/FFFS}, \url{https://github.com/Laadr/otbFFSforGMM}.
+% Finally, an improvement could be made to increase the stability of the selected features. For example, with hyperspectral data, a selection of continuous intervals and not band is a possible solution which has already been explored in \cite{serpico2007extraction}.
+
+% The python and C++ code are available freely for download: \url{https://github.com/Laadr/FFFS}, .
 
 \appendices
 \section{Proof of update rules}
@@ -1148,43 +1150,47 @@ The python and C++ code are available freely for download: \url{https://github.c
 \end{proof}
 
 \begin{proof}[Proof of proposition~(\ref{eq:update-log})]
-    {\footnotesize
-    \begin{align*}
-        \log &\left(|\boldsymbol{\Sigma}^{(k)}|\right) =
-        \log \left(\left|
-            \bigg[\begin{array}{cc}
-                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{u}      \\
-                \mathbf{u}^t          & \sigma_{kk} \\
-            \end{array}\bigg]
-        \right|\right) \\
-        =&\log \left(\left|
-            \bigg[\begin{array}{cc}
-                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
-                \mathbf{u}^t          & 1 \\
-            \end{array}\bigg]
-            \bigg[\begin{array}{cc}
-                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
-                \mathbf{0}_{k-1,1}^t          & \sigma_{kk} - \mathbf{u}^t(\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}\\
-            \end{array}\bigg]
-        \right|\right) \\
-        =&\log \left(\left|
-            \bigg[\begin{array}{cc}
-                \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
-                \mathbf{u}^t          & 1 \\
-            \end{array}\bigg]
-        \right|\right)
-        +\log \left(\left|
-            \bigg[\begin{array}{cc}
-                \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
-                \mathbf{0}_{k-1,1}^t          & \alpha \\
-            \end{array}\bigg]
-        \right|\right) \\
-        =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha| \right)\\
-        =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| \right) + \log ( \alpha )
-    \end{align*}
-    }
-    \noindent where $\mathbf{I}_{k-1}$ is the $(k-1) \times (k-1)$ identity matrix and $\mathbf{0}_{k-1,1}$ is the $(k-1) \times 1$ null vector.
-
+    % {\footnotesize
+    % \begin{align*}
+    %     \log &\left(|\boldsymbol{\Sigma}^{(k)}|\right) =
+    %     \log \left(\left|
+    %         \bigg[\begin{array}{cc}
+    %             \boldsymbol{\Sigma}^{(k-1)} & \mathbf{u}      \\
+    %             \mathbf{u}^t          & \sigma_{kk} \\
+    %         \end{array}\bigg]
+    %     \right|\right) \\
+    %     =&\log \left(\left|
+    %         \bigg[\begin{array}{cc}
+    %             \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
+    %             \mathbf{u}^t          & 1 \\
+    %         \end{array}\bigg]
+    %         \bigg[\begin{array}{cc}
+    %             \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
+    %             \mathbf{0}_{k-1,1}^t          & \sigma_{kk} - \mathbf{u}^t(\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}\\
+    %         \end{array}\bigg]
+    %     \right|\right) \\
+    %     =&\log \left(\left|
+    %         \bigg[\begin{array}{cc}
+    %             \boldsymbol{\Sigma}^{(k-1)} & \mathbf{0}_{k-1,1}     \\
+    %             \mathbf{u}^t          & 1 \\
+    %         \end{array}\bigg]
+    %     \right|\right)
+    %     +\log \left(\left|
+    %         \bigg[\begin{array}{cc}
+    %             \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}      \\
+    %             \mathbf{0}_{k-1,1}^t          & \alpha \\
+    %         \end{array}\bigg]
+    %     \right|\right) \\
+    %     =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha| \right)\\
+    %     =&\log \left( |\boldsymbol{\Sigma}^{(k-1)}| \right) + \log ( \alpha )
+    % \end{align*}
+    % }
+  From eq.~(\ref{eq:cov}) and standard results for the determinant of block matrix~\cite[Chapter 9]{IMM2012-03274} we have immediatly:
+  \begin{align*}
+    \log \left(|\boldsymbol{\Sigma}^{(k)}|\right)  & = \log\left(|\boldsymbol{\Sigma}^{(k-1)}|\right)\log\left(\sigma_{kk}  - \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1}  \mathbf{u}\right)\\
+    &= \log\left(|\boldsymbol{\Sigma}^{(k-1)}|\right)\log\left(\alpha\right)
+  \end{align*}
+  
 \end{proof}
 
 % \section*{Acknowledgment}
