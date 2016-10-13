@@ -101,10 +101,10 @@ Finally, the method is compared to standard classifiers using two different data
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites missioned by the German space agency will produce images with 244 spectral bands with a resolution of 30x30m with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched successfully recently and 2 Terabytes of data will be released every days~\cite{drusch2012sentinel}. This high volume of earth observation data provides an accurate information of land state and functioning, and help to improve the understanding of the earth~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
+\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands with a resolution of 30x30m with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched successfully recently and 2 Terabytes of data will be released every days~\cite{drusch2012sentinel}. This high volume of earth observation data provides an accurate information of land state and functioning, and help to improve the understanding of the earth~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
 
 In the spectral or temporal domain, a pixel is represented by a vector
-for   wich  each   component   corresponds   to  a   spectral/temporal
+for   which  each   component   corresponds   to  a   spectral/temporal
 measurement.  The  size of  the vector  is the  number of  spectral or
 temporal  measurements.   For  hyperspectral images,  this  number  is
 typically   about   several   hundreds  while   for   the   Sentinel-2
@@ -138,12 +138,12 @@ stream    (see    for    instance     the    Copernicus    data    hub
 requires   specific   computing  infrastructure.    High   performance
 computing   is   actually   investigated   by   the   remote   sensing
 community~\cite{christophe2011remote,plaza2011high}.  Main  issues are
-related to the use of  parallel approach (multicore, CPU, clusters) to
+related to the use of  parallel approach (multi-core, CPU, clusters) to
 improve the  processing time, and  to the use of  streaming techniques
 when data  does not fit in  memory.  One popular open  source software
 solution  is  the Orfeo  Toolbox,  developed  by the  French  National
 Agency~\cite{christophe2008orfeo}.   Streaming and  parallel computing
-are  convenientely  proposed  to  the  user  through  several  modules
+are  conveniently  proposed  to  the  user  through  several  modules
 ``\emph{ready to use}''.
 
 A method  to reduce  both statistical and  computational issues  is to
@@ -168,7 +168,17 @@ computational load.
 
 % retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.
 
-There are two ways to reduce dimension~\cite[Chapter 1]{Guyon:2006:FEF:1208773}: features extraction and feature selection. Feature extraction means reformulate and summarize the information by creating new features in combining the existing ones, it is sometimes referred to \emph{feature construction}. Linear combination of the initial features can be extracted using Principal Component Analysis (PCA)~\cite{jimenez1998supervised} or Independent Component Analysis \cite{villa2011hyperspectral}. Supervised extraction method has also been investigated such as Fischer discriminant analysis and decision boundary feature extraction~\cite{book:landgrebe}. To the contrary, features selection selects a subset of existing features identified as the most relevant for a given criterion. It has the additional advantage to be much more interpretable for the end-user. 
+There are two ways to reduce dimension~\cite[Chapter 1]{Guyon:2006:FEF:1208773}:
+features extraction and feature selection. Feature extraction means reformulate
+and summarize the information by creating new features in combining the existing
+ones, it is sometimes referred to \emph{feature construction}. Linear
+combination of the initial features can be extracted using Principal Component
+Analysis (PCA)~\cite{jimenez1998supervised} or Independent Component Analysis
+\cite{villa2011hyperspectral}. Supervised extraction method has also been
+investigated such as Fischer discriminant analysis and decision boundary feature
+extraction~\cite{book:landgrebe}. To the contrary, features selection selects a
+subset of existing features identified as the most relevant for a given
+criterion. It has the additional advantage to be much more easily understandable for the end-user. 
 
 Features selection/extraction algorithms can be divided into three classes. The first class is called \emph{filter methods}. They select features independently of the classifier. Features are ranked according to some statistical measures (correlation, independence). For example, the PCA is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. The use of correlation between bands has been explored with hyperspectral data\cite{demir2008phase}. In general, these methods have the advantage to be fast and usable with any classifier but they do not take into account the strength and weakness of the chosen classifier and do not optimize directly the classification process.
 
@@ -206,7 +216,7 @@ samples of class $c$.
         p(\mathbf{x}) = \sum_{c=1}^{C} \pi_c f_c(\mathbf{x}|\theta)
     \end{equation}
     where $\pi_c$ is  the prior, \emph{i.e.}, the  proportion of class
-    $c$  and  $f_c$  a  parametric density  function  parametrized  by
+    $c$  and  $f_c$  a  parametric density  function  control by
     $\theta$.
 
     Among the possible parametric model,  the Gaussian one is the most
@@ -344,7 +354,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         where Tr is the trace operator and $d$ the dimension of the distribution.
 
         The    KL   divergence    is   not    symmetric,   \emph{i.e.}
-        $KL_{cc^\prime} \ne KL_{c^\prime c}$.  A symmetrized version  is used to
+        $KL_{cc^\prime} \ne KL_{c^\prime c}$.  A symmetrical version  is used to
         compute the criterion function:
         \begin{align}\label{eq:skl}
           SKL_{cc^\prime} &=KL_{cc^\prime} + KL_{c^\prime c} \nonumber \\
@@ -753,7 +763,7 @@ GMM models for each fold.
     Following OTB framework, two application are available. The first,
     called  \texttt{otbcli\_TrainGMMSelectionApp}, performs  a feature
     selection algorithm (SFS or SFFS) with the one given criterion (to
-    choose  between  Jeffries-Matusita  dist.,  Kullback-Lieber  div.,
+    choose  between  Jeffries-Matusita  dist.,  Kullback-Leibler  div.,
     Cohen’s  kappa, overall  accuracy,  mean  F1-score).  The  second,
     called \texttt{otbcli\_PredictGMMApp}, generates the thematic maps
     according to the  learn model. The only  technical limitation that
