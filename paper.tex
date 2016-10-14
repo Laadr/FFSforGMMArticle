@@ -77,9 +77,7 @@ DYNAFOR, France.}%
 % in the abstract or keywords.
 \begin{abstract}
 This article presents a forward feature selection algorithm based on Gaussian mixture model (GMM) classifiers. The algorithm selects iteratively features that maximize a criterion function which can be either a classification rate or a measure of divergence. Several variations of this algorithm are explored by changing the criterion function and also by testing a floating forward variation allowing backward step to discard already selected features.
-
 An important effort is made in exploiting GMM properties to implement a fast algorithm. In particular, update rules of the GMM model are used to compute the criterion function with various sets of features. The result is a C++ remote module for the remote sensing processing toolbox Orfeo (OTB) developed by CNES.
-
 Finally, the method is compared to standard classifiers using two different data-sets, one of hyperspectral images with a lot of spectral variables and one with heterogeneous spatial features. The results validate the fact that the method performs well in terms of processing time and classification accuracy in comparison to the standard classifiers available in OTB.\\
 \end{abstract}
 
@@ -101,7 +99,7 @@ Finally, the method is compared to standard classifiers using two different data
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched successfully recently and 2 Terabytes of data will be released every days~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has released thousands of images. This high volume of Earth observation data provides an accurate information of land state and functioning, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
+\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched successfully recently and 2 Terabytes of data will be released every days~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has released thousands of images. This high volume of Earth observation data provides an accurate information of land state and functioning, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
 
 In the spectral or temporal domain, a pixel is represented by a vector
 for   which  each   component  corresponds   to  a   spectral/temporal
@@ -161,7 +159,7 @@ discriminant      for      the     purpose      of      classification
 hundreds of available spectral channels,  it is possible to reduce the
 number of channels  to make the processing more efficient  in terms of
 statistical complexity  and computational load. In  short, by reducing
-the dimension better classification results is expected with a reduced
+the dimension better, classification results is expected with a reduced
 computational load.
 
 % Among the various dimension reduction techniques, feature selection demonstrates several appealing for practical situation. The objective of feature selection is to find a subset of the original features with a minimum loss according the objective. Thus, 
@@ -172,7 +170,7 @@ There  are  two  main  strategies  to  reduce  dimension~\cite[Chapter
 1]{Guyon:2006:FEF:1208773}: features extraction and feature selection.
 Feature extraction means reformulate  and summarize the information by
 creating new features in combining  the existing ones, it is sometimes
-referred to  \emph{feature construction}.   Linear combination  of the
+referred to as \emph{feature construction}.   Linear combination  of the
 initial features  can be extracted using  Principal Component Analysis
 (PCA)~\cite{jimenez1998supervised}  or Independent  Component Analysis
 \cite{villa2011hyperspectral}.  Supervised extraction  method has also
@@ -188,7 +186,7 @@ The second class are known as \emph{wrapper methods}. They search for the best s
 
 % The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
 
-The third class corresponds to the \emph{embedded method}. They do not separate the features selection process from the learning algorithm and allow interaction between the two processes. A popular method embedded method is the \emph{Random Forest}. Embedded methods also exist for other models, \emph{e.g.} SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
+The third class corresponds to the \emph{embedded methods}. They do not separate the features selection process from the learning algorithm and allow interaction between the two processes. A popular method embedded method is the \emph{Random Forest}. Embedded methods also exist for other models, \emph{e.g.} SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
 
 Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed~\cite{fauvel2015fast}. The training computational load is too important to compensate the reduced prediction computational load. Hence, feature selection is not widely used in operational situation. However, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
 
@@ -196,9 +194,9 @@ The contribution of the paper is a forward feature selection method using GMM in
 
 % Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox .
 
-The remaining of the article is organized as follows. Section~\ref{sec:gmm-hd} presents GMM classifiers and the problems related to high-dimensional feature space. The features selection methods are detailed in Section~\ref{sec:selection}. Then an efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. Experimental results on two real high dimensional data set are given Section~\ref{sec:test}. Conclusion and perspectives conclude the paper in Section~\ref{sec:conclusion}.
+The remaining of the article is organized as follows. Section~\ref{sec:gmm-hd} presents GMM classifiers and the problems related to high-dimensional feature spaces. The features selection methods are detailed in Section~\ref{sec:selection}. Then an efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. Experimental results on two real high dimensional data-set are given Section~\ref{sec:test}. Conclusion and perspectives conclude the paper in Section~\ref{sec:conclusion}.
 
-\section{Gaussian Mixture Models in high dimensional space}
+\section{Gaussian Mixture Models in high dimensional spaces}
 \label{sec:gmm-hd}
 
 The    following    notations    are   used    in    the    remaining.
@@ -284,15 +282,14 @@ $c$.
 
     There are two major solutions to this problem. First option is to stabilize the inversion of the covariance matrices. Some methods investigate the use of constraints on the direct problem. Reynolds \emph{et al.} \cite{reynolds1995robust} proposed to use diagonal covariance matrices. It is also possible to force the diagonal element to be higher than a given value by maximizing the GMM likelihood \cite{hathaway1985constrained}. Celeux and Govaert \cite{celeux1995gaussian} suggest to use equality constraints between coefficients of the covariance matrix in a parsimonious cluster-based GMM framework. Others papers propose to work on the inverse problem. A classical method is to use a regularization method as the well-known ridge regularization \cite{hoerl1970ridge}. A ridge regularization aims to stabilize the inversion by replacing the covariance matrix $\boldsymbol{\Sigma}_c$ by $\boldsymbol{\Sigma}_c + \tau \mathbf{I}$ where $\tau$ is a positive parameter and $\mathbf{I}$ the identity matrix. Jensen \emph{et al.} \cite{jensen2008regression} propose a different approach using a sparsity approximation to inverse the covariance matrix.
 
-    %% Question: tu suggérais de reprendre ici "Ensuite, il y a la réduction de dimension données des refs (voir intro du papier JSTARS) et dans la réduction  de dimension, il  y a  la sélection de features." Le soucis que je vois, c'est que je détaille déjà dans l'intro les différentes méthodes de sélection/extraction et je trouve que ça devient pas très clair si je reprends tout en me basant sur le papier JSTARS. J'aurais dit avt "il y a trois types de sélection: filtre, wrapper, embedded blablabla" et ensuite ça me fait reprendre ici une autre distinction "supervisé/non-supervisé" si je me base sur jstars qui est un peu redondante il me semble. Qu'en dis-tu ?
-    Second option is to reduce the dimension. Features extraction/selection methods have been developed in order to reduce the dimension with various approaches described in Section~\ref{sec:intro}. In this study, this latter option is explored and a feature selection method named sequential forward features selection is presented after an overview of the selection algorithms.
+    Second option is to reduce the dimension. Features extraction/selection methods have been developed in order to reduce the dimension with various approaches described in Section~\ref{sec:intro}. In this study, this latter option is explored and a feature selection method named sequential forward features selection is presented.
 
 \section{Sequential forward features selection}
 \label{sec:selection}
 
 The feature selection method proposed in this work is a wrapper method associated to GMM models. Two elements are needed to set up a wrapper method:
 \begin{enumerate}
-\item A function that  ranks the features according to some good classification criteria,
+\item A function that ranks the features according to some good classification or class separability criteria,
 \item A search strategy to optimize the function.
 \end{enumerate}
 
@@ -386,7 +383,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
             &+ \frac{1}{2} \log \left( \frac{|\boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}|}{\sqrt{|\boldsymbol{\Sigma}_c| |\boldsymbol{\Sigma}_{c^\prime}|}} \right).
         \end{align}
 
-        The \emph{Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases~\cite{bruzzone2009novel}. The JM distance is defined as
+        The \emph{Jeffries-Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distributions increases~\cite{bruzzone2009novel}. The JM distance is defined as
         \begin{equation}\label{eq:jm}
             {JM}_{cc^\prime} = \sqrt{ 2 \{1 - \text{exp}(-B_{cc^\prime})\} }.
         \end{equation}
@@ -423,7 +420,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 
         \subsection{Selection method}
         \label{sec:selection:method}
-        Two  sequential  search  algorithms were  implemented  in  this
+        Two  sequential  search  algorithms have been  implemented  in  this
         work~\cite{Guyon:2006:FEF:1208773}:  the   sequential  forward
         selection and the sequential  floating forward.  The later one
         is  an   extension  of   the  former.  Both   select  features
@@ -510,9 +507,9 @@ numerical  complexity is  on average  $O(d^3)$.  Furthermore,  for the
 cross-validation procedure.
 
 An efficient implementation of the criterion optimization is proposed.
-It based on  the symmetry property of the covariance  matrix and block
+It is based on  the symmetry property of the covariance  matrix and block
 inverse  formula~\cite{IMM2012-03274}. In  the following  it is  shown
-that the criterion  can be split into  two part: one that  needs to be
+that the criterion  can be split into  two parts: one that  needs to be
 computed for each  tested variable, and one that needs  to be computed
 only once per  selection step. For the  cross-validation part, updates
 rules are given to derive sub-models  without the necessity to learn a
@@ -645,10 +642,10 @@ GMM models for each fold.
             &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}_c^t & \frac{1}{\alpha_c} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2}_{\substack{\text{computed for each augmented set}}} \nonumber \\
             &+ \underbrace{\alpha ( \left[\begin{array}{cc} \mathbf{v}_{c^\prime}^t & \frac{1}{\alpha_{c^\prime}} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2 - 2k}_{\substack{\text{computed for each augmented set}}} \nonumber \\
             &+ \underbrace{(\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1}(\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber\\
-          & + \underbrace{(\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t(\boldsymbol{\Sigma}_{c^\prime}^{(k-1)})^{-1} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \biggr\}.
+          & + \underbrace{(\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t(\boldsymbol{\Sigma}_{c^\prime}^{(k-1)})^{-1} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \biggr\},
         \end{align}
-        with $(\boldsymbol{\Sigma}_c^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv};
       \end{prop}
+      \noindent with $(\boldsymbol{\Sigma}_c^{(k)})^{-1}$ computed with Proposition~\ref{eq:update-inv}.
 
       \begin{prop}[Jeffries-Matusita distance~(\ref{eq:jm})]
       \begin{align}
@@ -704,7 +701,7 @@ GMM models for each fold.
     Same reasoning applied  to the term $\alpha$ in  the update rules:
     it       is       also        thresholded       to       EPS\_FLT.
     Algorithm~\ref{alg:sffs-update}    details   when    computational
-    stability is enforced (lines 6, 10, 20 and 24).
+    stability is enforced (lines 7, 13, 25 and 31).
 
     \begin{algorithm}
     \caption{Sequential floating forward features selection with updates\label{alg:sffs-update}}
@@ -774,7 +771,7 @@ GMM models for each fold.
     Following  OTB framework,  two  applications  are available.   The
     first,  called  \texttt{otbcli\_TrainGMMSelectionApp}, performs  a
     feature selection algorithm  (SFS or SFFS) with  the one criterion
-    given      from~\ref{tab:crit}.       The      second,      called
+    given      from Table~\ref{tab:crit}.       The      second,      called
     \texttt{otbcli\_PredictGMMApp},   generates   the  thematic   maps
     according to the  learn model. The only  technical limitation that
     the  training set  must  fit  in the  RAM  of  the computer.   The
@@ -916,7 +913,7 @@ resolution multispectral airborne image.
           (16 features)~\cite{otb}.
     \end{itemize}
     The normalized DSM and the raw  RGBIR image are added to these 191
-    features and  then then  stacked to  create a  new image  with 196
+    features and  then stacked to  create a  new image  with 196
     bands. %  The  training is  made with  tile 5\_11  and test  with two
     % tiles: 5\_12 which very similar with  tile 5\_11 and 3\_10 which a
     % further area a bit less urban and more industrial.
