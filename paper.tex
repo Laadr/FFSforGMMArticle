@@ -383,7 +383,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \emph{The Bhattacharyya distance} is defined in the case of Gaussian model as
         \begin{align}
             {B}_{cc^\prime} = &\frac{1}{8} (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime})^t \left( \frac{\boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}}{2} \right)^{-1} (\boldsymbol{\mu}_c - \boldsymbol{\mu}_{c^\prime}) \nonumber \\
-            &+ \frac{1}{2} \ln \left( \frac{|\boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}|}{\sqrt{|\boldsymbol{\Sigma}_c| |\boldsymbol{\Sigma}_{c^\prime}|}} \right).
+            &+ \frac{1}{2} \log \left( \frac{|\boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}|}{\sqrt{|\boldsymbol{\Sigma}_c| |\boldsymbol{\Sigma}_{c^\prime}|}} \right).
         \end{align}
 
         The \emph{Jeffries–Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distribution increases~\cite{bruzzone2009novel}. The JM distance is defined as
@@ -440,8 +440,8 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \begin{algorithmic}[1]
         \REQUIRE $\Omega,J,\text{maxVarNb}$
         \STATE $\Omega=\emptyset$
-        \STATE $F=\text{\{all variables\}}$
-        \WHILE{$\text{card}(\Omega) \leq maxVarNb$}
+        \STATE $F=\text{\{all variables $f_i$\}}$
+        \WHILE{$\text{card}(\Omega) < maxVarNb$}
         \FORALL{$f_i \in F$}
         \STATE $R_i = J(\{\Omega + f_i\})$
         \ENDFOR
@@ -469,9 +469,9 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \begin{algorithmic}[1]
         \REQUIRE $J,\text{maxVarNb}$
         \STATE $\Omega=\overbrace{(\emptyset,...,\emptyset)}^{maxVarNb}$
-        \STATE $F=\text{\{all variables\}}$
+        \STATE $F=\text{\{all variables $f_i$\}}$
         \STATE $k=0$
-        \WHILE{$k \neq \text{maxVarNb}$}
+        \WHILE{$k < \text{maxVarNb}$}
         \FORALL{$f_i \in F$}
         \STATE $R_i = J(\{\Omega_k + f_i\})$
         \ENDFOR
@@ -654,8 +654,8 @@ GMM models for each fold.
       \begin{align}
         \label{eq:jm-update}
             \text{B}_{cc^\prime} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
-            &+ \underbrace{\frac{1}{2} \ln \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_c^{(k-1)}| |\boldsymbol{\Sigma}_{c^\prime}^{(k-1)}|}} \right)}_{\substack{\text{computed once per selection step}}} \nonumber \\
-            &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2 + \frac{1}{2} \ln \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_c \alpha_{c^\prime}}} \right)}_{\substack{\text{computed for each augmented set}}},
+            &+ \underbrace{\frac{1}{2} \log \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_c^{(k-1)}| |\boldsymbol{\Sigma}_{c^\prime}^{(k-1)}|}} \right)}_{\substack{\text{computed once per selection step}}} \nonumber \\
+            &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2 + \frac{1}{2} \log \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_c \alpha_{c^\prime}}} \right)}_{\substack{\text{computed for each augmented set}}},
       \end{align}
     \end{prop}
     \noindent where $\boldsymbol{\tilde{\Sigma}} = \boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}$ and $\tilde{\alpha}$ and $\mathbf{\tilde{v}}$ are defined as $\alpha_c$ and $\mathbf{v}_c$ but using $\boldsymbol{\tilde{\Sigma}}$ instead of $\boldsymbol{\Sigma}_c$.
@@ -712,9 +712,9 @@ GMM models for each fold.
     \begin{algorithmic}[1]
     \REQUIRE $J,\text{maxVarNb}$
     \STATE $\Omega=\overbrace{(\emptyset,...,\emptyset)}^{maxVarNb}$
-    \STATE $F=\text{\{all variables\}}$
+    \STATE $F=\text{\{all variables $f_i$\}}$
     \STATE $k=0$
-    \WHILE{$k \neq \text{maxVarNb}$}
+    \WHILE{$k < \text{maxVarNb}$}
     \FORALL{$c \in \{1,...,C\}$}
     \STATE Diagonalize $\boldsymbol{\Sigma}^{(k-1)}_c = \mathbf{P}_c \boldsymbol{\Lambda}_c \mathbf{P}_c^t$
     \STATE {\bfseries for all} $\lambda_{c}(i)$ {\bfseries do} $\lambda_{c}(i) = \max (\text{EPS\_FLT},\lambda_{c}(i))$
@@ -1025,7 +1025,7 @@ resolution multispectral airborne image.
     presents  the results  of the  experiment with  mean and  standard
     deviation  of  the  Kappa  coefficient  over  the  20  trials  and
     Table~\ref{tab:aisa-otbsimu-time}  the   corresponding  processing
-    time. Additionally, Figure~\ref{fig:meanNbVar-aisa} summarizes the mean of the number of selected variables for each variation of the GMM classifier with selection.
+    time. Bold values corresponds to best results. In Table~\ref{tab:aisa-otbsimu}, when several bold scores appears for the same experiment, it means that the scores has been assessed as equivalent with a Wilcoxon rank-sum test \cite{mann1947test}. Additionally, Figure~\ref{fig:meanNbVar-aisa} summarizes the mean of the number of selected variables for each variation of the GMM classifier with selection.
 
     \begin{figure}[!t]
         \centering
@@ -1045,15 +1045,33 @@ resolution multispectral airborne image.
              & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
             \# samples by class & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS kappa & {\bfseries 0.684 (0.025)} & {\bfseries 0.698 (0.027)} & {\bfseries 0.711 (0.028)} \\
-            GMM SFS JM &    {\bfseries 0.680 (0.028)} & {\bfseries 0.700 (0.028)} & {\bfseries 0.710 (0.030)} \\
-            GMM SFFS JM &   {\bfseries 0.680 (0.028)} & {\bfseries 0.700 (0.028)} & {\bfseries 0.710 (0.030)} \\
+            GMM SFS kappa & {\bfseries 0.678 (0.029)} & {\bfseries 0.687 (0.029)} & {\bfseries 0.699 (0.028)} \\
+            GMM SFS JM &    {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.701 (0.029)} \\
+            GMM SFFS JM &   {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.701 (0.029)} \\
             GMM ridge &     0.611 (0.040) & 0.620 (0.036) & 0.642 (0.034) \\
             KNN &           0.551 (0.035) & 0.563 (0.033) & 0.574 (0.030) \\
             Random Forest & 0.645 (0.026) & 0.673 (0.023) & {\bfseries 0.693 (0.023)} \\
             \bottomrule
         \end{tabular}
     \end{table}
+
+    % this one is result without changing the number of selected variables
+    % \begin{table}[!t]
+    %     \centering
+    %     \caption{Average classification accuracy 20 trials (standard deviation in parenthesis).\label{tab:aisa-otbsimu}}
+    %     \begin{tabular}{lccc}\toprule
+    %          & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
+    %         \# samples by class & 250 & 500 & 1000 \\ \midrule
+
+    %         GMM SFS kappa & {\bfseries 0.684 (0.025)} & {\bfseries 0.698 (0.027)} & {\bfseries 0.711 (0.028)} \\
+    %         GMM SFS JM &    {\bfseries 0.680 (0.028)} & {\bfseries 0.700 (0.028)} & {\bfseries 0.710 (0.030)} \\
+    %         GMM SFFS JM &   {\bfseries 0.680 (0.028)} & {\bfseries 0.700 (0.028)} & {\bfseries 0.710 (0.030)} \\
+    %         GMM ridge &     0.611 (0.040) & 0.620 (0.036) & 0.642 (0.034) \\
+    %         KNN &           0.551 (0.035) & 0.563 (0.033) & 0.574 (0.030) \\
+    %         Random Forest & 0.645 (0.026) & 0.673 (0.023) & 0.693 (0.023) \\
+    %         \bottomrule
+    %     \end{tabular}
+    % \end{table}
 
     \begin{figure}
       \centering
@@ -1107,7 +1125,7 @@ resolution multispectral airborne image.
     tile (5\_11)  and validation  samples were all  the pixel  of tile
     5\_12     or    3\_10.      Table~\ref{tab:potsdam-otbsimu}    and
     Table~\ref{tab:potsdam-otbsimu-big} present  the results  in terms
-    of classification accuracy and processing time.
+    of classification accuracy and processing time. Bold values corresponds to best results. In Table~\ref{tab:potsdam-otbsimu}, when several bold scores appears for the same experiment, it means that the scores has been assessed as equivalent with a Wilcoxon rank-sum test \cite{mann1947test}.
 
     \begin{table*}[!t]
         \centering
@@ -1201,19 +1219,20 @@ Perspectives of this work concern the selection of continuous interval of featur
     %     \end{proof}
 
 \begin{proof}[Proof of proposition~(\ref{eq:update-quad})]
-    {\footnotesize
     \begin{alignat*}{3}
-    (&\mathbf{x}^{(k)})^t && (\boldsymbol{\Sigma}^{(k)}_c)^{-1} \mathbf{x}^{(k)}
-       = \left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
+    (&\mathbf{x}^{(k)})^t && (\boldsymbol{\Sigma}^{(k)}_c)^{-1} \mathbf{x}^{(k)} \\
+     &= &&\left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
         \left[\begin{array}{cc}
             \mathbf{A}_c   & \mathbf{v}_c \\
             \mathbf{v}_c^t & \frac{1}{\alpha_c}
         \end{array}\right]
         \left[\begin{array}{c} \mathbf{x}^{(k-1)} \\ x_k \end{array}\right] \\
-     &= &&\left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t \mathbf{A}_c + x_k \mathbf{v}_c^t & (\mathbf{x}^{(k-1)})^t \mathbf{v}_c + \frac{x_k}{\alpha_c} \end{array}\right]
-            \left[\begin{array}{c} \mathbf{x}^{(k-1)} \\ x_k \end{array}\right] \\
-     &= &&(\mathbf{x}^{(k-1)})^t \mathbf{A}_c \mathbf{x}^{(k-1)} + x_k \mathbf{v}_c^t \mathbf{x}^{(k-1)} + (\mathbf{x}^{(k-1)})^t \mathbf{v}_c x_k + \frac{(x_k)^2}{\alpha_c} \\
-     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}_c^{(k-1)})^{-1} + \frac{1}{\alpha_c} (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c \mathbf{u}_c^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
+     &= &&\left[\begin{array}{cc} (\mathbf{x}^{(k-1)})^t   & x_k \end{array}\right]
+            \left[\begin{array}{c} \mathbf{A}_c \mathbf{x}^{(k-1)} + x_k \mathbf{v}_c \\ \mathbf{v}_c^t \mathbf{x}^{(k-1)} + \frac{x_k}{\alpha_c} \end{array}\right] \\
+     &= &&(\mathbf{x}^{(k-1)})^t \mathbf{A}_c \mathbf{x}^{(k-1)} + x_k \mathbf{v}_c^t \mathbf{x}^{(k-1)} \\
+     & &&+ (\mathbf{x}^{(k-1)})^t \mathbf{v}_c x_k + \frac{(x_k)^2}{\alpha_c} \\
+     &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \\
+     & &&+ \frac{1}{\alpha_c} (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c \mathbf{u}_c^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1}) \mathbf{x}^{(k-1)}\\
      & &&+ 2 x_k \mathbf{v}_c^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha_c} \\
      &= &&(\mathbf{x}^{(k-1)})^t ((\boldsymbol{\Sigma}_c^{(k-1)})^{-1} + \alpha_c \mathbf{v}_c \mathbf{v}_c^t) \mathbf{x}^{(k-1)}\\
      & &&+ 2 x_k \mathbf{v}_c^t \mathbf{x}^{(k-1)} + \frac{(x_k)^2}{\alpha_c} \\
@@ -1222,12 +1241,10 @@ Perspectives of this work concern the selection of continuous interval of featur
      &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha_c ( (\mathbf{x}^{(k-1)})^t \mathbf{v}_c + \frac{x_k}{\alpha_c} )^2 \\
      &= &&(\mathbf{x}^{(k-1)})^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{x}^{(k-1)} + \alpha_c ( \left[\begin{array}{cc} \mathbf{v}_c^t & \frac{1}{\alpha_c} \end{array}\right] \mathbf{x}^{(k)} )^2
     \end{alignat*}
-    }
 \end{proof}
 
 \begin{proof}[Proof of proposition~(\ref{eq:update-log})]
 
-    % {\footnotesize
     % \begin{align*}
     %     \log &\left(|\boldsymbol{\Sigma}_c^{(k)}|\right) =
     %     \log \left(\left|
@@ -1261,7 +1278,6 @@ Perspectives of this work concern the selection of continuous interval of featur
     %     =&\log \left( |\boldsymbol{\Sigma}_c^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha_c| \right)\\
     %     =&\log \left( |\boldsymbol{\Sigma}_c^{(k-1)}| \right) + \log ( \alpha_c )
     % \end{align*}
-    % }
     % \noindent where $\mathbf{I}_{k-1}$ is the $(k-1) \times (k-1)$ identity matrix and $\mathbf{0}_{k-1,1}$ is the $(k-1) \times 1$ null vector.
   From eq.~(\ref{eq:cov}) and standard results for the determinant of block matrix~\cite[Chapter 9]{IMM2012-03274} we have immediatly:
   \begin{align*}
