@@ -46,7 +46,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Large-scale feature selection with Gaussian mixture models for remote sensing images}
+\title{Large-scale feature selection with Gaussian mixture models for the classification of high dimensional remote sensing images}
 %
 %
 % author names and IEEE memberships
@@ -76,9 +76,17 @@ DYNAFOR, France.}%
 % As a general rule, do not put math, special symbols or citations
 % in the abstract or keywords.
 \begin{abstract}
-This article presents a forward feature selection algorithm based on Gaussian mixture model (GMM) classifiers. The algorithm selects iteratively features that maximize a criterion function which can be either a classification rate or a measure of divergence. Several variations of this algorithm are explored by changing the criterion function and also by testing a floating forward variation allowing backward step to discard already selected features.
-An important effort is made in exploiting GMM properties to implement a fast algorithm. In particular, update rules of the GMM model are used to compute the criterion function with various sets of features. The result is a C++ remote module for the remote sensing processing toolbox Orfeo (OTB) developed by CNES.
-Finally, the method is compared to standard classifiers using two different data-sets, one of hyperspectral images with a lot of spectral variables and one with heterogeneous spatial features. The results validate the fact that the method performs well in terms of processing time and classification accuracy in comparison to the standard classifiers available in OTB.\\
+  A  large  scale  feature  selection wrapper  is  discussed  for  the
+  classification  of high  dimensional  remote  sensing. An  efficient
+  implementation is proposed based on intrinsic properties of Gaussian
+  mixtures models and  block matrix.  The criterion  function is split
+  into two parts  : one that is  updated to test each  feature and one
+  that needs to be updated only once per feature selection. This split
+  saved  a  lot  of  computation  for each  test.   The  algorithm  is
+  implemented in  \texttt{C++} and integrated into  the Orfeo Toolbox.
+  It has been compared to  other classification algorithms on two high
+  dimension remote sensing images. The  results show that the approach
+  provide good classification accuracies with low computation time.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
