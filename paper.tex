@@ -99,7 +99,7 @@ Finally, the method is compared to standard classifiers using two different data
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched successfully recently and 2 Terabytes of data will be released every days~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has released thousands of images. This high volume of Earth observation data provides an accurate information of land state and functioning, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
+\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched recently and 2 Terabytes of data will be released every day~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has released thousands of images. Such high volume of Earth observation data provides an accurate information of land state and functioning, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
 
 In the spectral or temporal domain, a pixel is represented by a vector
 for   which  each   component  corresponds   to  a   spectral/temporal
@@ -170,15 +170,16 @@ There  are  two  main  strategies  to  reduce  dimension~\cite[Chapter
 1]{Guyon:2006:FEF:1208773}: features extraction and feature selection.
 Feature extraction means reformulate  and summarize the information by
 creating new features in combining  the existing ones, it is sometimes
-referred to as \emph{feature construction}.   Linear combination  of the
+referred to as \emph{feature construction}.  Linear combination of the
 initial features  can be extracted using  Principal Component Analysis
 (PCA)~\cite{jimenez1998supervised}  or Independent  Component Analysis
 \cite{villa2011hyperspectral}.  Supervised extraction  method has also
 been investigated  such as Fischer discriminant  analysis and decision
 boundary feature  extraction~\cite{book:landgrebe}.  To  the contrary,
 features selection  extracts a subset of  existing features identified
-as the  most relevant  by a  given criterion.   It has  the additional
-advantage to be much more easily understandable for the end-user.
+as  the most  relevant  by a  given criterion.   This  subset has  the
+additional advantage to  be much more understandable  for the end-user
+than those constructed by a (non-)linear combination.
 
 Features selection/extraction algorithms can be divided into three classes. The first class is called \emph{filter methods}. They select features independently of the classifier. Features are ranked according to some statistical measures, \emph{e.g.}, correlation or independence. For example,  PCA is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. Correlation between bands has been explored for feature selection in hyperspectral data~\cite{demir2008phase}. In general, these methods are fast and do not depend on any classifier. But they do not take into account the properties of the chosen classifier and do not optimize directly the classification accuracy.
 
@@ -186,7 +187,7 @@ The second class are known as \emph{wrapper methods}. They search for the best s
 
 % The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
 
-The third class corresponds to the \emph{embedded methods}. They do not separate the features selection process from the learning algorithm and allow interaction between the two processes. A popular method embedded method is the \emph{Random Forest}. Embedded methods also exist for other models, \emph{e.g.} SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
+The third class corresponds to the \emph{embedded methods}. They do not separate the features selection process from the learning algorithm and allow interaction between the two processes. A popular embedded method is the \emph{Random Forest}. Embedded methods also exist for other models, \emph{e.g.} SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
 
 Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed~\cite{fauvel2015fast}. The training computational load is too important to compensate the reduced prediction computational load. Hence, feature selection is not widely used in operational situation. However, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
 
@@ -194,7 +195,14 @@ The contribution of the paper is a forward feature selection method using GMM in
 
 % Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox .
 
-The remaining of the article is organized as follows. Section~\ref{sec:gmm-hd} presents GMM classifiers and the problems related to high-dimensional feature spaces. The features selection methods are detailed in Section~\ref{sec:selection}. Then an efficient implementation of the proposed selection method is presented in Section~\ref{sec:implementation}. Experimental results on two real high dimensional data-set are given Section~\ref{sec:test}. Conclusion and perspectives conclude the paper in Section~\ref{sec:conclusion}.
+The     remaining    of     the     article     is    organized     as
+follows.   Section~\ref{sec:gmm-hd}  presents   GMM  classifiers   and
+problems  related to  high-dimensional  feature  spaces. The  features
+selection methods are detailed in Section~\ref{sec:selection}. Then an
+efficient         implementation        is         presented        in
+Section~\ref{sec:implementation}.  Experimental  results on  two  real
+high dimensional data-set are given Section~\ref{sec:test}. Conclusion
+and perspectives conclude the paper in Section~\ref{sec:conclusion}.
 
 \section{Gaussian Mixture Models in high dimensional spaces}
 \label{sec:gmm-hd}
@@ -305,7 +313,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \subsubsection{Measures of correct classification}
         \label{sec:criterion-rate}
 
-        A measure of correct classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used:
+        A measure of correct classification is based on an error matrix $M$, or \emph{confusion matrix}~\cite[Chapter 4]{congalton2008assessing}. The confusion matrix allows the computation of several global and per-class indices related to the classification accuracy~\cite{congalton2008assessing}. Three global criteria were used in this work:
 
         \begin{itemize}
         \item  \emph{The overall  accuracy} (OA)  is the  rate of  the
