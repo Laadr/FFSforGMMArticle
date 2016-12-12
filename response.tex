@@ -71,33 +71,49 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   In Fig. 5, the optimal number of variables are selected if the criterion stops to increase significantly. It is unclear to me how to make this selection. For example in Fig. 5, I would pick the optimal number of variables to be 7 instead of 18 which the authors suggest, since after 7 variables I do not observe a significant increase. Maybe plotting the discrete derivative of criteria together with Fig. 5 can help in the explanation.
   \begin{resbox}
+  The value of the derivative of criterion is compared to a user-defined threshold. The first time the value reaches below the threshold correspond to the number of selected variables. The derivative for the example presented on Fig. 5 of the paper is presented in Figure~\ref{fig:deriv}.
   With the same example, 7 features gives a kappa of $0.620$ and 18 features a kappa of $0.657$.
 
   \end{resbox}
 \end{revbox}
 
-  \begin{figure}[!ht]
-      \centering
-      \begin{tikzpicture}
-          \begin{axis}[ymin=0,ymax=0.3,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
-              \addplot[thick,black] table[x expr=\coordindex,y=deriv] {derivate_criterion_1000spl_aisa.txt};
-              % \draw[thick,red] (axis cs:18,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:18,\pgfkeysvalueof{/pgfplots/ymax});
-              % \draw[thick,black] (axis cs:24,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:24,\pgfkeysvalueof{/pgfplots/ymax});
-          \end{axis};
-      \end{tikzpicture}
-      \caption{Criterion evolution (kappa) in function of the number of selected variables for first trial with Aisa dataset with 500 samples by class. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.}
-  \end{figure}
+\begin{figure}[!ht]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[ymin=0,ymax=0.25,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Derivative of\\Cohen's kappa},ylabel style={align=center},yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=3}]
+      \addplot[thick,black] table[x expr=\coordindex,y=deriv] {derivate_criterion_1000spl_aisa.txt};
+      \draw[thick,red] (axis cs:18,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:18,\pgfkeysvalueof{/pgfplots/ymax});
+      \draw[thick,black] (axis cs:24,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:24,\pgfkeysvalueof{/pgfplots/ymax});
+    \end{axis};
+  \end{tikzpicture}
+  \caption{Derivative of criterion (kappa) in function of the number of selected variables for first trial with Aisa dataset with 500 samples by class. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.\label{fig:deriv}}
+\end{figure}
+
 
 \begin{revbox}
   Following the question 3, why choosing the optimal number of variables based on the increase of criterion instead of the highest value?
   \begin{resbox}
-
+    We also considered this possibility and it is a choice available in the code of the OTB module we provide. But taking the maximum appears not to be the optimal choice in the sense that the algorithm selects sometimes more variables than necessary. Sometimes, at a given point, the best new selected variable is one which contains no information (for example one whose contribution is thresholded by EPS\_FLT) because all others decrease the criterion value. If it happens several times, it can lead to a final drop of the criterion. The algorithm then tries to counterbalance the drop and regains the original maximum but can be slightly higher. Figure~\ref{fig:crit-evol} illustrated this case.
+    The problem is that we introduce a few irrelevant features and we want to avoid that if possible. This case appears more often with the second dataset but we choose to use the same method for both dataset.
   \end{resbox}
 \end{revbox}
+
+\begin{figure}[!t]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[ymin=0.2,ymax=0.9,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
+      \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
+    \end{axis};
+  \end{tikzpicture}
+  \caption{Criterion evolution (kappa) in function of the number of selected variables for first trial with Potsdam dataset with 1000 samples by class.\label{fig:crit-evol}}
+\end{figure}
 
 \begin{revbox}
   In the experiment with Aisa dataset, although several numbers of training samples are tested, the number of training samples seems carefully selected by the authors to show the cases where the GMM classifiers perform better. I guess when a larger number of samples are trained, the random forest will have a higher classification rate. And when a smaller number of samples are used, the KNN will have a shorter training time. The GMM only wins in the classification time regardless of the sample number. It’ll be good to show these cases.
   \begin{resbox}
+    It is true that we can try with fewer samples. NB: TODO
+    But in the case of a larger training set is not possible to test with the chosen validation method. We use an equal number of samples in each class and 50\% of the samples are used for test. Thus, as the less represented class contains 2107 samples, we are limited to 1053 samples by class with this dataset. Nevertheless, the second dataset illustrates the case and we also add the following comment in the paper to make it clear that RF could perform better with more samples:
+    \emph{Random Forest has similar performance in term of classification rate with 1000 samples \rev{ and one could expect to get a better classification rate with RF if more samples were available}.}
   \end{resbox}
 \end{revbox}
 

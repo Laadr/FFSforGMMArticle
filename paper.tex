@@ -1125,7 +1125,7 @@ resolution multispectral airborne image.
 
     The results show that, on this  dataset, GMM classifiers with feature selection get the best classification rate. Among the three variations of the selection algorithm, none appears to perform better than the others. Using kappa or Jeffries-Matusita distance as criterion is equal and using SFFS does not give any advantage.
 
-    The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples. The GMM classifier with ridge regularization and the KNN classifier are both outperformed.
+    The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples and one could expect to get a better classification rate with RF if more samples were available. The GMM classifier with ridge regularization and the KNN classifier are both outperformed.
 
     In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~(\ref{eq:decision}) has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
 
