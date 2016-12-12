@@ -1,0 +1,324 @@
+% -*- coding: utf-8 -*-
+\documentclass[a4paper,10pt,DIV=16]{scrartcl}  
+\usepackage{ucs} 
+\usepackage{array}
+\usepackage[utf8x]{inputenc}                   
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}                        
+\usepackage[english]{babel} 
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage[pdftex]{graphicx}
+\usepackage{graphicx,amsfonts,amssymb,amsmath,amsthm}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage[normalem]{ulem}
+\hypersetup{colorlinks=true,hypertexnames=false}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage[]{tcolorbox}
+\usepackage{paralist}
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\subject{Response to the reviewers}
+\title{Large-scale feature selection with Gaussian mixture models for the classification of high dimensional remote sensing images}
+\date{\today}
+\author{Adrien Lagrange \and Mathieu Fauvel \and Manuel Grizonnet}
+
+\newcommand{\rev}[1]{\textcolor{magenta}{#1}}
+%%% Definition of the boxes
+\newtcolorbox[auto counter,number within=section]{revbox}[1][]{%
+colback=red!5!white,colframe=red!50!white,fonttitle=\sffamily\bfseries,
+title=Comment~\thetcbcounter: #1}
+\newtcolorbox[auto counter,number within=section]{resbox}[1][]{%
+colback=blue!5!white,colframe=blue!5!white,title=Response~:,coltitle=black,fonttitle=\sffamily\bfseries}
+
+\begin{document}
+\maketitle
+
+We have revised  the paper taking into account the  comments raised by
+the reviewers.   We provide an  item-by-item response detailed  in the
+following.   We hope  that this  improved  paper is  now suitable  for
+publication  in  {\sc  Special Issue on Computational Imaging for Earth Sciences}.   We would  like  to  thank  the
+anonymous reviewers for their dedication in reviewing our work and for
+their constructive comments.
+
+For clarity,  the modification appear  in \textcolor{magenta}{magenta}
+in the revised paper.
+
+
+\section{Reviewer 1}
+
+\begin{revbox}
+In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical instability. It’s not clear how the authors select the proper value for this threshold. And how does this threshold influence the classification accuracy?
+
+  \begin{resbox}
+    In order to influence as less as possible the classification accuracy, the threshold has been set as small as possible. The smallest possible float number is define by the computer architecture (in our case 64bits) and C++ specifications. The C++ documentation states that epsilon is the \emph{difference between 1 and the least value greater than 1 that is representable}(\url{http://www.cplusplus.com/reference/cfloat/}).
+    This thresholding can be seen as a ridge regularization when applied to eigenvalues. 
+  \end{resbox}
+
+\end{revbox}
+
+\begin{revbox}
+  The authors show the experimental results on two different types of hyper-dimensional images, which is very good. But I have some doubts on the construction of the second high dimensional cube where 191 features are constructed based on the low dimensional RGBIR images. Are these features simply used for the purpose of increasing the data dimensionality? Or are there benefits in terms of classification accuracy?
+  \begin{resbox}
+    The interest of this second data cube is first to test the algorithm in a different context. In particular, this second dataset should be seen as a method to learn the most relevant kind of features and the best parameters to extract those features. In the first dataset, only spectral features has been considered and in the particular context of hyperspectral imaging which imply contiguous features highly correlated.
+    (reponse bof à revoir et developper mais c'est un debut)
+  \end{resbox}
+\end{revbox}
+
+
+\begin{revbox}
+  In Fig. 5, the optimal number of variables are selected if the criterion stops to increase significantly. It is unclear to me how to make this selection. For example in Fig. 5, I would pick the optimal number of variables to be 7 instead of 18 which the authors suggest, since after 7 variables I do not observe a significant increase. Maybe plotting the discrete derivative of criteria together with Fig. 5 can help in the explanation.
+  \begin{resbox}
+  With the same example, 7 features gives a kappa of $0.620$ and 18 features a kappa of $0.657$.
+
+  \end{resbox}
+\end{revbox}
+
+  \begin{figure}[!ht]
+      \centering
+      \begin{tikzpicture}
+          \begin{axis}[ymin=0,ymax=0.3,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
+              \addplot[thick,black] table[x expr=\coordindex,y=deriv] {derivate_criterion_1000spl_aisa.txt};
+              % \draw[thick,red] (axis cs:18,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:18,\pgfkeysvalueof{/pgfplots/ymax});
+              % \draw[thick,black] (axis cs:24,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:24,\pgfkeysvalueof{/pgfplots/ymax});
+          \end{axis};
+      \end{tikzpicture}
+      \caption{Criterion evolution (kappa) in function of the number of selected variables for first trial with Aisa dataset with 500 samples by class. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.}
+  \end{figure}
+
+\begin{revbox}
+  Following the question 3, why choosing the optimal number of variables based on the increase of criterion instead of the highest value?
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  In the experiment with Aisa dataset, although several numbers of training samples are tested, the number of training samples seems carefully selected by the authors to show the cases where the GMM classifiers perform better. I guess when a larger number of samples are trained, the random forest will have a higher classification rate. And when a smaller number of samples are used, the KNN will have a shorter training time. The GMM only wins in the classification time regardless of the sample number. It’ll be good to show these cases.
+  \begin{resbox}
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  Correct some typos, for example:
+  \begin{enumerate}
+    \item In Proposition 2, in the sentence after the covariance matrix equation, I guess it should be ``u\_c'' instead of ``v\_c''.
+    \item Grammar mistakes such as ``a buildings''.
+  \end{enumerate}
+  \begin{resbox}
+    % Done. Thank you for the careful reading.
+    NB:
+    no $v_c$ after prop 2...
+    building corrected. Need to correct english at the end
+  \end{resbox}
+\end{revbox}
+
+
+\section{Reviewer 2}
+
+\begin{revbox}
+  page 4 :  C. Model inference equations seem correct  but what is the
+  typical range of p-hat (fixed parameter)?
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  Experimental Results : Absence of such visual graphics such as final
+  classification map,  original imagery and accuracy  studies based on
+  classification  performance   (not  just  compute  time   and  kappa
+  coefficients, but  in terms  of miss classification  rate, confusion
+  matrix from classifications etc.)
+
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\clearpage
+
+\section{Reviewer 2}
+\begin{revbox}
+  In section III-A, 5 criterion functions are proposed. With 2 feature selection methods (SFS and SFFS), there should be 10 possible configurations. However, in the experimental parts (page 14, line 21-24), results of only three configurations are shown. The authors said “other configurations have been investigated and performs either equally or lower in terms of classification accuracy.” I would suggest that the authors either show the results of more configurations or not introducing those unrelated criterion functions.
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  Only Cohen’s Kappa is utilized to analyze the classification accuracy. The experimental results would be more persuasive if other criterion functions are utilized as well. I am interested to see how different methods’ performance varies under different criterion functions.
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  According to Table IV in page 16. GMM SFS JM outperforms GMM SFS kappa a little bit under the kappa criterion. Since GMM SFS kappa updates the features according to the kappa criterion while GMM SFS JM updates the features according to the JM criterion, shouldn’t GMM SFS kappa outperforms GMM SFS JM under the kappa criterion? Or is there some explanation to it?
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  In Table VI and Table VII, the \# of selected features are different for different proposed methods. And the classification performance drops when the \# of selected features decreases. According to Algorithm 2 and Algorithm 3, the \# of selected features should be equal to maxVarNb. So why the \# of selected features are different for different proposed methods? The comparison is not fair to me if the \# of selected features are different. The authors should also show the \# of selected features in Table IV or Table V as well.
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  A reference or an explanation should be made in Page 1, line 36 regarding the curse of dimensionality
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\section{Reviewer 3}
+
+
+\begin{revbox}
+  Although the method seems promising, there are some significant issues the authors should address to. The key novelty and contribution of this technique is unfortunately unclear. The authors dedicate a lot of space in explaining already known mathematical formulations of the Gaussian Mixture Models and the feature selection techniques, in comparison with their proposed scheme.
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  Additionally, critical references are missing, such as:
+  \begin{enumerate}
+  \item K. Karalas, G. Tsagkatakis, M. Zervakis, and P. Tsakalides, "Land Classification Using Remotely Sensed Data: Going Multi-Label," IEEE Transactions on Geoscience and Remote Sensing, 2016, doi: 10.1109/TGRS.2016.2520203
+  \item K. Karalas, G. Tsagkatakis, M. Zervakis, and P. Tsakalides. "Deep learning for multi-label land cover classification", in SPIE Remote Sensing, Toulouse
+  \end{enumerate}
+
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+
+\begin{revbox}
+  Another drawback is that the English language is poorly written, since it contains several critical syntax and typographical errors. As a result, some parts of the text are unclarified and misunderstood.
+  \begin{resbox}
+
+  \end{resbox}
+\end{revbox}
+ 
+
+\section{Auxillary data}
+\label{sec:auxillary}
+
+\begin{table}[h]
+  \footnotesize
+  \centering
+  \caption{University}
+  \begin{tabular}{lrrrrrrrrrrrrrrr}
+    Method & M0 & M1 & M2 & M3 & M4 & M5 & M6 & NM0 & NM1 & NM2 & NM3 & NM3 & KDA & RF & SVM \\
+    OA & 82.0 & 83.9 & 69.6 & 68.0 & 73.3 & 65.2 & 68.7 & 78.7 & 83.8 & 67.7 & 65.8 & 65.8 & 83.5 & 71.9 & 84.5 \\
+    Kappa & 0.768 & 0.793 & 0.617 & 0.603 & 0.661 & 0.567 & 0.61 & 0.73 & 0.792 & 0.599 & 0.578 & 0.578 & 0.786 & 0.646 & 0.799 \\
+    CPT & 18 & 18 & 18 & 19 & 19 & 18 & 19 & 17 & 18 & 18 & 19 & 19 & 98 & 3 & 10 \\
+    PA 0 & 82.0 & 81.6 & 74.0 & 67.5 & 73.5 & 64.0 & 68.7 & 83.4 & 87.5 & 71.8 & 66.4 & 66.4 & 73.0 & 73.1 & 80.0 \\
+    PA 1 & 79.5 & 82.5 & 65.1 & 59.3 & 69.4 & 64.3 & 61.5 & 72.9 & 80.1 & 60.7 & 56.9 & 56.9 & 84.1 & 65.1 & 84.6 \\
+    PA 2 & 72.1 & 75.9 & 58.4 & 57.4 & 75.8 & 63.3 & 64.9 & 72.7 & 75.6 & 54.5 & 53.5 & 53.5 & 82.4 & 68.2 & 79.6 \\
+    PA 3 & 96.3 & 96.7 & 81.7 & 93.6 & 91.9 & 68.2 & 91.3 & 96.4 & 97.7 & 94.0 & 93.3 & 93.3 & 92.1 & 93.6 & 92.5 \\
+    PA 4 & 99.4 & 99.5 & 88.1 & 95.6 & 98.2 & 80.4 & 95.7 & 99.6 & 99.7 & 91.8 & 96.5 & 96.5 & 98.6 & 99.0 & 99.3 \\
+    PA 5 & 79.6 & 82.9 & 64.8 & 68.0 & 65.7 & 56.9 & 66.4 & 75.3 & 85.3 & 67.9 & 64.8 & 64.8 & 83.3 & 68.6 & 83.6 \\
+    PA 6 & 86.9 & 91.3 & 71.8 & 89.5 & 83.2 & 71.1 & 88.0 & 86.4 & 84.0 & 62.9 & 86.9 & 86.9 & 93.4 & 87.2 & 90.1 \\
+    PA 7 & 79.1 & 78.6 & 72.9 & 72.8 & 67.4 & 66.2 & 67.8 & 78.5 & 77.3 & 68.0 & 70.0 & 70.0 & 79.8 & 71.1 & 78.5 \\
+    PA 8 & 99.8 & 99.7 & 99.2 & 98.9 & 99.0 & 99.5 & 98.8 & 99.5 & 99.6 & 97.3 & 96.6 & 96.6 & 99.7 & 99.9 & 99.9 \\
+    UA 0 & 94.7 & 96.0 & 81.5 & 95.1 & 94.4 & 86.8 & 93.1 & 94.8 & 94.5 & 89.6 & 95.0 & 95.0 & 96.0 & 93.7 & 94.5 \\
+    UA 1 & 93.4 & 94.5 & 88.9 & 88.2 & 88.3 & 88.7 & 88.2 & 91.4 & 95.1 & 88.8 & 86.8 & 86.8 & 94.8 & 88.3 & 94.2 \\
+    UA 2 & 60.8 & 62.4 & 41.2 & 45.5 & 46.8 & 35.3 & 43.6 & 60.0 & 62.4 & 41.9 & 43.7 & 43.7 & 60.3 & 49.2 & 65.6 \\
+    UA 3 & 60.2 & 65.7 & 61.0 & 51.5 & 59.7 & 65.5 & 53.1 & 60.3 & 63.9 & 49.5 & 48.7 & 48.7 & 77.1 & 57.6 & 77.6 \\
+    UA 4 & 97.9 & 97.9 & 99.9 & 75.8 & 81.8 & 98.1 & 74.1 & 92.8 & 96.7 & 68.9 & 56.3 & 56.3 & 98.9 & 92.6 & 96.9 \\
+    UA 5 & 67.1 & 69.4 & 41.4 & 39.4 & 45.1 & 41.7 & 40.3 & 53.3 & 66.0 & 39.9 & 37.4 & 37.4 & 66.4 & 43.1 & 66.2 \\
+    UA 6 & 65.9 & 64.7 & 44.3 & 48.7 & 58.3 & 24.9 & 50.2 & 71.9 & 81.2 & 55.6 & 53.5 & 53.5 & 55.4 & 52.8 & 59.9 \\
+    UA 7 & 76.8 & 79.3 & 68.9 & 73.1 & 78.8 & 65.8 & 75.5 & 80.2 & 80.2 & 71.8 & 73.0 & 73.0 & 75.9 & 75.2 & 80.4 \\
+    UA 8 & 99.9 & 99.9 & 90.6 & 100.0 & 100.0 & 44.6 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 99.8 & 99.8 & 99.9 \\
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \footnotesize
+  \centering
+  \caption{KSC}
+  \begin{tabular}{lrrrrrrrrrrrrrrr}
+    Method & M0 & M1 & M2 & M3 & M4 & M5 & M6 & NM0 & NM1 & NM2 & NM3 & NM3 & KDA & RF & SVM \\
+    OA & 92.9 & 93.1 & 86.0 & 85.9 & 88.4 & 83.9 & 86.1 & 92.1 & 92.9 & 85.5 & 83.6 & 83.6 & 93.2 & 86.9 & 93.5 \\
+    Kappa & 0.92 & 0.922 & 0.844 & 0.842 & 0.87 & 0.82 & 0.845 & 0.911 & 0.921 & 0.838 & 0.817 & 0.817 & 0.924 & 0.853 & 0.928 \\
+    CPT & 31 & 33 & 31 & 33 & 34 & 32 & 34 & 31 & 33 & 31 & 33 & 33 & 253 & 3 & 28 \\
+    PA 0 & 90.7 & 90.8 & 87.0 & 85.9 & 88.2 & 86.8 & 85.6 & 89.9 & 90.3 & 85.3 & 84.2 & 84.2 & 87.0 & 88.1 & 90.0 \\
+    PA 1 & 88.9 & 89.6 & 83.7 & 80.7 & 85.5 & 83.3 & 80.8 & 90.6 & 90.3 & 82.6 & 80.2 & 80.2 & 87.7 & 83.5 & 91.0 \\
+    PA 2 & 90.1 & 91.7 & 86.1 & 89.9 & 86.6 & 86.6 & 89.9 & 85.0 & 89.2 & 86.3 & 87.0 & 87.0 & 88.2 & 89.6 & 93.0 \\
+    PA 3 & 77.2 & 78.3 & 61.3 & 67.7 & 70.3 & 64.1 & 70.9 & 74.3 & 77.9 & 62.6 & 61.9 & 61.9 & 79.8 & 64.1 & 78.5 \\
+    PA 4 & 81.5 & 83.4 & 63.1 & 61.8 & 71.7 & 66.7 & 64.1 & 79.1 & 82.2 & 62.2 & 59.2 & 59.2 & 82.8 & 65.0 & 80.4 \\
+    PA 5 & 80.7 & 80.4 & 55.3 & 51.1 & 58.0 & 36.2 & 48.0 & 84.2 & 83.4 & 53.0 & 45.5 & 45.5 & 82.5 & 56.3 & 79.6 \\
+    PA 6 & 95.5 & 95.6 & 89.5 & 93.9 & 92.0 & 91.4 & 94.6 & 92.4 & 94.0 & 88.1 & 90.4 & 90.4 & 96.8 & 93.1 & 94.8 \\
+    PA 7 & 91.9 & 92.3 & 82.0 & 81.7 & 88.0 & 84.8 & 82.8 & 93.2 & 93.2 & 82.0 & 74.1 & 74.1 & 93.0 & 81.0 & 93.8 \\
+    PA 8 & 96.4 & 96.6 & 92.6 & 91.8 & 94.3 & 93.9 & 92.1 & 94.9 & 96.1 & 90.1 & 86.7 & 86.7 & 97.5 & 89.4 & 95.3 \\
+    PA 9 & 95.1 & 94.9 & 81.2 & 88.5 & 90.5 & 73.5 & 88.8 & 95.4 & 95.5 & 94.5 & 93.0 & 93.0 & 96.8 & 86.4 & 96.9 \\
+    PA 10 & 97.7 & 98.1 & 90.2 & 90.4 & 94.7 & 85.0 & 90.9 & 97.7 & 97.9 & 89.6 & 90.2 & 90.2 & 97.4 & 95.8 & 97.9 \\
+    PA 11 & 93.0 & 92.5 & 88.0 & 81.0 & 82.1 & 78.5 & 80.8 & 90.0 & 92.4 & 80.5 & 77.7 & 77.7 & 96.3 & 83.2 & 95.1 \\
+    PA 12 & 98.9 & 98.9 & 97.8 & 98.2 & 98.4 & 97.9 & 98.3 & 98.6 & 98.6 & 97.1 & 97.6 & 97.6 & 99.9 & 99.4 & 100.0 \\
+    UA 0 & 97.5 & 97.6 & 96.4 & 96.8 & 96.3 & 96.9 & 96.9 & 97.5 & 97.4 & 96.7 & 96.8 & 96.8 & 97.8 & 95.7 & 97.0 \\
+    UA 1 & 93.4 & 93.3 & 82.4 & 81.0 & 84.8 & 78.9 & 81.2 & 93.1 & 93.6 & 86.2 & 83.3 & 83.3 & 92.9 & 79.0 & 93.7 \\
+    UA 2 & 92.1 & 92.2 & 75.8 & 81.4 & 92.7 & 58.5 & 86.2 & 95.4 & 94.0 & 88.7 & 84.2 & 84.2 & 91.3 & 87.1 & 87.6 \\
+    UA 3 & 78.9 & 81.2 & 59.9 & 62.9 & 65.8 & 56.3 & 63.2 & 78.0 & 81.2 & 60.9 & 60.4 & 60.4 & 71.4 & 63.7 & 79.0 \\
+    UA 4 & 72.9 & 73.4 & 53.8 & 60.2 & 57.0 & 47.0 & 60.3 & 69.3 & 74.6 & 52.7 & 53.5 & 53.5 & 73.9 & 62.1 & 74.6 \\
+    UA 5 & 69.9 & 71.2 & 45.9 & 49.9 & 58.1 & 55.7 & 54.6 & 65.2 & 67.3 & 49.5 & 47.4 & 47.4 & 67.0 & 55.2 & 69.8 \\
+    UA 6 & 71.3 & 71.6 & 62.2 & 55.9 & 65.8 & 27.8 & 56.2 & 77.8 & 76.6 & 63.6 & 58.0 & 58.0 & 71.7 & 59.6 & 72.0 \\
+    UA 7 & 88.0 & 87.5 & 81.1 & 80.2 & 81.6 & 78.1 & 79.8 & 84.6 & 88.6 & 83.2 & 79.0 & 79.0 & 92.5 & 74.1 & 91.1 \\
+    UA 8 & 94.5 & 94.6 & 89.5 & 89.4 & 91.9 & 88.2 & 90.3 & 95.6 & 95.8 & 92.1 & 88.6 & 88.6 & 95.1 & 86.1 & 95.0 \\
+    UA 9 & 95.6 & 95.7 & 98.1 & 76.5 & 84.1 & 99.8 & 75.3 & 92.2 & 93.2 & 65.2 & 62.0 & 62.0 & 99.0 & 90.3 & 99.5 \\
+    UA 10 & 98.5 & 98.5 & 99.2 & 96.4 & 92.8 & 99.8 & 92.4 & 97.6 & 98.4 & 96.6 & 93.6 & 93.6 & 98.5 & 97.3 & 97.4 \\
+    UA 11 & 94.1 & 94.4 & 79.9 & 88.2 & 93.6 & 92.7 & 88.5 & 94.4 & 93.7 & 91.4 & 88.7 & 88.7 & 97.6 & 91.5 & 98.0 \\
+    UA 12 & 99.8 & 99.9 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 100.0 & 99.9 & 100.0 & 100.0 & 100.0 & 99.7 & 98.7 & 99.7 \\
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]
+  \footnotesize
+  \centering
+  \caption{Heves}
+  \begin{tabular}{lrrrrrrrrrrrrrrr}
+    Method & M0 & M1 & M2 & M3 & M4 & M5 & M6 & NM0 & NM1 & NM2 & NM3 & NM3 & KDA & RF & SVM \\
+    OA & 71.6 & 72.2 & 64.5 & 65.1 & 65.1 & 63.9 & 64.1 & 69.5 & 72.9 & 63.1 & 64.2 & 64.2 & 71.5 & 64.4 & 70.8 \\
+    Kappa & 0.664 & 0.671 & 0.588 & 0.594 & 0.595 & 0.582 & 0.583 & 0.64 & 0.677 & 0.573 & 0.585 & 0.585 & 0.666 & 0.585 & 0.658 \\
+    CPT & 148 & 151 & 148 & 152 & 152 & 148 & 152 & 148 & 151 & 148 & 152 & 152 & 695 & 18 & 171 \\
+    PA 0 & 82.1 & 81.9 & 75.5 & 77.4 & 82.0 & 77.0 & 77.8 & 84.8 & 83.8 & 76.9 & 76.8 & 76.8 & 81.0 & 77.1 & 82.5 \\
+    PA 1 & 51.7 & 51.2 & 36.9 & 37.1 & 46.0 & 39.2 & 38.2 & 53.5 & 53.5 & 39.2 & 38.9 & 38.9 & 50.3 & 41.8 & 55.0 \\
+    PA 2 & 73.2 & 73.3 & 62.0 & 62.7 & 66.5 & 61.2 & 61.6 & 71.0 & 72.4 & 60.6 & 61.3 & 61.3 & 73.6 & 59.6 & 71.4 \\
+    PA 3 & 67.2 & 68.1 & 51.2 & 53.5 & 61.2 & 51.1 & 54.2 & 68.1 & 71.5 & 56.2 & 56.9 & 56.9 & 65.0 & 55.1 & 67.6 \\
+    PA 4 & 94.8 & 94.8 & 93.0 & 92.0 & 91.6 & 92.5 & 90.5 & 88.6 & 92.8 & 89.0 & 88.4 & 88.4 & 96.1 & 88.0 & 94.6 \\
+    PA 5 & 51.2 & 43.8 & 47.2 & 44.1 & 61.4 & 49.5 & 47.5 & 55.1 & 44.3 & 46.1 & 42.7 & 42.7 & 65.8 & 51.5 & 65.5 \\
+    PA 6 & 51.5 & 52.5 & 51.7 & 51.3 & 50.9 & 50.2 & 51.0 & 46.3 & 51.2 & 49.9 & 50.2 & 50.2 & 58.2 & 48.6 & 54.3 \\
+    PA 7 & 72.9 & 72.7 & 74.2 & 74.3 & 75.8 & 74.0 & 71.6 & 74.7 & 73.8 & 78.2 & 75.7 & 75.7 & 79.7 & 70.0 & 79.2 \\
+    PA 8 & 61.0 & 60.0 & 54.3 & 55.3 & 61.6 & 54.4 & 56.8 & 64.6 & 61.8 & 55.0 & 55.0 & 55.0 & 62.1 & 51.3 & 58.9 \\
+    PA 9 & 90.8 & 91.0 & 89.1 & 86.8 & 86.9 & 88.5 & 85.3 & 89.8 & 90.9 & 85.9 & 84.8 & 84.8 & 91.3 & 87.2 & 91.5 \\
+    PA 10 & 64.6 & 64.8 & 60.6 & 55.4 & 61.3 & 62.4 & 57.2 & 58.3 & 57.1 & 55.7 & 51.3 & 51.3 & 65.2 & 45.9 & 60.9 \\
+    PA 11 & 72.4 & 77.4 & 66.4 & 67.4 & 53.5 & 63.5 & 63.4 & 59.6 & 75.2 & 63.3 & 65.5 & 65.5 & 74.2 & 61.6 & 74.4 \\
+    PA 12 & 42.6 & 42.5 & 29.9 & 39.6 & 43.3 & 30.2 & 40.3 & 54.7 & 53.6 & 47.1 & 50.9 & 50.9 & 49.9 & 31.7 & 53.0 \\
+    PA 13 & 90.3 & 90.4 & 87.6 & 87.6 & 88.0 & 87.7 & 86.9 & 89.8 & 90.4 & 87.4 & 86.6 & 86.6 & 90.3 & 85.3 & 90.5 \\
+    PA 14 & 71.6 & 71.8 & 61.9 & 63.5 & 64.9 & 61.6 & 62.8 & 72.8 & 74.6 & 60.4 & 63.3 & 63.3 & 66.9 & 65.5 & 65.9 \\
+    PA 15 & 92.4 & 92.4 & 90.3 & 88.4 & 86.6 & 89.9 & 86.8 & 87.6 & 89.8 & 84.5 & 83.4 & 83.4 & 90.5 & 84.1 & 89.9 \\
+    UA 0 & 65.7 & 65.5 & 70.0 & 67.6 & 65.0 & 66.2 & 67.1 & 63.4 & 64.0 & 69.9 & 68.8 & 68.8 & 69.0 & 56.9 & 66.4 \\
+    UA 1 & 44.0 & 44.1 & 35.2 & 34.0 & 37.7 & 33.7 & 32.8 & 39.6 & 41.6 & 35.9 & 33.4 & 33.4 & 42.7 & 28.8 & 41.5 \\
+    UA 2 & 65.1 & 65.9 & 65.1 & 63.8 & 64.1 & 65.4 & 64.4 & 65.7 & 66.9 & 65.8 & 65.2 & 65.2 & 71.7 & 59.4 & 67.2 \\
+    UA 3 & 31.7 & 31.2 & 35.9 & 28.2 & 31.0 & 36.1 & 29.0 & 23.9 & 24.9 & 23.0 & 21.0 & 21.0 & 30.9 & 22.9 & 22.2 \\
+    UA 4 & 76.3 & 78.1 & 71.9 & 72.0 & 73.0 & 74.4 & 73.9 & 85.4 & 83.6 & 79.2 & 78.6 & 78.6 & 83.7 & 68.6 & 82.0 \\
+    UA 5 & 40.8 & 43.0 & 31.9 & 34.2 & 29.2 & 30.1 & 31.9 & 32.1 & 42.7 & 29.6 & 32.9 & 32.9 & 49.1 & 33.0 & 42.4 \\
+    UA 6 & 73.2 & 74.1 & 58.4 & 57.2 & 64.6 & 58.9 & 56.5 & 76.4 & 74.6 & 59.3 & 58.5 & 58.5 & 70.9 & 55.6 & 74.9 \\
+    UA 7 & 50.0 & 52.2 & 25.8 & 25.2 & 32.3 & 27.1 & 26.8 & 51.4 & 54.2 & 24.7 & 26.5 & 26.5 & 43.5 & 25.0 & 46.7 \\
+    UA 8 & 16.3 & 16.4 & 13.6 & 12.7 & 12.9 & 14.4 & 12.7 & 12.7 & 14.9 & 12.7 & 12.1 & 12.1 & 14.8 & 11.3 & 15.6 \\
+    UA 9 & 97.9 & 98.0 & 86.1 & 94.3 & 98.4 & 89.7 & 95.6 & 98.3 & 98.1 & 98.0 & 98.8 & 98.8 & 98.4 & 97.3 & 97.6 \\
+    UA 10 & 12.4 & 12.3 & 11.2 & 12.3 & 11.7 & 10.5 & 11.5 & 14.9 & 15.4 & 11.7 & 13.5 & 13.5 & 11.7 & 13.5 & 13.6 \\
+    UA 11 & 86.8 & 85.2 & 85.3 & 85.5 & 89.1 & 85.7 & 86.0 & 88.1 & 85.8 & 85.7 & 85.9 & 85.9 & 91.4 & 87.1 & 91.5 \\
+    UA 12 & 27.1 & 25.2 & 14.2 & 9.4 & 16.1 & 14.1 & 8.7 & 16.3 & 19.9 & 7.6 & 6.9 & 6.9 & 16.9 & 12.1 & 20.0 \\
+    UA 13 & 74.2 & 74.4 & 83.8 & 81.1 & 73.5 & 84.3 & 85.0 & 73.3 & 72.4 & 88.2 & 88.8 & 88.8 & 73.5 & 59.6 & 72.6 \\
+    UA 14 & 96.8 & 96.7 & 97.6 & 97.9 & 98.1 & 97.5 & 97.9 & 97.2 & 96.5 & 98.0 & 97.9 & 97.9 & 97.6 & 97.6 & 97.2 \\
+    UA 15 & 58.4 & 60.1 & 32.3 & 51.2 & 65.8 & 34.8 & 51.4 & 80.8 & 75.5 & 64.1 & 69.8 & 69.8 & 58.6 & 56.2 & 56.5 \\
+  \end{tabular}
+\end{table}
+
+\end{document}
