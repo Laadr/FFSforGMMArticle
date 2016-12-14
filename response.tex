@@ -112,6 +112,7 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
   In the experiment with Aisa dataset, although several numbers of training samples are tested, the number of training samples seems carefully selected by the authors to show the cases where the GMM classifiers perform better. I guess when a larger number of samples are trained, the random forest will have a higher classification rate. And when a smaller number of samples are used, the KNN will have a shorter training time. The GMM only wins in the classification time regardless of the sample number. It’ll be good to show these cases.
   \begin{resbox}
     It is true that we can try with fewer samples. NB: TODO
+    
     But in the case of a larger training set is not possible to test with the chosen validation method. We use an equal number of samples in each class and 50\% of the samples are used for test. Thus, as the less represented class contains 2107 samples, we are limited to 1053 samples by class with this dataset. Nevertheless, the second dataset illustrates the case and we also add the following comment in the paper to make it clear that RF could perform better with more samples:
     \emph{Random Forest has similar performance in term of classification rate with 1000 samples \rev{ and one could expect to get a better classification rate with RF if more samples were available}.}
   \end{resbox}
@@ -126,7 +127,9 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
   \begin{resbox}
     % Thank you for the careful reading.
     NB:
+
     no $v_c$ after prop 2...
+
     building corrected. Need to correct english at the end
   \end{resbox}
 \end{revbox}
