@@ -111,12 +111,29 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   In the experiment with Aisa dataset, although several numbers of training samples are tested, the number of training samples seems carefully selected by the authors to show the cases where the GMM classifiers perform better. I guess when a larger number of samples are trained, the random forest will have a higher classification rate. And when a smaller number of samples are used, the KNN will have a shorter training time. The GMM only wins in the classification time regardless of the sample number. It’ll be good to show these cases.
   \begin{resbox}
-    It is true that we can try with fewer samples. NB: TODO
-    
+    It is true that we can try with fewer samples. We tried with 50 samples by class and it leads to the same behavior than with 250 samples (see Table~\ref{tab:aisa-otbsimu}).
+
     But in the case of a larger training set is not possible to test with the chosen validation method. We use an equal number of samples in each class and 50\% of the samples are used for test. Thus, as the less represented class contains 2107 samples, we are limited to 1053 samples by class with this dataset. Nevertheless, the second dataset illustrates the case and we also add the following comment in the paper to make it clear that RF could perform better with more samples:
     \emph{Random Forest has similar performance in term of classification rate with 1000 samples \rev{ and one could expect to get a better classification rate with RF if more samples were available}.}
   \end{resbox}
 \end{revbox}
+
+\begin{table}[!t]
+    \centering
+    \caption{Average classification accuracy 20 trials (standard deviation in parenthesis).\label{tab:aisa-otbsimu}}
+    \begin{tabular}{lcccc}\toprule
+         & \multicolumn{4}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-5}
+        \# samples by class & 50 & 250 & 500 & 1000 \\ \midrule
+
+        GMM SFS kappa &  0.612 (0.028) & {\bfseries 0.678 (0.029)} & {\bfseries 0.687 (0.029)} & {\bfseries 0.699 (0.028)} \\
+        GMM SFS JM &     0.622 (0.026) & {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.701 (0.029)} \\
+        GMM SFFS JM &    0.622 (0.026) & {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.701 (0.029)} \\
+        GMM ridge &      0.597 (0.035) & 0.611 (0.040) & 0.620 (0.036) & 0.642 (0.034) \\
+        KNN &            0.481 (0.054) & 0.551 (0.035) & 0.563 (0.033) & 0.574 (0.030) \\
+        Random Forest &  0.555 (0.031) & 0.645 (0.026) & 0.673 (0.023) & {\bfseries 0.693 (0.023)} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \begin{revbox}
   Correct some typos, for example:
