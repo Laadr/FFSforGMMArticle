@@ -169,16 +169,16 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
             \# samples by class & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS JM &    0.685 (0.030) & 0.689 (0.030) & 0.701 (0.029) \\
-            GMM SFS divKL &    &&\\
-            GMM SFS kappa & 0.678 (0.029) & 0.687 (0.029) & 0.699 (0.028) \\
-            GMM SFS OA &    &&\\
-            GMM SFS F1mean &    &&\\
-            GMM SFFS JM &   0.685 (0.030) & 0.689 (0.030) & 0.701 (0.029) \\
-            GMM SFFS divKL &   &&\\
-            GMM SFFS kappa &   &&\\
-            GMM SFFS OA &   &&\\
-            GMM SFFS F1mean &   &&\\
+            GMM SFS JM &      0.680 (0.028) & 0.700 (0.028) & 0.710 (0.030) \\
+            GMM SFS divKL &   0.680 (0.027) & 0.699 (0.028) & 0.708 (0.031) \\
+            GMM SFS kappa &   0.684 (0.025) & 0.698 (0.027) & 0.711 (0.028) \\
+            GMM SFS OA &      0.684 (0.025) & 0.698 (0.027) & 0.710 (0.028) \\
+            GMM SFS F1mean &  0.683 (0.027) & 0.699 (0.027) & 0.711 (0.028) \\
+            GMM SFFS JM &     0.680 (0.028) & 0.700 (0.028) & 0.710 (0.030) \\
+            GMM SFFS divKL &  0.668 (0.039) & 0.689 (0.029) & 0.669 (0.091) \\
+            GMM SFFS kappa &  0.648 (0.087) & 0.627 (0.100) & 0.615 (0.105) \\
+            GMM SFFS OA &     0.647 (0.087) & 0.604 (0.104) & 0.613 (0.100) \\
+            GMM SFFS F1mean & 0.650 (0.112) & 0.638 (0.105) & 0.625 (0.107) \\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -197,27 +197,36 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{3}{c}{\bfseries Overall Accuracy} & \multicolumn{3}{c}{\bfseries F1-mean} \\ \cmidrule{2-7}
             \# samples by class & 250 & 500 & 1000  & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS kappa & & & & & & \\
-            GMM SFS JM &    & & & & & \\
-            GMM SFFS JM &   & & & & & \\
-            GMM ridge &     & & & & & \\
-            KNN &           & & & & & \\
-            Random Forest & & & & & & \\
+            GMM SFS JM &      0.730 (0.026) & 0.748 (0.026) & 0.757 (0.027) & 0.591 (0.016) & 0.611 (0.016) & 0.622 (0.018) \\
+            GMM SFS divKL &   0.730 (0.024) & 0.747 (0.026) & 0.754 (0.029) & 0.587 (0.017) & 0.607 (0.017) & 0.616 (0.019) \\
+            GMM SFS kappa &   0.734 (0.024) & 0.746 (0.025) & 0.757 (0.026) & 0.593 (0.014) & 0.608 (0.015) & 0.621 (0.018) \\
+            GMM SFS OA &      0.734 (0.024) & 0.746 (0.025) & 0.757 (0.026) & 0.593 (0.014) & 0.608 (0.016) & 0.621 (0.018) \\
+            GMM SFS F1mean &  0.733 (0.025) & 0.746 (0.025) & 0.757 (0.026) & 0.591 (0.015) & 0.610 (0.017) & 0.622 (0.018) \\
+            GMM SFFS JM &     0.730 (0.026) & 0.748 (0.026) & 0.757 (0.027) & 0.591 (0.016) & 0.611 (0.016) & 0.622 (0.018) \\
+            GMM SFFS divKL &  0.720 (0.035) & 0.738 (0.027) & 0.718 (0.087) & 0.572 (0.036) & 0.594 (0.028) & 0.579 (0.065) \\
+            GMM SFFS kappa &  0.702 (0.079) & 0.681 (0.097) & 0.672 (0.094) & 0.559 (0.082) & 0.538 (0.087) & 0.511 (0.116) \\
+            GMM SFFS OA &     0.700 (0.080) & 0.661 (0.099) & 0.671 (0.089) & 0.558 (0.083) & 0.509 (0.100) & 0.511 (0.110) \\
+            GMM SFFS F1mean & 0.701 (0.109) & 0.691 (0.101) & 0.680 (0.103) & 0.555 (0.092) & 0.543 (0.095) & 0.524 (0.107) \\
+            GMM ridge &       0.665 (0.038) & 0.672 (0.034) & 0.692 (0.033) & 0.580 (0.017) & 0.593 (0.016) & 0.609 (0.018) \\
+            KNN &             0.611 (0.033) & 0.622 (0.030) & 0.632 (0.027) & 0.485 (0.019) & 0.502 (0.018) & 0.515 (0.019) \\
+            Random Forest &   0.699 (0.023) & 0.723 (0.020) & 0.741 (0.021) & 0.554 (0.018) & 0.578 (0.017) & 0.598 (0.019) \\
             \bottomrule
         \end{tabular}
     \end{table}
 
+
 \begin{revbox}
   According to Table IV in page 16. GMM SFS JM outperforms GMM SFS kappa a little bit under the kappa criterion. Since GMM SFS kappa updates the features according to the kappa criterion while GMM SFS JM updates the features according to the JM criterion, shouldn’t GMM SFS kappa outperforms GMM SFS JM under the kappa criterion? Or is there some explanation to it?
   \begin{resbox}
-
+    First of all, the score difference between GMM SFS JM and GMM SFS kappa in Table IV is statistically significant. But, for the reason given by the reviewer, we expected that GMM SFS kappa performs better before carrying the experiment. Our guess is that the Gaussian hypothesis is sufficiently accurate on this data and thus JM metric has good generalization performances in this case.
   \end{resbox}
 \end{revbox}
 
 \begin{revbox}
   In Table VI and Table VII, the \# of selected features are different for different proposed methods. And the classification performance drops when the \# of selected features decreases. According to Algorithm 2 and Algorithm 3, the \# of selected features should be equal to maxVarNb. So why the \# of selected features are different for different proposed methods? The comparison is not fair to me if the \# of selected features are different. The authors should also show the \# of selected features in Table IV or Table V as well.
   \begin{resbox}
-
+    As explained in Section VI.A, maxVarNb is the same for all methods for a given dataset. The number of variables used for classification is selected after the use of the selection algorithm by studying the behavior of the selection criterion in function of the number of selected variables which is a collateral output of the selection. We studied to select this number of variables. First we tried to use the number which maximize the criterion but due to some limitation (cf. Q3 of reviewer 1), we then considered to put a threshold on the derivative of the criterion. We believe that it is not unfair to use a different number of variables for each method because it also reflects the ability of a criterion to identify relevant features. And taking more features when the criterion shows on training data that it does not give more information should not increase the score whatever.
+    TODO:put nb of var in table 4-5
   \end{resbox}
 \end{revbox}
 
@@ -264,7 +273,7 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \end{revbox}
  
 
-\section{Auxillary data}
+\section{Auxiliary data}
 \label{sec:auxillary}
 
 
