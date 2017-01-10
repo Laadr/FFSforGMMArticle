@@ -52,9 +52,16 @@ in the revised paper.
 \begin{revbox}
 In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical instability. It’s not clear how the authors select the proper value for this threshold. And how does this threshold influence the classification accuracy?
 
-  \begin{resbox}
-    In order to influence as less as possible the classification accuracy, the threshold has been set as small as possible. The smallest possible float number is define by the computer architecture (in our case 64bits) and C++ specifications. The C++ documentation states that epsilon is the \emph{difference between 1 and the least value greater than 1 that is representable}(\url{http://www.cplusplus.com/reference/cfloat/}).
-    This thresholding can be seen as a ridge regularization when applied to eigenvalues. 
+\begin{resbox}
+  We acknowledge for the missing information. Numerical instability comes from the computation of the inverse and of the log-determinant of the covariance matrix. When the matrix is badly conditionned, e.g. when it is estimated with less samples than the number of parameters to estimate, some eigenvalues might be negative or null. Therefore the covariance matrix is non-invertible and its determinant is zero. To prevent such situations, the eigenvalues are shrunk.
+
+  In practice, it consists in thresholding eigenvalues to the smallest significant positive value: $\lambda_c = \max\{EPS\_FLT,\lambda_c\}$, where $EPS\_FLT$ is defined by the computer architecture and C++ specifications. This thresholding can be seen as a ridge regularization with a very small value.
+
+  In the context of feature selection, it is not expected to increase the classification accuracy. It rather ensures the computation to be tractable.
+
+  The paper has been changed to make the sentence more clear: \emph{To
+    prevent  numerical  instability,   \rev{non  strictly  positive
+      eigenvalues are thresholded to a fixed value EPS\_FLT}.}
   \end{resbox}
 
 \end{revbox}
@@ -62,11 +69,20 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   The authors show the experimental results on two different types of hyper-dimensional images, which is very good. But I have some doubts on the construction of the second high dimensional cube where 191 features are constructed based on the low dimensional RGBIR images. Are these features simply used for the purpose of increasing the data dimensionality? Or are there benefits in terms of classification accuracy?
   \begin{resbox}
-    The interest of this second data cube is first to test the algorithm in a different context. In particular, the algorithm applied to this second dataset should be seen as a method to learn the most relevant kind of features and the best parameters to extract those features.
+    The extraction of spatial features from very high spatial resolution images is a standard practice in remote sensing. There are a vast literature, let us cite for instance the \emph{morphological profile} and its extension, all the possible spectral features such as \emph{NDVI} and recently all the convolutional filters. There is in general a significant increase of the classification accuracy.
 
-    In the first dataset, only spectral features has been considered and in the particular context of hyperspectral imaging which imply contiguous features highly correlated.
+    However, the reviewer is right, there is also an increase of the data dimensionality which can result in many statistical issues. Usually, the choice of features is performed by experts. In this work, to illustrate the potential of the feature selection, a large number of features is extracted and the optimal selection is done by the algorithm, as in ref [26], thus alleviate the \emph{curse of dimensionality}.
+
+    To make it clear, the following part of the paper has been modified:
+
+    \emph{\rev{Conventionally,  the following  features are  extracted using  the
+      RGBIR  images in  order to  increase the  classification accuracy,
+      similarly to [26]:}\\
+    $\vdots$\\    
+    The normalized DSM and the raw  RGBIR image are added to these 191
+    features and  then stacked to create  a new image with  196 bands.
+    \rev{The  resulting  data cube  is  therefore  high-dimensional.}}
     
-    (reponse bof à revoir et developper mais c'est un debut)
   \end{resbox}
 \end{revbox}
 
@@ -74,8 +90,17 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   In Fig. 5, the optimal number of variables are selected if the criterion stops to increase significantly. It is unclear to me how to make this selection. For example in Fig. 5, I would pick the optimal number of variables to be 7 instead of 18 which the authors suggest, since after 7 variables I do not observe a significant increase. Maybe plotting the discrete derivative of criteria together with Fig. 5 can help in the explanation.
   \begin{resbox}
-  The value of the derivative of criterion is compared to a user-defined threshold. The first time the value reaches below the threshold correspond to the number of selected variables. The derivative for the example presented on Fig. 5 of the paper is presented in Figure~\ref{fig:deriv}.
-  With the same example, 7 features gives a kappa of $0.620$ and 18 features a kappa of $0.657$.
+    We would like to thank the reviewer for this very important comment. The sentence was indeed not clear.  In order to check if the criterion stops to increase significantly, we compute the discrete derivative between two iterations and normalize it by its maximum value. The number of selected features corresponds to the last iteration before the value drops below $10^{-3}$ for all datasets.
+
+    The derivative for the example presented on Fig. 5 of the paper is presented in Figure~\ref{fig:deriv}.  For this example, 7 features gives a kappa of $0.620$ and 18 features a kappa of $0.657$. This figure was not included in the paper in order to keep the paper not too long. If the reviewer asks, it is of course possible to include it in the paper.
+
+    The paper has been updated as follow:
+
+    \rev{It  is found  by  computing the  discrete  derivative of  the
+      criteria  between  two  iterations  and normalizing  it  by  its
+      maximum value.   The number of selected  features corresponds to
+      the last  iteration before the  value drops below  $10^{-3}$ for
+      all datasets}.
 
   \end{resbox}
 \end{revbox}
@@ -96,27 +121,28 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   Following the question 3, why choosing the optimal number of variables based on the increase of criterion instead of the highest value?
   \begin{resbox}
-    We also considered this possibility and it is a choice available in the code of the OTB module we provide. But taking the maximum appears not to be the optimal choice in the sense that the algorithm selects sometimes more variables than necessary. Sometimes, at a given point, the best new selected variable is one which contains no information (for example one whose contribution is thresholded by EPS\_FLT) because all others decrease the criterion value. If it happens several times, it can lead to a final drop of the criterion. The algorithm then tries to counterbalance the drop and regains the original maximum but can be slightly higher. Figure~\ref{fig:crit-evol} illustrated this case.
-    The problem is that we introduce a few irrelevant features and we want to avoid that if possible. This case appears more often with the second dataset but we choose to use the same method for both dataset.
-  \end{resbox}
+    We also considered this possibility and it is a choice available in the code of the OTB module we provide. However, selecting the maximum value of the criteria without considering the slope of the curve might be hazardous. At some point, adding more feature does not improve significantly the discrimination of the classes, until a too large number of variables is reached and statistical issues arise. It is therefore safer to stop when the increase of criteria stops to be significant.
+\end{resbox}
 \end{revbox}
 
-\begin{figure}[!t]
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[ymin=0.2,ymax=0.9,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
-      \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
-    \end{axis};
-  \end{tikzpicture}
-  \caption{Criterion evolution (kappa) in function of the number of selected variables for first trial with Potsdam dataset with 1000 samples by class.\label{fig:crit-evol}}
-\end{figure}
+% \begin{figure}[!t]
+%   \centering
+%   \begin{tikzpicture}
+%     \begin{axis}[ymin=0.2,ymax=0.9,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
+%       \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
+%     \end{axis};
+%   \end{tikzpicture}
+%   \caption{Criterion evolution (kappa) in function of the number of selected variables for first trial with Potsdam dataset with 1000 samples by class.\label{fig:crit-evol}}
+% \end{figure}
 
 \begin{revbox}
   In the experiment with Aisa dataset, although several numbers of training samples are tested, the number of training samples seems carefully selected by the authors to show the cases where the GMM classifiers perform better. I guess when a larger number of samples are trained, the random forest will have a higher classification rate. And when a smaller number of samples are used, the KNN will have a shorter training time. The GMM only wins in the classification time regardless of the sample number. It’ll be good to show these cases.
   \begin{resbox}
-    It is true that we can try with fewer samples. We tried with 50 samples by class and it leads to the same behavior than with 250 samples (see Table~\ref{tab:aisa-otbsimu}).
+    The reviewer is right regarding the number of training samples. GMM (not restricted to the feature selection case) does not benefit as much as other machine learning algorithm of the increase of the number of training samples. For the feature selection case, it is discussed in ref [27] for instance, with KNN, RF and SVM. Please note it is also discussed in the paper for the Potsdam dataset.
+    
+    We tried with 50 samples by class and it leads to the same behavior than with 250 samples (see Table~\ref{tab:aisa-otbsimu}). We therefore choose to not include this additional results in the final version of the paper.
 
-    But in the case of a larger training set is not possible to test with the chosen validation method. We use an equal number of samples in each class and 50\% of the samples are used for test. Thus, as the less represented class contains 2107 samples, we are limited to 1053 samples by class with this dataset. Nevertheless, the second dataset illustrates the case and we also add the following comment in the paper to make it clear that RF could perform better with more samples:
+    For larger training set,  it is not possible to test with the chosen validation method for the AISA dataset. We use an equal number of samples in each class and 50\% of the samples are used for test. Thus, as the less represented class contains 2107 samples, we are limited to 1053 samples by class with this dataset. Nevertheless, the second dataset illustrates the case and we also add the following comment in the paper to make it clear that RF could perform better with more samples:
     \emph{Random Forest has similar performance in term of classification rate with 1000 samples \rev{ and one could expect to get a better classification rate with RF if more samples were available}.}
   \end{resbox}
 \end{revbox}
@@ -145,12 +171,8 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
     \item Grammar mistakes such as ``a buildings''.
   \end{enumerate}
   \begin{resbox}
-    % Thank you for the careful reading.
-    NB:
-
-    no $v_c$ after prop 2...
-
-    building corrected. Need to correct english at the end
+    The changes have been done. Thank you for the careful reading.
+    
   \end{resbox}
 \end{revbox}
 
@@ -158,7 +180,11 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   In section III-A, 5 criterion functions are proposed. With 2 feature selection methods (SFS and SFFS), there should be 10 possible configurations. However, in the experimental parts (page 14, line 21-24), results of only three configurations are shown. The authors said “other configurations have been investigated and performs either equally or lower in terms of classification accuracy.” I would suggest that the authors either show the results of more configurations or not introducing those unrelated criterion functions.
   \begin{resbox}
-    see Table~\ref{tab:aisa-otbsimu-all}
+    We agree with the reviewer comment. In order to keep the paper short, we provide the additional results as a supplementary material. The reviewer can find the results in Table~\ref{tab:aisa-otbsimu-all} for AISA dataset and Table~\ref{tab:potsdam-otbsimu-all} for Potsdam.
+
+    The paper has been modified:
+
+    \emph{For the sake of clarity, only the three aforementioned configurations are discussed here \rev{and the results for all other configurations is available in the supplementary material}.}
   \end{resbox}
 \end{revbox}
 
@@ -169,16 +195,35 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
             \# samples by class & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS JM &      0.680 (0.028) & 0.700 (0.028) & 0.710 (0.030) \\
+            GMM SFS JM &      0.685 (0.030) & 0.689 (0.030) & 0.693 (0.032) \\
             GMM SFS divKL &   0.680 (0.027) & 0.699 (0.028) & 0.708 (0.031) \\
-            GMM SFS kappa &   0.684 (0.025) & 0.698 (0.027) & 0.711 (0.028) \\
-            GMM SFS OA &      0.684 (0.025) & 0.698 (0.027) & 0.710 (0.028) \\
-            GMM SFS F1mean &  0.683 (0.027) & 0.699 (0.027) & 0.711 (0.028) \\
-            GMM SFFS JM &     0.680 (0.028) & 0.700 (0.028) & 0.710 (0.030) \\
-            GMM SFFS divKL &  0.668 (0.039) & 0.689 (0.029) & 0.669 (0.091) \\
-            GMM SFFS kappa &  0.648 (0.087) & 0.627 (0.100) & 0.615 (0.105) \\
-            GMM SFFS OA &     0.647 (0.087) & 0.604 (0.104) & 0.613 (0.100) \\
-            GMM SFFS F1mean & 0.650 (0.112) & 0.638 (0.105) & 0.625 (0.107) \\
+            GMM SFS kappa &   0.682 (0.025) & 0.698 (0.027) & 0.710 (0.029) \\
+            GMM SFS OA &      0.682 (0.025) & 0.698 (0.027) & 0.710 (0.028) \\
+            GMM SFS F1mean &  0.682 (0.028) & 0.699 (0.027) & 0.710 (0.028) \\
+            GMM SFFS JM &     0.685 (0.030) & 0.689 (0.030) & 0.693 (0.032) \\
+            GMM SFFS divKL &  0.547 (0.158) & 0.615 (0.113) & 0.636 (0.120) \\
+            GMM SFFS kappa &  0.519 (0.126) & 0.537 (0.102) & 0.545 (0.141) \\
+            GMM SFFS OA &     0.531 (0.126) & 0.537 (0.093) & 0.560 (0.127) \\
+            GMM SFFS F1mean & 0.447 (0.158) & 0.579 (0.097) & 0.529 (0.129) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \begin{table}[!t]
+        \centering
+        \caption{Average classification accuracy for 1,000 samples by class averaged over 5 trials  with all configurations of criterion and method (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-all}}
+        \begin{tabular}{lccc}\toprule
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} \\ \cmidrule{2-4}
+            GMM SFS JM &      &&\\
+            GMM SFS divKL &   &&\\
+            GMM SFS kappa &   &&\\
+            GMM SFS OA &      &&\\
+            GMM SFS F1mean &  &&\\
+            GMM SFFS JM &     &&\\
+            GMM SFFS divKL &  &&\\
+            GMM SFFS kappa &  &&\\
+            GMM SFFS OA &     &&\\
+            GMM SFFS F1mean & &&\\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -186,7 +231,13 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   Only Cohen’s Kappa is utilized to analyze the classification accuracy. The experimental results would be more persuasive if other criterion functions are utilized as well. I am interested to see how different methods’ performance varies under different criterion functions.
   \begin{resbox}
-    see Table~\ref{tab:aisa-otbsimu-othereval}
+    The reviewer is right by suggesting to look at different criteria. Again, in order to keep the length of the paper reasonable, only the Kappa coefficient is reported in the paper. This choice has been motivated by previous publications that recommend this criterion, see for instance ref [34] page 105.
+
+    The other criterion are now provided in the supplementary material, and are given here Table~\ref{tab:aisa-otbsimu-othereval} and  Table~\ref{tab:potsdam-otbsimu-othereval}.
+
+    The paper has been modified:
+
+    \emph{The    classification   rate    is    presented   using    Cohen's kappa \rev{but scores computed with overall accuracy and mean of f1-score are available in supplementary material}.}
   \end{resbox}
 \end{revbox}
 
@@ -197,19 +248,40 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{3}{c}{\bfseries Overall Accuracy} & \multicolumn{3}{c}{\bfseries F1-mean} \\ \cmidrule{2-7}
             \# samples by class & 250 & 500 & 1000  & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS JM &      0.730 (0.026) & 0.748 (0.026) & 0.757 (0.027) & 0.591 (0.016) & 0.611 (0.016) & 0.622 (0.018) \\
+            GMM SFS JM &      0.735 (0.027) & 0.738 (0.027) & 0.742 (0.029) & 0.591 (0.018) & 0.596 (0.018) & 0.600 (0.020) \\
             GMM SFS divKL &   0.730 (0.024) & 0.747 (0.026) & 0.754 (0.029) & 0.587 (0.017) & 0.607 (0.017) & 0.616 (0.019) \\
-            GMM SFS kappa &   0.734 (0.024) & 0.746 (0.025) & 0.757 (0.026) & 0.593 (0.014) & 0.608 (0.015) & 0.621 (0.018) \\
-            GMM SFS OA &      0.734 (0.024) & 0.746 (0.025) & 0.757 (0.026) & 0.593 (0.014) & 0.608 (0.016) & 0.621 (0.018) \\
-            GMM SFS F1mean &  0.733 (0.025) & 0.746 (0.025) & 0.757 (0.026) & 0.591 (0.015) & 0.610 (0.017) & 0.622 (0.018) \\
-            GMM SFFS JM &     0.730 (0.026) & 0.748 (0.026) & 0.757 (0.027) & 0.591 (0.016) & 0.611 (0.016) & 0.622 (0.018) \\
-            GMM SFFS divKL &  0.720 (0.035) & 0.738 (0.027) & 0.718 (0.087) & 0.572 (0.036) & 0.594 (0.028) & 0.579 (0.065) \\
-            GMM SFFS kappa &  0.702 (0.079) & 0.681 (0.097) & 0.672 (0.094) & 0.559 (0.082) & 0.538 (0.087) & 0.511 (0.116) \\
-            GMM SFFS OA &     0.700 (0.080) & 0.661 (0.099) & 0.671 (0.089) & 0.558 (0.083) & 0.509 (0.100) & 0.511 (0.110) \\
-            GMM SFFS F1mean & 0.701 (0.109) & 0.691 (0.101) & 0.680 (0.103) & 0.555 (0.092) & 0.543 (0.095) & 0.524 (0.107) \\
+            GMM SFS kappa &   0.733 (0.023) & 0.746 (0.025) & 0.756 (0.027) & 0.591 (0.014) & 0.607 (0.015) & 0.620 (0.018) \\
+            GMM SFS OA &      0.732 (0.023) & 0.746 (0.025) & 0.756 (0.026) & 0.591 (0.014) & 0.607 (0.015) & 0.619 (0.018) \\
+            GMM SFS F1mean &  0.732 (0.026) & 0.747 (0.025) & 0.757 (0.026) & 0.590 (0.018) & 0.609 (0.016) & 0.620 (0.018) \\
+            GMM SFFS JM &     0.735 (0.027) & 0.738 (0.027) & 0.742 (0.029) & 0.591 (0.018) & 0.596 (0.018) & 0.600 (0.020) \\
+            GMM SFFS divKL &  0.611 (0.149) & 0.672 (0.105) & 0.690 (0.110) & 0.441 (0.152) & 0.515 (0.114) & 0.541 (0.116) \\
+            GMM SFFS kappa &  0.583 (0.119) & 0.599 (0.099) & 0.605 (0.141) & 0.427 (0.117) & 0.439 (0.085) & 0.442 (0.119) \\
+            GMM SFFS OA &     0.596 (0.115) & 0.600 (0.090) & 0.620 (0.127) & 0.437 (0.124) & 0.436 (0.079) & 0.455 (0.109) \\
+            GMM SFFS F1mean & 0.515 (0.154) & 0.640 (0.093) & 0.590 (0.127) & 0.352 (0.128) & 0.476 (0.085) & 0.431 (0.114) \\
             GMM ridge &       0.665 (0.038) & 0.672 (0.034) & 0.692 (0.033) & 0.580 (0.017) & 0.593 (0.016) & 0.609 (0.018) \\
             KNN &             0.611 (0.033) & 0.622 (0.030) & 0.632 (0.027) & 0.485 (0.019) & 0.502 (0.018) & 0.515 (0.019) \\
             Random Forest &   0.699 (0.023) & 0.723 (0.020) & 0.741 (0.021) & 0.554 (0.018) & 0.578 (0.017) & 0.598 (0.019) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \begin{table}[!t]
+        \centering
+        \caption{Average classification accuracy for 1,000 samples by class averaged over 5 trials  evaluated with overall accuracy and mean of F1-score (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-othereval}}
+        \begin{tabular}{lcccccc}\toprule
+             & \multicolumn{2}{c}{\bfseries 5\_11 (train)} & \multicolumn{2}{c}{\bfseries 5\_12 (test)} & \multicolumn{2}{c}{\bfseries 3\_10 (test)} \\ \cmidrule{2-7}
+             & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} \\ \cmidrule{2-7}
+
+            GMM SFS JM &      &&&&&\\
+            GMM SFS divKL &   &&&&&\\
+            GMM SFS kappa &   &&&&&\\
+            GMM SFS OA &      &&&&&\\
+            GMM SFS F1mean &  &&&&&\\
+            GMM SFFS JM &     &&&&&\\
+            GMM SFFS divKL &  &&&&&\\
+            GMM SFFS kappa &  &&&&&\\
+            GMM SFFS OA &     &&&&&\\
+            GMM SFFS F1mean & &&&&&\\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -218,15 +290,30 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   According to Table IV in page 16. GMM SFS JM outperforms GMM SFS kappa a little bit under the kappa criterion. Since GMM SFS kappa updates the features according to the kappa criterion while GMM SFS JM updates the features according to the JM criterion, shouldn’t GMM SFS kappa outperforms GMM SFS JM under the kappa criterion? Or is there some explanation to it?
   \begin{resbox}
-    First of all, the score difference between GMM SFS JM and GMM SFS kappa in Table IV is statistically significant. But, for the reason given by the reviewer, we expected that GMM SFS kappa performs better before carrying the experiment. Our guess is that the Gaussian hypothesis is sufficiently accurate on this data and thus JM metric has good generalization performances in this case.
+    We would like to thank the reviewer for this important comment. First, please note that the score difference between GMM SFS JM and GMM SFS kappa in Table IV is not statistically significant according to the Wilcoxon rank-sum test. Second, the Kappa is estimated by cross-validation during the feature selection, which is a (little) biased estimators and therefore, it is possible to observe significant differences between the estimated kappa and the true Kappa (usually, a lower value), see ref [36] Chapter 7.
+
+    Our guess is that if the Gaussian hypothesis is a good approximation for the data, the JM metric performs well  with  performances similar to the ones obtained with the Kappa. It is the case for the AISA data set, while for the Potsdam data, the Kappa coefficient outperformed the JM metric. Our recommendation would be to start with JM since it is fast, and then try Kappa if necessary.
   \end{resbox}
 \end{revbox}
 
 \begin{revbox}
   In Table VI and Table VII, the \# of selected features are different for different proposed methods. And the classification performance drops when the \# of selected features decreases. According to Algorithm 2 and Algorithm 3, the \# of selected features should be equal to maxVarNb. So why the \# of selected features are different for different proposed methods? The comparison is not fair to me if the \# of selected features are different. The authors should also show the \# of selected features in Table IV or Table V as well.
   \begin{resbox}
-    As explained in Section VI.A, maxVarNb is the same for all methods for a given dataset. The number of variables used for classification is selected after the use of the selection algorithm by studying the behavior of the selection criterion in function of the number of selected variables which is a collateral output of the selection. We studied to select this number of variables. First we tried to use the number which maximize the criterion but due to some limitation (cf. Q3 of reviewer 1), we then considered to put a threshold on the derivative of the criterion. We believe that it is not unfair to use a different number of variables for each method because it also reflects the ability of a criterion to identify relevant features. And taking more features when the criterion shows on training data that it does not give more information should not increase the score whatever.
-    TODO:put nb of var in table 4-5
+    We apologize  for the misunderstanding,  this part was  unclear in
+    the primary  version of  the paper. The  \emph{maxVarNb} parameter
+    corresponds  to  the number  of  bands  searched by  the  iterative
+    algorithm. To select  the optimal number of  selected features, the
+    criterion  evolution is  analyzed, as  explain in  the end  of the
+    Section VI.A. The optimal number  of retained features is found by
+    computing  the discrete  derivative  of the  criterion between  two
+    iterations and normalizing it by  its maximum value. The number of
+    selected  features corresponds  to the  last iteration  before the
+    value drops below $10^{-3}$ for  all datasets. See response to the
+    Reviewer 1 (1.3 and 1.4).
+
+    Therefore, in practice, the optimal number can be different from one method to another.  We believe that it is fair to use a different number of variables for each method because it also reflects the ability of a criterion to identify relevant features.
+
+    The Table V has been modified to include the \# of selected features.
   \end{resbox}
 \end{revbox}
 
@@ -267,14 +354,14 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
   Another drawback is that the English language is poorly written, since it contains several critical syntax and typographical errors. As a result, some parts of the text are unclarified and misunderstood.
   \begin{resbox}
 
-  TODO
+    We proofread the article to correct as many errors as possible. Thank you for the careful reading.
 
   \end{resbox}
 \end{revbox}
- 
-
-\section{Auxiliary data}
-\label{sec:auxillary}
-
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

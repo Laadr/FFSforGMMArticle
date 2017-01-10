@@ -37,6 +37,7 @@
 
 % correct bad hyphenation here
 % \hyphenation{op-tical net-works semi-conduc-tor}
+\newcommand{\rev}[1]{\textcolor{magenta}{\emph{#1}}}
 
 \begin{document}
 %
@@ -125,7 +126,7 @@ difficult~\cite{donoho}.  Consequently,  with a limited  training set,
 beyond a certain limit, the classification accuracy actually decreases
 as the number of features increases~\cite{hughes}.  For the purpose of
 classification,  these  problems are  related  to  the \emph{curse  of
-  dimensionality}~\cite{trunk1979problem}. This  is a  major drawback  in many  remote sensing
+  dimensionality}~\cite{hughes}. This  is a  major drawback  in many  remote sensing
 application since it  is difficult to collect a large  and an accurate
 ground-truth.   An intensive  work has  been performed  in the  remote
 sensing community  to build accurate classifiers  for high dimensional
@@ -147,7 +148,7 @@ community~\cite{christophe2011remote,plaza2011high}.  Main  issues are
 related to the use of parallel approach (multi-core, GPU, clusters) to
 improve the  processing time, and  to the use of  streaming techniques
 when data  does not fit in  memory.  One popular open  source software
-solution  is  the Orfeo  Toolbox,  developed  by the  French  National
+solution  is  the Orfeo  Toolbox,  developed  by the  French  Space
 Agency~\cite{christophe2008orfeo}.   Streaming and  parallel computing
 are  conveniently proposed  to the  users/developpers through  several
 modules ``\emph{ready to use}''.
@@ -548,7 +549,7 @@ without the necessity to learn a GMM models for each fold.
                                                         &- \frac{n_c \nu_c}{(n_c-\nu_c)} (\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})(\boldsymbol{\hat{\mu}}_c^{\nu_c}-\boldsymbol{\hat{\mu}}_c^{n_c})^t \biggr\} \nonumber
             \end{align*}
         \end{prop}
-        \noindent where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exponents on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\nu}_c$ denotes the set of samples used to compute them.
+        \noindent where $n_c$ is the number of samples of class $c$, $\nu_c$ is the number of samples of class $c$ removed from the initial set, exponents on $\boldsymbol{\Sigma}_c$ and $\boldsymbol{\mu}_c$ denotes the set of samples used to compute them.
 
         \subsubsection{Criterion function computation}
         \label{sec:update-crit}
@@ -750,9 +751,10 @@ without the necessity to learn a GMM models for each fold.
     where $\boldsymbol{\Lambda}^{(k)}_c$  and $\mathbf{P}^{(k)}_c$ are
     the diagonal  matrix of eigenvalues  of the covariance  matrix and
     the    orthonormal   matrix    of   corresponding    eigenvectors,
-    respectively.  To prevent  numerical instability,  the eigenvalues
-    are thresholded to a given  value EPS\_FLT. In our implementation,
-    EPS\_FLT is set to the floating machine precision.
+    respectively.  To prevent numerical instability, \rev{non strictly
+      positive eigenvalues are thresholded to a fixed value EPS\_FLT}.
+    In our  implementation, EPS\_FLT  is set  to the  floating machine
+    precision.
 
     Then, the inverse of the covariance matrix can be computed as
 
@@ -918,7 +920,11 @@ resolution multispectral airborne image.
         \end{tabular}
     \end{table}
 
-    In order to increase the dimensionality of the data, the following features are computed using the RGBIR images similarly to \cite{tuia2015multiclass}:
+    In order to increase the dimensionality of the data,
+
+    \rev{Conventionally,  the following  features are  extracted using  the
+    RGBIR  images in  order to  increase the  classification accuracy,
+    similarly to \cite{tuia2015multiclass}:}
     \begin{itemize}
         \item Fifteen Radiometric indexes: NDVI, TNDVI, RVI, SAVI, TSAVI, MSAVI, MSAVI2, GEMI, IPVI, NDWI2, NDTI, RI, CI, BI, BI2~\cite{otb}.
         \item Morphological profile build on each band with a disk of radius 5, 9, 13, 17, 21, 25, 29, 33, 37 and 41 (80 features)~\cite{fauvel2013advances};
@@ -929,10 +935,9 @@ resolution multispectral airborne image.
           (16 features)~\cite{otb}.
     \end{itemize}
     The normalized DSM and the raw  RGBIR image are added to these 191
-    features and  then stacked to  create a  new image  with 196
-    bands. %  The  training is  made with  tile 5\_11  and test  with two
-    % tiles: 5\_12 which very similar with  tile 5\_11 and 3\_10 which a
-    % further area a bit less urban and more industrial.
+    features and  then stacked to create  a new image with  196 bands.
+    \rev{The  resulting  data cube  is  therefore  high-dimensional.} 
+    
 
 
 \section{Experimental results}
@@ -967,7 +972,7 @@ resolution multispectral airborne image.
     Other configurations  have been  investigated and  performs either
     equally     or     lower     in    terms     of     classification
     accuracy~\cite{al:report}. For the sake of clarity, only the three
-    aforementioned configurations are discussed here.
+    aforementioned configurations are discussed here \rev{and the results for all other configurations is available in the supplementary material}.
 
     The training set has been created  with an equal number of samples
     for each class and additionally  a spatial stratification has been
@@ -984,9 +989,12 @@ resolution multispectral airborne image.
     variables is selected as follow.  Rather than selecting the number
     of variables corresponding to the  highest value of the criterion,
     the number of  retained variables is set when  the criterion stops
-    to increase significantly.  It is  found by computing the discrete
-    derivative of the criteria.  See Figure~\ref{fig:crit-evol} for an
-    example.
+    to  increase significantly.   \rev{It  is found  by computing  the
+      discrete derivative  of the criteria between  two iterations and
+      normalizing it  by its  maximum value.   The number  of selected
+      features  corresponds to  the  last iteration  before the  value
+      drops    below    $10^{-3}$     for    all    datasets}.     See
+    Figure~\ref{fig:crit-evol} for an example.
 
     \begin{figure}[!t]
         \centering
@@ -1017,7 +1025,7 @@ resolution multispectral airborne image.
     % with $DJ_k = \frac{J(\Omega_k) - J(\Omega_{k-1})}{\max_k (J(\Omega_k) - J(\Omega_{k-1}))}$.
 
     The    classification   rate    is    presented   using    Cohen's
-    kappa. Processing  time has been  evaluated on a  desktop computer
+    kappa \rev{but scores computed with overall accuracy and mean of f1-score are available in supplementary material}. Processing  time has been  evaluated on a  desktop computer
     with  8Gb of  RAM  and  Intel(R) Core(TM)  i5-3570  CPU @  3.40GHz
     $\times$ 4 processors.
 
@@ -1105,27 +1113,31 @@ resolution multispectral airborne image.
       \label{fig:meanNbVar-aisa}
     \end{figure}
 
-    \begin{table}[!t]
+    \begin{table*}[!t]
         \centering
         \caption{Mean processing time for training and classification for results in Table \ref{tab:aisa-otbsimu}.\label{tab:aisa-otbsimu-time}}
-        \begin{tabularx}{\columnwidth}{l*{6}{>{\centering\arraybackslash}X}}
+        \begin{tabularx}{0.8\textwidth}{l*{9}{>{\centering\arraybackslash}X}}
             \toprule
-             & \multicolumn{3}{c}{\bfseries Training time (s)} & \multicolumn{3}{c}{\bfseries Classification time (s)} \\ \cmidrule{2-7}
-            \# samples by class & 250 & 500 & 1000 & 250 & 500 & 1000 \\ \midrule
+             & \multicolumn{3}{c}{\bfseries Training time (s)} & \multicolumn{3}{c}{\bfseries Classification time (s)} & \multicolumn{3}{c}{\bfseries \# of selected features} \\ \cmidrule{2-10}
+            \# samples by class & 250 & 500 & 1000 & 250 & 500 & 1000 & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS kappa & 257             & 496             & 955             & {\bfseries 5.2} & {\bfseries 5.2} & {\bfseries 5.5} \\
-            GMM SFS JM &    {\bfseries 8.6} & {\bfseries 8.9} & {\bfseries 9.1} & {\bfseries 5.7} & {\bfseries 5.7} & {\bfseries 5.9} \\
-            GMM SFFS JM &   {\bfseries 8.8} & {\bfseries 9.0} & {\bfseries 9.3} & {\bfseries 5.0} & {\bfseries 5.0} & {\bfseries 5.4} \\
-            GMM ridge &     71.7            & 105             & 167             & 530 & 530 & 530 \\
-            KNN &           {\bfseries 8.9} & 19.6            & 59.7            & 387 & 639 & 887 \\
-            Random Forest & 24.5            & 49.3            & 105             & 33.0 & 41.7 & 45.9 \\
+            GMM SFS kappa & 257             & 496             & 955             & {\bfseries 5.2} & {\bfseries 5.2} & {\bfseries 5.5} & 11.95 & 12    & 12.05\\
+            GMM SFS JM &    {\bfseries 8.6} & {\bfseries 8.9} & {\bfseries 9.1} & {\bfseries 5.7} & {\bfseries 5.7} & {\bfseries 5.9} & 11.95 & 12    & 12.05\\
+            GMM SFFS JM &   {\bfseries 8.8} & {\bfseries 9.0} & {\bfseries 9.3} & {\bfseries 5.0} & {\bfseries 5.0} & {\bfseries 5.4} & 21.45 & 24.35 & 27.05\\
+            GMM ridge &     71.7            & 105             & 167             & 530 & 530 & 530    & & & \\
+            KNN &           {\bfseries 8.9} & 19.6            & 59.7            & 387 & 639 & 887    & & & \\
+            Random Forest & 24.5            & 49.3            & 105             & 33.0 & 41.7 & 45.9 & & & \\
             \bottomrule
         \end{tabularx}
-    \end{table}
+    \end{table*}
+    
+    
+    
+
 
     The results show that, on this  dataset, GMM classifiers with feature selection get the best classification rate. Among the three variations of the selection algorithm, none appears to perform better than the others. Using kappa or Jeffries-Matusita distance as criterion is equal and using SFFS does not give any advantage.
 
-    The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples and one could expect to get a better classification rate with RF if more samples were available. The GMM classifier with ridge regularization and the KNN classifier are both outperformed.
+    The difference with the second best classifier, Random Forest, appears to be significant when using 250 and 500 samples. Random Forest has similar performance in term of classification rate with 1000 samples \rev{and one could expect to get a better classification rate with RF if more samples were available}. The GMM classifier with ridge regularization and the KNN classifier are both outperformed.
 
     In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~(\ref{eq:decision}) has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
 
