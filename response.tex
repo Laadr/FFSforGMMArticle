@@ -138,7 +138,7 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   In the experiment with Aisa dataset, although several numbers of training samples are tested, the number of training samples seems carefully selected by the authors to show the cases where the GMM classifiers perform better. I guess when a larger number of samples are trained, the random forest will have a higher classification rate. And when a smaller number of samples are used, the KNN will have a shorter training time. The GMM only wins in the classification time regardless of the sample number. It’ll be good to show these cases.
   \begin{resbox}
-    The reviewer is right regarding the number of training samples. GMM (not restricted to the feature selection case) does not benefit as much as other machine learning algorithm of the increase of the number of training samples. For the feature selection case, it is discussed in ref [27] for instance, with KNN, RF and SVM. Please note it is also discussed in the paper for the Potsdam dataset.
+    The reviewer is right regarding the number of training samples. GMM (not restricted to the feature selection case) does not benefit as much as other machine learning algorithms of the increase of the number of training samples. For the feature selection case, it is discussed in ref [27] for instance, with KNN, RF and SVM. Please note it is also discussed in the paper for the Potsdam dataset.
     
     We tried with 50 samples by class and it leads to the same behavior than with 250 samples (see Table~\ref{tab:aisa-otbsimu}). We therefore choose to not include this additional results in the final version of the paper.
 
@@ -290,9 +290,9 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   According to Table IV in page 16. GMM SFS JM outperforms GMM SFS kappa a little bit under the kappa criterion. Since GMM SFS kappa updates the features according to the kappa criterion while GMM SFS JM updates the features according to the JM criterion, shouldn’t GMM SFS kappa outperforms GMM SFS JM under the kappa criterion? Or is there some explanation to it?
   \begin{resbox}
-    We would like to thank the reviewer for this important comment. First, please note that the score difference between GMM SFS JM and GMM SFS kappa in Table IV is not statistically significant according to the Wilcoxon rank-sum test. Second, the Kappa is estimated by cross-validation during the feature selection, which is a (little) biased estimators and therefore, it is possible to observe significant differences between the estimated kappa and the true Kappa (usually, a lower value), see ref [36] Chapter 7.
+    We would like to thank the reviewer for this important comment. First, please note that the score difference between GMM SFS JM and GMM SFS kappa in Table IV is not statistically significant according to the Wilcoxon rank-sum test. Second, the Kappa is estimated by cross-validation during the feature selection, which is a  biased estimators and therefore, it is possible to observe significant differences between the estimated kappa and the true Kappa (usually, a lower value), see ref [36] Chapter 7.
 
-    Our guess is that if the Gaussian hypothesis is a good approximation for the data, the JM metric performs well  with  performances similar to the ones obtained with the Kappa. It is the case for the AISA data set, while for the Potsdam data, the Kappa coefficient outperformed the JM metric. Our recommendation would be to start with JM since it is fast, and then try Kappa if necessary.
+    Our guess is that if the Gaussian hypothesis is a good approximation for the used data, the JM metric performs well  with  performances similar to the ones obtained with the Kappa. It is the case for the AISA data set, while for the Potsdam data, the Kappa coefficient outperformed the JM metric. Our recommendation would be to start with JM since it is fast, and then try Kappa if necessary.
   \end{resbox}
 \end{revbox}
 
@@ -320,7 +320,7 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   A reference or an explanation should be made in Page 1, line 36 regarding the curse of dimensionality
   \begin{resbox}
-    We added a reference as suggested.
+    We added the following reference: \emph{D. Donoho, ``High-dimensional data analysis: the curses and blessing of dimensionality,'' in AMS Mathematical challenges of the 21st century, 2000}.
   \end{resbox}
 \end{revbox}
 
@@ -330,7 +330,7 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   Although the method seems promising, there are some significant issues the authors should address to. The key novelty and contribution of this technique is unfortunately unclear. The authors dedicate a lot of space in explaining already known mathematical formulations of the Gaussian Mixture Models and the feature selection techniques, in comparison with their proposed scheme.
   \begin{resbox}
-    We totally agree that some mathematical formulations we used are already known. Nevertheless, we think that these formulations in this particular context has not been exploited so far. The results of our experiment shows that the proposed algorithm has the advantage to be very efficient in term of processing time with a fairly reasonable cost in term of classification accuracy. It has to be noticed that compared to similar methods using Gaussian Mixture model, no additional hypothesis are made on the covariance matrix which is tractable only because of the efficient implementation.
+    We totally agree that some mathematical formulations are already known. Nevertheless, we think that these formulations in this particular context has not been exploited so far. The results of our experiment shows that the proposed algorithm has the advantage to be very efficient in term of processing time with a fairly reasonable cost in term of classification accuracy. It has to be noticed that compared to similar methods using Gaussian Mixture model, no additional hypothesis are made on the covariance matrix which is tractable only because of the efficient implementation.
   \end{resbox}
 \end{revbox}
 
