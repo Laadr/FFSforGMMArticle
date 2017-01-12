@@ -330,7 +330,11 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 \begin{revbox}
   Although the method seems promising, there are some significant issues the authors should address to. The key novelty and contribution of this technique is unfortunately unclear. The authors dedicate a lot of space in explaining already known mathematical formulations of the Gaussian Mixture Models and the feature selection techniques, in comparison with their proposed scheme.
   \begin{resbox}
-    We totally agree that some mathematical formulations are already known. Nevertheless, we think that these formulations in this particular context has not been exploited so far. The results of our experiment shows that the proposed algorithm has the advantage to be very efficient in term of processing time with a fairly reasonable cost in term of classification accuracy. It has to be noticed that compared to similar methods using Gaussian Mixture model, no additional hypothesis are made on the covariance matrix which is tractable only because of the efficient implementation.
+    We totally agree that some mathematical formulations are conventional. We believe that it is necessary to provide to readers sufficient information to explain clearly the contribution of the proposed paper. The contributions are based on specific derivation of the GMM and the FE formulation. Without these primary recall, we are afraid that readers can be lost. Concerning the contribution of the paper, they are stated in the antepenultimate paragraph of the introduction. They concern the expression of efficient updates rules using block matrix processing. Furthermore, an open source C++ library is made available for the community. The results of our experiment shows that the proposed algorithm has the advantage to be very efficient in term of processing time with a fairly reasonable cost in term of classification accuracy. It has to be noticed that compared to similar methods using Gaussian Mixture model, no additional hypothesis are made on the covariance matrix which is tractable only because of the efficient implementation.
+
+    To make the contribution more clear, the antepenultimate paragraph has been modified to
+
+\rev{The contribution of the paper is a extension of the forward feature selection method proposed in~\cite{fauvel2015fast}. An smart implementation of the feature selection updates rules are presented in order to perform efficiently on large amount of data. They are based on linear algebra on block matrix applied to the covariance matrix of the conditional class density function.  Furthermore, a floating version of the algorithm is proposed and evaluated. Several \emph{goodness of fit} criteria are proposed to handle unbalanced training set, extending the conventional \emph{overall accuracy} measure.  Finally, the developed algorithm is made available to the scientific community as a remote module of the Orfeo Toolbox~[13].}
   \end{resbox}
 \end{revbox}
 
@@ -342,19 +346,14 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
   \end{enumerate}
 
   \begin{resbox}
-    After reading with interest this two references, we fail to see the link between these publications and our submission except for the type of data used to test algorithms.
-
-    First reference reviews ways to assign several labels to one sample and so performs spectral unmixing. Second reference focus on the same topic but develop a deep learning approach. Although very interesting, we do not address the subject of multi-labeling in our work.
-
-    According to these observations, we choose to respectfully disagree with the reviewer and take the decision not to add a digression to cite these references.
+    We thank the reviewer for these two interesting references. However, after reading them with interest, we think the issues address in these papers are somewhat unrelated to the feature selection proposed in this work.  First reference reviews ways to assign several labels to one sample and so performs spectral unmixing. Second reference focus on the same topic but develop a deep learning approach. Although very interesting, we do not address the subject of multi-labeling in our work.  According to these observations and to keep the paper short, we choose to not include these references in the revised paper.
   \end{resbox}
 \end{revbox}
 
 \begin{revbox}
   Another drawback is that the English language is poorly written, since it contains several critical syntax and typographical errors. As a result, some parts of the text are unclarified and misunderstood.
   \begin{resbox}
-
-    We proofread the article to correct as many errors as possible. Thank you for the careful reading.
+    We proofread the article to correct as many errors as possible. If the reviewer still see weird sentences or typo, we will happy pleased to modify or correct them.
 
   \end{resbox}
 \end{revbox}
