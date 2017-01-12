@@ -87,7 +87,7 @@ DYNAFOR, France.}%
   implemented in  \texttt{C++} and integrated into  the Orfeo Toolbox.
   It has been compared to  other classification algorithms on two high
   dimension remote sensing images. The  results show that the approach
-  provide good classification accuracies with low computation time.
+  provides good classification accuracies with low computation time.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -108,7 +108,7 @@ DYNAFOR, France.}%
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched recently and 2 Terabytes of data will be released every day~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has released thousands of images. Such high volume of Earth observation data provides an accurate information of land state and functioning, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
+\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched recently and 2 Terabytes of data will be released every day~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has also released thousands of images. Such high volume of Earth observation data provides accurate information of land state and functions, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
 
 In the spectral or temporal domain, a pixel is represented by a vector
 for   which  each   component  corresponds   to  a   spectral/temporal
@@ -117,18 +117,18 @@ spectral  or temporal  measurements.  For  hyperspectral images,  this
 number is  typically about several  hundreds while for  the Sentinel-2
 multitemporal images, the number of spectro-temporal measurement for a
 given  year  is approximately  one  thousand.   When working  in  high
-dimensional  space,  statistical  methods  made for  low  or  moderate
-dimensional  space do  not  adapt  well.  For  instance,  the rate  of
+dimensional  spaces,  statistical  methods  made for  low  or  moderate
+dimensional  spaces do  not  adapt  well.  For  instance,  the rate  of
 convergence of the statistical estimation decreases when the dimension
-grows while conjointly the number of parameters to estimate increases,
+grows while jointly the number of parameters to estimate increases,
 making    the    estimation    of   the    model    parameters    very
 difficult~\cite{donoho}.  Consequently,  with a limited  training set,
 beyond a certain limit, the classification accuracy actually decreases
 as the number of features increases~\cite{hughes}.  For the purpose of
 classification,  these  problems are  related  to  the \emph{curse  of
   dimensionality}~\cite{donoho}.  This is  a  major  drawback in  many
-remote sensing  application since it  is difficult to collect  a large
-and an accurate ground-truth.  An intensive work has been performed in
+remote sensing  applications since it  is difficult to collect  a large
+and accurate ground-truth.  An intensive work has been performed in
 the remote  sensing community to  build accurate classifiers  for high
 dimensional  images.   Bayesian models~\cite{book:landgrebe},  feature
 extraction              and             feature              reduction
@@ -146,19 +146,19 @@ from  internet  stream  (see  for instance  the  Copernicus  data  hub
 requires   specific   computing  infrastructure.    High   performance
 computing   is   actually   investigated   by   the   remote   sensing
 community~\cite{christophe2011remote,plaza2011high}.  Main  issues are
-related to the use of parallel approach (multi-core, GPU, clusters) to
+related to the use of parallel approaches (multi-core, GPU, clusters) to
 improve the  processing time, and  to the use of  streaming techniques
 when data  does not fit in  memory.  One popular open  source software
 solution  is  the Orfeo  Toolbox,  developed  by the  French  Space
 Agency~\cite{christophe2008orfeo}.   Streaming and  parallel computing
-are  conveniently proposed  to the  users/developpers through  several
+are  conveniently proposed  to  users/developpers through  several
 modules ``\emph{ready to use}''.
 
 A method  to reduce  both statistical and  computational issues  is to
 perform a reduction of the dimension. In fact, with the \emph{curse of
   dimensionality}     comes     the      \emph{blessing     of     the
   dimensionality}~\cite{bouveyron2014model}:  high   dimensional  data
-space   exhibits  interesting   properties   for  the   classification
+spaces   exhibit  interesting   properties   for    classification
 purpose.  In  particular,  it  is   possible  to  get  a  parsimonious
 representation  of  the  data  while  maintaining  or  increasing  the
 classification  accuracy~\cite{jimenez1998supervised}.  For  instance,
@@ -169,7 +169,7 @@ discriminant      for      the     purpose      of      classification
 hundreds of available spectral channels,  it is possible to reduce the
 number of channels  to make the processing more efficient  in terms of
 statistical complexity  and computational load. In  short, by reducing
-the dimension better, classification results is expected with a reduced
+the dimension, better classification results are expected with a reduced
 computational load.
 
 % Among the various dimension reduction techniques, feature selection demonstrates several appealing for practical situation. The objective of feature selection is to find a subset of the original features with a minimum loss according the objective. Thus, 

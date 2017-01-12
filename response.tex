@@ -195,12 +195,12 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
             \# samples by class & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS JM &      0.685 (0.030) & 0.689 (0.030) & 0.693 (0.032) \\
-            GMM SFS divKL &   0.680 (0.027) & 0.699 (0.028) & 0.708 (0.031) \\
-            GMM SFS kappa &   0.682 (0.025) & 0.698 (0.027) & 0.710 (0.029) \\
-            GMM SFS OA &      0.682 (0.025) & 0.698 (0.027) & 0.710 (0.028) \\
-            GMM SFS F1mean &  0.682 (0.028) & 0.699 (0.027) & 0.710 (0.028) \\
-            GMM SFFS JM &     0.685 (0.030) & 0.689 (0.030) & 0.693 (0.032) \\
+            GMM SFS JM &      {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.693 (0.032)} \\
+            GMM SFS divKL &   {\bfseries 0.680 (0.027)} & {\bfseries 0.699 (0.028)} & {\bfseries 0.708 (0.031)} \\
+            GMM SFS kappa &   {\bfseries 0.682 (0.025)} & {\bfseries 0.698 (0.027)} & {\bfseries 0.710 (0.029)} \\
+            GMM SFS OA &      {\bfseries 0.682 (0.025)} & {\bfseries 0.698 (0.027)} & {\bfseries 0.710 (0.028)} \\
+            GMM SFS F1mean &  {\bfseries 0.682 (0.028)} & {\bfseries 0.699 (0.027)} & {\bfseries 0.710 (0.028)} \\
+            GMM SFFS JM &     {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.693 (0.032)} \\
             GMM SFFS divKL &  0.547 (0.158) & 0.615 (0.113) & 0.636 (0.120) \\
             GMM SFFS kappa &  0.519 (0.126) & 0.537 (0.102) & 0.545 (0.141) \\
             GMM SFFS OA &     0.531 (0.126) & 0.537 (0.093) & 0.560 (0.127) \\
@@ -214,19 +214,34 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
         \caption{Average classification accuracy for 1,000 samples by class averaged over 5 trials  with all configurations of criterion and method (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-all}}
         \begin{tabular}{lccc}\toprule
             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} \\ \cmidrule{2-4}
-            GMM SFS JM &      &&\\
-            GMM SFS divKL &   &&\\
-            GMM SFS kappa &   &&\\
-            GMM SFS OA &      &&\\
-            GMM SFS F1mean &  &&\\
-            GMM SFFS JM &     &&\\
-            GMM SFFS divKL &  &&\\
-            GMM SFFS kappa &  &&\\
-            GMM SFFS OA &     &&\\
-            GMM SFFS F1mean & &&\\
+            GMM SFS JM &      0.624 (0.028) & & \\
+            GMM SFS divKL &   0.552 (0.092) & & \\
+            GMM SFS kappa &   {\bfseries 0.694 (0.002)} & & \\
+            GMM SFS OA &      {\bfseries 0.696 (0.003)} & & \\
+            GMM SFS F1mean &  {\bfseries 0.689 (0.002)} & & \\
+            GMM SFFS JM &     0.624 (0.028) & & \\
+            GMM SFFS divKL &  0.161 (0.066) & & \\
+            GMM SFFS kappa &  0.474 (0.103) & & \\
+            GMM SFFS OA &     0.407 (0.114) & & \\
+            GMM SFFS F1mean & 0.319 (0.052) & & \\
             \bottomrule
         \end{tabular}
     \end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \begin{revbox}
   Only Cohen’s Kappa is utilized to analyze the classification accuracy. The experimental results would be more persuasive if other criterion functions are utilized as well. I am interested to see how different methods’ performance varies under different criterion functions.
@@ -248,19 +263,19 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{3}{c}{\bfseries Overall Accuracy} & \multicolumn{3}{c}{\bfseries F1-mean} \\ \cmidrule{2-7}
             \# samples by class & 250 & 500 & 1000  & 250 & 500 & 1000 \\ \midrule
 
-            GMM SFS JM &      0.735 (0.027) & 0.738 (0.027) & 0.742 (0.029) & 0.591 (0.018) & 0.596 (0.018) & 0.600 (0.020) \\
-            GMM SFS divKL &   0.730 (0.024) & 0.747 (0.026) & 0.754 (0.029) & 0.587 (0.017) & 0.607 (0.017) & 0.616 (0.019) \\
-            GMM SFS kappa &   0.733 (0.023) & 0.746 (0.025) & 0.756 (0.027) & 0.591 (0.014) & 0.607 (0.015) & 0.620 (0.018) \\
-            GMM SFS OA &      0.732 (0.023) & 0.746 (0.025) & 0.756 (0.026) & 0.591 (0.014) & 0.607 (0.015) & 0.619 (0.018) \\
-            GMM SFS F1mean &  0.732 (0.026) & 0.747 (0.025) & 0.757 (0.026) & 0.590 (0.018) & 0.609 (0.016) & 0.620 (0.018) \\
-            GMM SFFS JM &     0.735 (0.027) & 0.738 (0.027) & 0.742 (0.029) & 0.591 (0.018) & 0.596 (0.018) & 0.600 (0.020) \\
+            GMM SFS JM &      {\bfseries 0.735 (0.027)} & {\bfseries 0.738 (0.027)} & {\bfseries 0.742 (0.029)} & {\bfseries 0.591 (0.018)} & {\bfseries 0.596 (0.018)} & {\bfseries 0.600 (0.020)} \\
+            GMM SFS divKL &   {\bfseries 0.730 (0.024)} & {\bfseries 0.747 (0.026)} & {\bfseries 0.754 (0.029)} & {\bfseries 0.587 (0.017)} & {\bfseries 0.607 (0.017)} & {\bfseries 0.616 (0.019)} \\
+            GMM SFS kappa &   {\bfseries 0.733 (0.023)} & {\bfseries 0.746 (0.025)} & {\bfseries 0.756 (0.027)} & {\bfseries 0.591 (0.014)} & {\bfseries 0.607 (0.015)} & {\bfseries 0.620 (0.018)} \\
+            GMM SFS OA &      {\bfseries 0.732 (0.023)} & {\bfseries 0.746 (0.025)} & {\bfseries 0.756 (0.026)} & {\bfseries 0.591 (0.014)} & {\bfseries 0.607 (0.015)} & {\bfseries 0.619 (0.018)} \\
+            GMM SFS F1mean &  {\bfseries 0.732 (0.026)} & {\bfseries 0.747 (0.025)} & {\bfseries 0.757 (0.026)} & {\bfseries 0.590 (0.018)} & {\bfseries 0.609 (0.016)} & {\bfseries 0.620 (0.018)} \\
+            GMM SFFS JM &     {\bfseries 0.735 (0.027)} & {\bfseries 0.738 (0.027)} & {\bfseries 0.742 (0.029)} & {\bfseries 0.591 (0.018)} & {\bfseries 0.596 (0.018)} & {\bfseries 0.600 (0.020)} \\
             GMM SFFS divKL &  0.611 (0.149) & 0.672 (0.105) & 0.690 (0.110) & 0.441 (0.152) & 0.515 (0.114) & 0.541 (0.116) \\
             GMM SFFS kappa &  0.583 (0.119) & 0.599 (0.099) & 0.605 (0.141) & 0.427 (0.117) & 0.439 (0.085) & 0.442 (0.119) \\
             GMM SFFS OA &     0.596 (0.115) & 0.600 (0.090) & 0.620 (0.127) & 0.437 (0.124) & 0.436 (0.079) & 0.455 (0.109) \\
             GMM SFFS F1mean & 0.515 (0.154) & 0.640 (0.093) & 0.590 (0.127) & 0.352 (0.128) & 0.476 (0.085) & 0.431 (0.114) \\
-            GMM ridge &       0.665 (0.038) & 0.672 (0.034) & 0.692 (0.033) & 0.580 (0.017) & 0.593 (0.016) & 0.609 (0.018) \\
+            GMM ridge &       0.665 (0.038) & 0.672 (0.034) & 0.692 (0.033) & {\bfseries 0.580 (0.017)} & {\bfseries 0.593 (0.016)} & {\bfseries 0.609 (0.018)} \\
             KNN &             0.611 (0.033) & 0.622 (0.030) & 0.632 (0.027) & 0.485 (0.019) & 0.502 (0.018) & 0.515 (0.019) \\
-            Random Forest &   0.699 (0.023) & 0.723 (0.020) & 0.741 (0.021) & 0.554 (0.018) & 0.578 (0.017) & 0.598 (0.019) \\
+            Random Forest &   0.699 (0.023) & 0.723 (0.020) & {\bfseries 0.741 (0.021)} & 0.554 (0.018) & 0.578 (0.017) & {\bfseries 0.598 (0.019)} \\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -272,16 +287,16 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{2}{c}{\bfseries 5\_11 (train)} & \multicolumn{2}{c}{\bfseries 5\_12 (test)} & \multicolumn{2}{c}{\bfseries 3\_10 (test)} \\ \cmidrule{2-7}
              & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} \\ \cmidrule{2-7}
 
-            GMM SFS JM &      &&&&&\\
-            GMM SFS divKL &   &&&&&\\
-            GMM SFS kappa &   &&&&&\\
-            GMM SFS OA &      &&&&&\\
-            GMM SFS F1mean &  &&&&&\\
-            GMM SFFS JM &     &&&&&\\
-            GMM SFFS divKL &  &&&&&\\
-            GMM SFFS kappa &  &&&&&\\
-            GMM SFFS OA &     &&&&&\\
-            GMM SFFS F1mean & &&&&&\\
+            GMM SFS JM &      0.725 (0.025) & 0.528 (0.022) &  &&&\\
+            GMM SFS divKL &   0.677 (0.065) & 0.503 (0.044) &  &&&\\
+            GMM SFS kappa &   0.771 (0.002) & 0.642 (0.005) &  &&&\\
+            GMM SFS OA &      0.773 (0.002) & 0.642 (0.006) &  &&&\\
+            GMM SFS F1mean &  0.767 (0.002) & 0.646 (0.004) &  &&&\\
+            GMM SFFS JM &     0.725 (0.025) & 0.528 (0.022) &  &&&\\
+            GMM SFFS divKL &  0.408 (0.037) & 0.237 (0.051) &  &&&\\
+            GMM SFFS kappa &  0.601 (0.087) & 0.431 (0.065) &  &&&\\
+            GMM SFFS OA &     0.544 (0.097) & 0.392 (0.063) &  &&&\\
+            GMM SFFS F1mean & 0.473 (0.043) & 0.364 (0.027) &  &&&\\
             \bottomrule
         \end{tabular}
     \end{table}
@@ -334,7 +349,7 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
 
     To make the contribution more clear, the antepenultimate paragraph has been modified to
 
-\rev{The contribution of the paper is a extension of the forward feature selection method proposed in~\cite{fauvel2015fast}. An smart implementation of the feature selection updates rules are presented in order to perform efficiently on large amount of data. They are based on linear algebra on block matrix applied to the covariance matrix of the conditional class density function.  Furthermore, a floating version of the algorithm is proposed and evaluated. Several \emph{goodness of fit} criteria are proposed to handle unbalanced training set, extending the conventional \emph{overall accuracy} measure.  Finally, the developed algorithm is made available to the scientific community as a remote module of the Orfeo Toolbox~[13].}
+\rev{The contribution of the paper is a extension of the forward feature selection method proposed in~[27]. An smart implementation of the feature selection updates rules are presented in order to perform efficiently on large amount of data. They are based on linear algebra on block matrix applied to the covariance matrix of the conditional class density function.  Furthermore, a floating version of the algorithm is proposed and evaluated. Several \emph{goodness of fit} criteria are proposed to handle unbalanced training set, extending the conventional \emph{overall accuracy} measure.  Finally, the developed algorithm is made available to the scientific community as a remote module of the Orfeo Toolbox~[13].}
   \end{resbox}
 \end{revbox}
 
