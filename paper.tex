@@ -108,7 +108,7 @@ DYNAFOR, France.}%
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regularly (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched recently and 2 Terabytes of data will be released every day~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has also released thousands of images. Such high volume of Earth observation data provides accurate information of land state and functions, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
+\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regular (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched recently and 2 Terabytes of data will be released every day~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has also released thousands of images. Such high volume of Earth observation data provides accurate information of land state and functions, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
 
 In the spectral or temporal domain, a pixel is represented by a vector
 for   which  each   component  corresponds   to  a   spectral/temporal
@@ -151,8 +151,7 @@ improve the  processing time, and  to the use of  streaming techniques
 when data  does not fit in  memory.  One popular open  source software
 solution  is  the Orfeo  Toolbox,  developed  by the  French  Space
 Agency~\cite{christophe2008orfeo}.   Streaming and  parallel computing
-are  conveniently proposed  to  users/developpers through  several
-modules ``\emph{ready to use}''.
+are  conveniently proposed  to  users/developpers through  several ``\emph{ready to use}'' modules.
 
 A method  to reduce  both statistical and  computational issues  is to
 perform a reduction of the dimension. In fact, with the \emph{curse of
@@ -177,7 +176,7 @@ computational load.
 % retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.
 
 There  are  two  main  strategies  to  reduce  dimension~\cite[Chapter
-1]{Guyon:2006:FEF:1208773}: features extraction and feature selection.
+1]{Guyon:2006:FEF:1208773}: feature extraction and feature selection.
 Feature extraction means reformulate  and summarize the information by
 creating new features in combining  the existing ones, it is sometimes
 referred to as \emph{feature construction}.  Linear combination of the
@@ -186,32 +185,32 @@ initial features  can be extracted using  Principal Component Analysis
 \cite{villa2011hyperspectral}.  Supervised extraction  method has also
 been investigated  such as Fischer discriminant  analysis and decision
 boundary feature  extraction~\cite{book:landgrebe}.  To  the contrary,
-features selection  extracts a subset of  existing features identified
+feature selection  extracts a subset of  existing features identified
 as  the most  relevant  by a  given criterion.   This  subset has  the
 additional advantage to  be much more understandable  for the end-user
 than those constructed by a (non-)linear combination.
 
-Features selection/extraction algorithms can be divided into three classes. The first class is called \emph{filter methods}. They select features independently of the classifier. Features are ranked according to some statistical measures, \emph{e.g.}, correlation or independence. For example,  PCA is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. Correlation between bands has been explored for feature selection in hyperspectral data~\cite{demir2008phase}. In general, these methods are fast and do not depend on any classifier. But they do not take into account the properties of the chosen classifier and do not optimize directly the classification accuracy.
+Feature selection/extraction algorithms can be divided into three classes. The first class is called \emph{filter methods}. They select features independently of the classifier. Features are ranked according to some statistical measures, \emph{e.g.}, correlation or independence. For example,  PCA is a typical unsupervised filter method. Bruzzone \emph{et al.}\cite{bruzzone1995extension} develop a supervised filter method based on Jeffries-Matusita distance to maximize the separability of class distribution. Correlation between bands has been explored for feature selection in hyperspectral data~\cite{demir2008phase}. In general, these methods are fast and do not depend on any classifier. But they do not take into account the properties of the chosen classifier and do not optimize directly the classification accuracy.
 
-The second class are known as \emph{wrapper methods}. They search for the best subset of variables for a given learning model. Since exhaustive searches are too expensive in terms of processing time, several sub-optimal search strategies have been designed, mainly iterative forward or backward search~\cite{whitney1971direct,marill1963effectiveness} or a combination of both~\cite{somol1999adaptive}. The advantage of such methods compare to filter methods is that they are dedicated to a particular model and to a particular learning problem. On the other hand, as they require the training of multiple models to test various set of variables, they are more time consuming.
+The second class are known as \emph{wrapper methods}. They search for the best subset of variables for a given learning model. Since exhaustive searches are too expensive in terms of processing time, several sub-optimal search strategies have been designed, mainly iterative forward or backward search~\cite{whitney1971direct,marill1963effectiveness} or a combination of both~\cite{somol1999adaptive}. The advantage of such methods compared to filter methods is that they are dedicated to a particular model and to a particular learning problem. On the other hand, as they require the training of multiple models to test various set of variables, they are more time consuming.
 
 % The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
 
-The third class corresponds to the \emph{embedded methods}. They do not separate the features selection process from the learning algorithm and allow interaction between the two processes. A popular embedded method is the \emph{Random Forest}. Embedded methods also exist for other models, \emph{e.g.} SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
+The third class corresponds to the \emph{embedded methods}. They do not separate the feature selection process from the learning algorithm and allow interactions between the two processes. A popular embedded method is the \emph{Random Forest}. Embedded methods also exist for other models, \emph{e.g.} SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
 
-Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed~\cite{fauvel2015fast}. The training computational load is too important to compensate the reduced prediction computational load. Hence, feature selection is not widely used in operational situation. However, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
+Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed~\cite{fauvel2015fast}. The training computational load is too important to compensate the reduced prediction computational load. Hence, feature selection is not widely used in operational situations. However, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
 
-\rev{The contribution of the paper is a extension of the forward feature selection method proposed in~\cite{fauvel2015fast}. An smart implementation of the feature selection updates rules are presented in order to perform efficiently on large amount of data. They are based on linear algebra on block matrix applied to the covariance matrix of the conditional class density function.  Furthermore, a floating version of the algorithm is proposed and evaluated. Several \emph{goodness of fit} criteria are proposed to handle unbalanced training set, extending the conventional \emph{overall accuracy} measure.  Finally, the developed algorithm is made available to the scientific community as a remote module of the Orfeo Toolbox~\cite{christophe2008orfeo}.}
+\rev{The contribution of this paper is a extension of the forward feature selection method proposed in~\cite{fauvel2015fast}. A smart implementation of the feature selection update rules are presented in order to perform efficiently on large amount of data. The rules use on linear algebra on block matrices applied to the covariance matrix of the conditional class density function.  Furthermore, a floating version of the algorithm is proposed and evaluated. Several \emph{correctness of fit} criteria are proposed to handle unbalanced training sets, extending the conventional \emph{overall accuracy} measure.  Finally, the developed algorithm is made available to the scientific community as a remote module of the Orfeo Toolbox~\cite{christophe2008orfeo}.}
 
 % Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox .
 
 The     remaining    of     the     article     is    organized     as
 follows.   Section~\ref{sec:gmm-hd}  presents   GMM  classifiers   and
-problems  related to  high-dimensional  feature  spaces. The  features
-selection methods are detailed in Section~\ref{sec:selection}. Then an
+problems  related to  high-dimensional  feature  spaces. The  feature
+selection methods are detailed in Section~\ref{sec:selection}. Then, an
 efficient         implementation        is         presented        in
 Section~\ref{sec:implementation}.  Experimental  results on  two  real
-high dimensional data-set are given Section~\ref{sec:test}. Conclusion
+high dimensional data-sets are given Section~\ref{sec:test}. Conclusion
 and perspectives conclude the paper in Section~\ref{sec:conclusion}.
 
 \section{Gaussian Mixture Models in high dimensional spaces}
@@ -230,15 +229,15 @@ $c$.
     For mixture models, it is assumed  that a given sample $\mathbf{x}$ is
     the realization  of a  random vector which  distribution is  a mixture
     (convex     combination)     of      several     class     conditioned
-    distribution~\cite{Fraley00model-basedclustering}:
+    distributions~\cite{Fraley00model-basedclustering}:
     \begin{align}
         p(\mathbf{x}) = \sum_{c=1}^{C} \pi_c f_c(\mathbf{x}|\theta)
     \end{align}
     where $\pi_c$ is  the prior, \emph{i.e.}, the  proportion of class
-    $c$  and  $f_c$  a  parametric density  function  control by
+    $c$  and  $f_c$  a  parametric density  function  controlled by
     $\theta$.
 
-    Among the possible parametric model,  the Gaussian one is the most
+    Among the possible parametric models,  the Gaussian one is the most
     used~\cite{bouveyron2014model}.   It assumes  that each  $f_c$ is,
     conditionally  to  $c$,  a  Gaussian  distribution  of  parameters
     $\boldsymbol{\mu}_c$    and    $\boldsymbol{\Sigma}_c$:
@@ -298,25 +297,25 @@ $c$.
         \caption{Number of parameters $\eta_c$ by class in function of dimension $d$: $\eta_c=d(d+3)/2+1$.\label{fig:nb-param}}
     \end{figure}
 
-    There are two major solutions to this problem. First option is to stabilize the inversion of the covariance matrices. Some methods investigate the use of constraints on the direct problem. Reynolds \emph{et al.} \cite{reynolds1995robust} proposed to use diagonal covariance matrices. It is also possible to force the diagonal element to be higher than a given value by maximizing the GMM likelihood \cite{hathaway1985constrained}. Celeux and Govaert \cite{celeux1995gaussian} suggest to use equality constraints between coefficients of the covariance matrix in a parsimonious cluster-based GMM framework. Others papers propose to work on the inverse problem. A classical method is to use a regularization method as the well-known ridge regularization \cite{hoerl1970ridge}. A ridge regularization aims to stabilize the inversion by replacing the covariance matrix $\boldsymbol{\Sigma}_c$ by $\boldsymbol{\Sigma}_c + \tau \mathbf{I}$ where $\tau$ is a positive parameter and $\mathbf{I}$ the identity matrix. Jensen \emph{et al.} \cite{jensen2008regression} propose a different approach using a sparsity approximation to inverse the covariance matrix.
+    There are two major solutions to this problem. The first option is to stabilize the inversion of the covariance matrices. Some methods investigate the use of constraints on the direct problem. Reynolds \emph{et al.} \cite{reynolds1995robust} proposed to use diagonal covariance matrices. It is also possible to force the diagonal element to be higher than a given value by maximizing the GMM likelihood \cite{hathaway1985constrained}. Celeux and Govaert \cite{celeux1995gaussian} suggest to use equality constraints between coefficients of the covariance matrix in a parsimonious cluster-based GMM framework. Other papers propose to work on the inverse problem. A classical method is to use a regularization method as the well-known ridge regularization \cite{hoerl1970ridge}. A ridge regularization aims to stabilize the inversion by replacing the covariance matrix $\boldsymbol{\Sigma}_c$ by $\boldsymbol{\Sigma}_c + \tau \mathbf{I}$ where $\tau$ is a positive parameter and $\mathbf{I}$ the identity matrix. Jensen \emph{et al.} \cite{jensen2008regression} propose a different approach using a sparsity approximation to inverse the covariance matrix.
 
-    Second option is to reduce the dimension. Features extraction/selection methods have been developed in order to reduce the dimension with various approaches described in Section~\ref{sec:intro}. In this study, this latter option is explored and a feature selection method named sequential forward features selection is presented.
+    The second option is to reduce the dimension. Feature extraction/selection methods have been developed in order to reduce the dimension with various approaches described in Section~\ref{sec:intro}. In this study, this latter option is explored and a feature selection method named sequential forward features selection is presented.
 
 \section{Sequential forward features selection}
 \label{sec:selection}
 
 The feature selection method proposed in this work is a wrapper method associated to GMM models. Two elements are needed to set up a wrapper method:
 \begin{enumerate}
-\item A function that ranks the features according to some good classification or class separability criteria,
+\item A function that ranks the features according to some good classification or class separability criterion,
 \item A search strategy to optimize the function.
 \end{enumerate}
 
-Section~\ref{sec:criterion} describes the different criterion used in this work and two search strategies are discussed in~\ref{sec:selection:method}.
+Section~\ref{sec:criterion} describes the various criteria used in this work and two search strategies are discussed in~\ref{sec:selection:method}.
 
 
     \subsection{Criterion function}
     \label{sec:criterion}
-    The criterion evaluates how a given model built with a subset of features performs for the classification task. It can be an estimation of the correct classification or a measure of separability/similarity between class distribution. The former are in general more demanding in terms of processing time than the later.
+    The criterion evaluates how a given model built with a subset of features performs for the classification task. It can be an estimation of the correct classification or a measure of separability/similarity between class distributions. The former are in general more demanding in terms of processing time than the later.
 
     % Criterion functions aim to evaluate either a rate of correct classification or the separability/similarity of class distributions. These functions are used to estimate which sets of variables are the best to represent data, to assure the separability of the classes and to perform classification. The choice of a criterion function is the choice of a way to compare sets of variables.
 
@@ -340,7 +339,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
           Positive plus False Positive) and the recall (number of True
           Positive over True Positive plus False Negative)~\cite{powers2011evaluation}.
         \end{itemize}
-        High  value  of  theses  indices  correspond  to  an  accurate
+        High  values  of  theses  indices  correspond  to  an  accurate
         classification.
 
         These  indices  are  estimated  from the  training  set  by  a
@@ -356,8 +355,8 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \hspace{0pt} \\
 
         \subsubsection{Similarity between distributions}
-        The similarity  between two distributions is  quantified using
-        divergence  measure~\cite{opac-b1097517}. Contrary  to measure
+        The similarity  between two distributions can be  quantified using
+        divergence  measures~\cite{opac-b1097517}. Contrary  to measures
         of correct  classification, divergences are  computed directly
         on  the  trained  model,  with  no  need  of  cross-validation
         estimation.  Two particular divergences are used in this work:
@@ -365,7 +364,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
         \emph{Jeffries-Matusita}  distance.   The advantage  of  these
         divergences is  that they have  an explicit expression  in the
         case of Gaussian models. The  simplification allows to get rid
-        of  any integration  calculus which  is a  major problem  when
+        of  any integration  calculations which  is a  major problem  when
         dealing with high-dimensional data.
 
         \emph{The   Kullback-Leibler   divergence}   (KL   divergence)
@@ -519,7 +518,7 @@ Section~\ref{sec:criterion} describes the different criterion used in this work 
 \label{sec:implementation}
 The most  demanding part  of the  algorithm is  the evaluation  of the
 criterion  for  all   the  remaining  variables  (see   lines  5-7  in
-Algorithm~\ref{alg:sfs}). Calculus are based on linear algebra, and the
+Algorithm~\ref{alg:sfs}). Calculations are based on linear algebra, and the
 numerical  complexity is  on average  $O(d^3)$.  Furthermore,  for the
 \emph{accuracy}-type  criterion the  complexity  is  augmented by  the
 cross-validation procedure.
@@ -742,7 +741,7 @@ without the necessity to learn a GMM models for each fold.
     estimation of the  inverse and of the log-determinant,  and so the
     numerical stability.
 
-    To deal with this limitation, the choice has been made to perform an eigendecomposition of the covariance matrix $\boldsymbol{\Sigma}^{(k)}_c$:
+    To deal with this limitation, the choice has been made to perform an eigenvalues decomposition of the covariance matrix $\boldsymbol{\Sigma}^{(k)}_c$:
 
     \begin{eqnarray}
     \boldsymbol{\Sigma}^{(k)}_c = \mathbf{P}^{(k)}_c \boldsymbol{\Lambda}^{(k)}_c (\mathbf{P}^{(k)}_c)^t\label{eq:eigendecomp}
