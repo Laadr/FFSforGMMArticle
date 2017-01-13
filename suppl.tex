@@ -1,0 +1,155 @@
+% \documentclass[journal,peerreview,onecolumn]{IEEEtran}
+\documentclass[journal,10pt,onecolumn]{IEEEtran}
+\usepackage{etex}
+\usepackage{cite}
+\usepackage[pdftex]{graphicx}
+\graphicspath{{./Fig/}}
+\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{array}
+\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{fixltx2e}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{tabularx}
+\usepackage{empheq}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{minted}\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\newcommand\MyBox[2]{
+  \fbox{\lower0.75cm
+    \vbox to 1.2cm{\vfil
+      \hbox to 1.2cm{\hfil\parbox{1.4cm}{#1\\#2}\hfil}
+      \vfil}%
+  }%
+}
+
+% for peerreview
+% \usepackage{setspace}
+% \onehalfspacing
+
+
+\begin{document}
+
+\title{Large-scale feature selection with Gaussian mixture models for the classification of high dimensional remote sensing images:\\supplementary material}
+
+\author{Adrien~Lagrange,~Mathieu~Fauvel~and~Manuel~Grizonnet% <-this % stops a space
+% \thanks{A. Lagrange and M. Fauvel are with the Universit\'{e} de Toulouse,
+% INP-ENSAT, UMR 1201 DYNAFOR, France and with the INRA, UMR 1201
+% DYNAFOR, France.}%
+% \thanks{M. Grizonnet is with Centre National d'\'{E}tudes Spatiales, French Space Agency, Toulouse, France.}%
+% \thanks{This  work was  supported  by the  French National  Research Agency  (ANR)  under  Project Grant  ANR-13-JS02-0005-01  (Asterix project).}
+}
+
+% The paper headers
+\markboth{Transactions on Computational Imaging,~Special Issue on Computational Imaging for Earth Sciences, September~2016}{}
+
+% make the title area
+\maketitle
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+
+\section{Results for combinations of algorithm and criterion}
+\label{sec:res-all}
+
+    \begin{table}[H]
+        \centering
+        \caption{Average classification accuracy 20 trials with all configurations of criterion and method (standard deviation in parenthesis).\label{tab:aisa-otbsimu-all}}
+        \begin{tabular}{lccc}\toprule
+             & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
+            \# samples by class & 250 & 500 & 1000 \\ \midrule
+
+            GMM SFS JM &      {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.693 (0.032)} \\
+            GMM SFS divKL &   {\bfseries 0.680 (0.027)} & {\bfseries 0.699 (0.028)} & {\bfseries 0.708 (0.031)} \\
+            GMM SFS kappa &   {\bfseries 0.682 (0.025)} & {\bfseries 0.698 (0.027)} & {\bfseries 0.710 (0.029)} \\
+            GMM SFS OA &      {\bfseries 0.682 (0.025)} & {\bfseries 0.698 (0.027)} & {\bfseries 0.710 (0.028)} \\
+            GMM SFS F1mean &  {\bfseries 0.682 (0.028)} & {\bfseries 0.699 (0.027)} & {\bfseries 0.710 (0.028)} \\
+            GMM SFFS JM &     {\bfseries 0.685 (0.030)} & {\bfseries 0.689 (0.030)} & {\bfseries 0.693 (0.032)} \\
+            GMM SFFS divKL &  0.547 (0.158) & 0.615 (0.113) & 0.636 (0.120) \\
+            GMM SFFS kappa &  0.519 (0.126) & 0.537 (0.102) & 0.545 (0.141) \\
+            GMM SFFS OA &     0.531 (0.126) & 0.537 (0.093) & 0.560 (0.127) \\
+            GMM SFFS F1mean & 0.447 (0.158) & 0.579 (0.097) & 0.529 (0.129) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+        \caption{Average classification accuracy for 1,000 samples by class averaged over 5 trials  with all configurations of criterion and method (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-all}}
+        \begin{tabular}{lccc}\toprule
+            & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} \\ \cmidrule{2-4}
+            GMM SFS JM &      0.624 (0.028) & 0.631 (0.034) & 0.461 (0.027) \\
+            GMM SFS divKL &   0.552 (0.092) & 0.557 (0.086) & 0.388 (0.084) \\
+            GMM SFS kappa &   {\bfseries 0.694 (0.002)} & {\bfseries 0.669 (0.005)} & {\bfseries 0.533 (0.008)} \\
+            GMM SFS OA &      {\bfseries 0.696 (0.003)} & {\bfseries 0.670 (0.005)} & {\bfseries 0.535 (0.011)} \\
+            GMM SFS F1mean &  {\bfseries 0.689 (0.002)} & {\bfseries 0.668 (0.006)} & {\bfseries 0.529 (0.005)} \\
+            GMM SFFS JM &     0.624 (0.028) & 0.631 (0.034) & 0.461 (0.027) \\
+            GMM SFFS divKL &  0.161 (0.066) & 0.142 (0.065) & 0.148 (0.058) \\
+            GMM SFFS kappa &  0.474 (0.103) & 0.499 (0.144) & 0.330 (0.099) \\
+            GMM SFFS OA &     0.407 (0.114) & 0.424 (0.148) & 0.335 (0.099) \\
+            GMM SFFS F1mean & 0.319 (0.052) & 0.316 (0.067) & 0.316 (0.034) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+\section{Results with other metrics}
+\label{sec:res-all-metrics}
+
+    \begin{table}[H]
+        \centering
+        \caption{Average classification accuracy 20 trials evaluated with overall accuracy and mean of F1-score (standard deviation in parenthesis).\label{tab:aisa-otbsimu-othereval}}
+        \begin{tabular}{lcccccc}\toprule
+             & \multicolumn{3}{c}{\bfseries Overall Accuracy} & \multicolumn{3}{c}{\bfseries F1-mean} \\ \cmidrule{2-7}
+            \# samples by class & 250 & 500 & 1000  & 250 & 500 & 1000 \\ \midrule
+
+            GMM SFS JM &      {\bfseries 0.735 (0.027)} & {\bfseries 0.738 (0.027)} & {\bfseries 0.742 (0.029)} & {\bfseries 0.591 (0.018)} & {\bfseries 0.596 (0.018)} & {\bfseries 0.600 (0.020)} \\
+            GMM SFS divKL &   {\bfseries 0.730 (0.024)} & {\bfseries 0.747 (0.026)} & {\bfseries 0.754 (0.029)} & {\bfseries 0.587 (0.017)} & {\bfseries 0.607 (0.017)} & {\bfseries 0.616 (0.019)} \\
+            GMM SFS kappa &   {\bfseries 0.733 (0.023)} & {\bfseries 0.746 (0.025)} & {\bfseries 0.756 (0.027)} & {\bfseries 0.591 (0.014)} & {\bfseries 0.607 (0.015)} & {\bfseries 0.620 (0.018)} \\
+            GMM SFS OA &      {\bfseries 0.732 (0.023)} & {\bfseries 0.746 (0.025)} & {\bfseries 0.756 (0.026)} & {\bfseries 0.591 (0.014)} & {\bfseries 0.607 (0.015)} & {\bfseries 0.619 (0.018)} \\
+            GMM SFS F1mean &  {\bfseries 0.732 (0.026)} & {\bfseries 0.747 (0.025)} & {\bfseries 0.757 (0.026)} & {\bfseries 0.590 (0.018)} & {\bfseries 0.609 (0.016)} & {\bfseries 0.620 (0.018)} \\
+            GMM SFFS JM &     {\bfseries 0.735 (0.027)} & {\bfseries 0.738 (0.027)} & {\bfseries 0.742 (0.029)} & {\bfseries 0.591 (0.018)} & {\bfseries 0.596 (0.018)} & {\bfseries 0.600 (0.020)} \\
+            GMM SFFS divKL &  0.611 (0.149) & 0.672 (0.105) & 0.690 (0.110) & 0.441 (0.152) & 0.515 (0.114) & 0.541 (0.116) \\
+            GMM SFFS kappa &  0.583 (0.119) & 0.599 (0.099) & 0.605 (0.141) & 0.427 (0.117) & 0.439 (0.085) & 0.442 (0.119) \\
+            GMM SFFS OA &     0.596 (0.115) & 0.600 (0.090) & 0.620 (0.127) & 0.437 (0.124) & 0.436 (0.079) & 0.455 (0.109) \\
+            GMM SFFS F1mean & 0.515 (0.154) & 0.640 (0.093) & 0.590 (0.127) & 0.352 (0.128) & 0.476 (0.085) & 0.431 (0.114) \\
+            GMM ridge &       0.665 (0.038) & 0.672 (0.034) & 0.692 (0.033) & {\bfseries 0.580 (0.017)} & {\bfseries 0.593 (0.016)} & {\bfseries 0.609 (0.018)} \\
+            KNN &             0.611 (0.033) & 0.622 (0.030) & 0.632 (0.027) & 0.485 (0.019) & 0.502 (0.018) & 0.515 (0.019) \\
+            Random Forest &   0.699 (0.023) & 0.723 (0.020) & {\bfseries 0.741 (0.021)} & 0.554 (0.018) & 0.578 (0.017) & {\bfseries 0.598 (0.019)} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \begin{table}[H]
+        \centering
+        \caption{Average classification accuracy for 1,000 samples by class averaged over 5 trials  evaluated with overall accuracy and mean of F1-score (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-othereval}}
+        \begin{tabular}{lcccccc}\toprule
+             & \multicolumn{2}{c}{\bfseries 5\_11 (train)} & \multicolumn{2}{c}{\bfseries 5\_12 (test)} & \multicolumn{2}{c}{\bfseries 3\_10 (test)} \\ \cmidrule{2-7}
+             & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} \\ \cmidrule{2-7}
+
+            GMM SFS JM &      0.725 (0.025) & 0.528 (0.022) & 0.750 (0.029) & 0.514 (0.023) & 0.585 (0.026) & 0.467 (0.020) \\
+            GMM SFS divKL &   0.677 (0.065) & 0.503 (0.044) & 0.702 (0.063) & 0.488 (0.036) & 0.521 (0.071) & 0.414 (0.072) \\
+            GMM SFS kappa &   {\bfseries 0.771 (0.002)} & {\bfseries 0.642 (0.005)} & {\bfseries 0.769 (0.004)} & {\bfseries 0.602 (0.004)} & {\bfseries 0.637 (0.007)} & {\bfseries 0.562 (0.010)} \\
+            GMM SFS OA &      {\bfseries 0.773 (0.002)} & {\bfseries 0.642 (0.006)} & {\bfseries 0.771 (0.004)} & {\bfseries 0.602 (0.004)} & {\bfseries 0.639 (0.009)} & {\bfseries 0.568 (0.016)} \\
+            GMM SFS F1mean &  {\bfseries 0.767 (0.002)} & {\bfseries 0.646 (0.004)} & {\bfseries 0.768 (0.005)} & {\bfseries 0.605 (0.003)} & {\bfseries 0.634 (0.005)} & {\bfseries 0.569 (0.008)} \\
+            GMM SFFS JM &     0.725 (0.025) & 0.528 (0.022) & 0.750 (0.029) & 0.514 (0.023) & 0.585 (0.026) & 0.467 (0.020) \\
+            GMM SFFS divKL &  0.408 (0.037) & 0.237 (0.051) & 0.466 (0.020) & 0.241 (0.045) & 0.292 (0.072) & 0.195 (0.048) \\
+            GMM SFFS kappa &  0.601 (0.087) & 0.431 (0.065) & 0.641 (0.125) & 0.439 (0.069) & 0.467 (0.081) & 0.373 (0.071) \\
+            GMM SFFS OA &     0.544 (0.097) & 0.392 (0.063) & 0.579 (0.127) & 0.396 (0.064) & 0.473 (0.087) & 0.369 (0.066) \\
+            GMM SFFS F1mean & 0.473 (0.043) & 0.364 (0.027) & 0.491 (0.061) & 0.361 (0.025) & 0.462 (0.028) & 0.355 (0.023) \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+\end{document}

@@ -214,34 +214,19 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
         \caption{Average classification accuracy for 1,000 samples by class averaged over 5 trials  with all configurations of criterion and method (standard deviation in parenthesis).\label{tab:potsdam-otbsimu-all}}
         \begin{tabular}{lccc}\toprule
             & {\bfseries 5\_11 (train)} & {\bfseries 5\_12 (test)} & {\bfseries 3\_10 (test)} \\ \cmidrule{2-4}
-            GMM SFS JM &      0.624 (0.028) & & \\
-            GMM SFS divKL &   0.552 (0.092) & & \\
-            GMM SFS kappa &   {\bfseries 0.694 (0.002)} & & \\
-            GMM SFS OA &      {\bfseries 0.696 (0.003)} & & \\
-            GMM SFS F1mean &  {\bfseries 0.689 (0.002)} & & \\
-            GMM SFFS JM &     0.624 (0.028) & & \\
-            GMM SFFS divKL &  0.161 (0.066) & & \\
-            GMM SFFS kappa &  0.474 (0.103) & & \\
-            GMM SFFS OA &     0.407 (0.114) & & \\
-            GMM SFFS F1mean & 0.319 (0.052) & & \\
+            GMM SFS JM &      0.624 (0.028) & 0.631 (0.034) & 0.461 (0.027) \\
+            GMM SFS divKL &   0.552 (0.092) & 0.557 (0.086) & 0.388 (0.084) \\
+            GMM SFS kappa &   {\bfseries 0.694 (0.002)} & {\bfseries 0.669 (0.005)} & {\bfseries 0.533 (0.008)} \\
+            GMM SFS OA &      {\bfseries 0.696 (0.003)} & {\bfseries 0.670 (0.005)} & {\bfseries 0.535 (0.011)} \\
+            GMM SFS F1mean &  {\bfseries 0.689 (0.002)} & {\bfseries 0.668 (0.006)} & {\bfseries 0.529 (0.005)} \\
+            GMM SFFS JM &     0.624 (0.028) & 0.631 (0.034) & 0.461 (0.027) \\
+            GMM SFFS divKL &  0.161 (0.066) & 0.142 (0.065) & 0.148 (0.058) \\
+            GMM SFFS kappa &  0.474 (0.103) & 0.499 (0.144) & 0.330 (0.099) \\
+            GMM SFFS OA &     0.407 (0.114) & 0.424 (0.148) & 0.335 (0.099) \\
+            GMM SFFS F1mean & 0.319 (0.052) & 0.316 (0.067) & 0.316 (0.034) \\
             \bottomrule
         \end{tabular}
     \end{table}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 \begin{revbox}
   Only Cohen’s Kappa is utilized to analyze the classification accuracy. The experimental results would be more persuasive if other criterion functions are utilized as well. I am interested to see how different methods’ performance varies under different criterion functions.
@@ -287,20 +272,19 @@ In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical
              & \multicolumn{2}{c}{\bfseries 5\_11 (train)} & \multicolumn{2}{c}{\bfseries 5\_12 (test)} & \multicolumn{2}{c}{\bfseries 3\_10 (test)} \\ \cmidrule{2-7}
              & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} & {\bfseries OA} & {\bfseries F1-mean} \\ \cmidrule{2-7}
 
-            GMM SFS JM &      0.725 (0.025) & 0.528 (0.022) &  &&&\\
-            GMM SFS divKL &   0.677 (0.065) & 0.503 (0.044) &  &&&\\
-            GMM SFS kappa &   0.771 (0.002) & 0.642 (0.005) &  &&&\\
-            GMM SFS OA &      0.773 (0.002) & 0.642 (0.006) &  &&&\\
-            GMM SFS F1mean &  0.767 (0.002) & 0.646 (0.004) &  &&&\\
-            GMM SFFS JM &     0.725 (0.025) & 0.528 (0.022) &  &&&\\
-            GMM SFFS divKL &  0.408 (0.037) & 0.237 (0.051) &  &&&\\
-            GMM SFFS kappa &  0.601 (0.087) & 0.431 (0.065) &  &&&\\
-            GMM SFFS OA &     0.544 (0.097) & 0.392 (0.063) &  &&&\\
-            GMM SFFS F1mean & 0.473 (0.043) & 0.364 (0.027) &  &&&\\
+            GMM SFS JM &      0.725 (0.025) & 0.528 (0.022) & 0.750 (0.029) & 0.514 (0.023) & 0.585 (0.026) & 0.467 (0.020) \\
+            GMM SFS divKL &   0.677 (0.065) & 0.503 (0.044) & 0.702 (0.063) & 0.488 (0.036) & 0.521 (0.071) & 0.414 (0.072) \\
+            GMM SFS kappa &   {\bfseries 0.771 (0.002)} & {\bfseries 0.642 (0.005)} & {\bfseries 0.769 (0.004)} & {\bfseries 0.602 (0.004)} & {\bfseries 0.637 (0.007)} & {\bfseries 0.562 (0.010)} \\
+            GMM SFS OA &      {\bfseries 0.773 (0.002)} & {\bfseries 0.642 (0.006)} & {\bfseries 0.771 (0.004)} & {\bfseries 0.602 (0.004)} & {\bfseries 0.639 (0.009)} & {\bfseries 0.568 (0.016)} \\
+            GMM SFS F1mean &  {\bfseries 0.767 (0.002)} & {\bfseries 0.646 (0.004)} & {\bfseries 0.768 (0.005)} & {\bfseries 0.605 (0.003)} & {\bfseries 0.634 (0.005)} & {\bfseries 0.569 (0.008)} \\
+            GMM SFFS JM &     0.725 (0.025) & 0.528 (0.022) & 0.750 (0.029) & 0.514 (0.023) & 0.585 (0.026) & 0.467 (0.020) \\
+            GMM SFFS divKL &  0.408 (0.037) & 0.237 (0.051) & 0.466 (0.020) & 0.241 (0.045) & 0.292 (0.072) & 0.195 (0.048) \\
+            GMM SFFS kappa &  0.601 (0.087) & 0.431 (0.065) & 0.641 (0.125) & 0.439 (0.069) & 0.467 (0.081) & 0.373 (0.071) \\
+            GMM SFFS OA &     0.544 (0.097) & 0.392 (0.063) & 0.579 (0.127) & 0.396 (0.064) & 0.473 (0.087) & 0.369 (0.066) \\
+            GMM SFFS F1mean & 0.473 (0.043) & 0.364 (0.027) & 0.491 (0.061) & 0.361 (0.025) & 0.462 (0.028) & 0.355 (0.023) \\
             \bottomrule
         \end{tabular}
     \end{table}
-
 
 \begin{revbox}
   According to Table IV in page 16. GMM SFS JM outperforms GMM SFS kappa a little bit under the kappa criterion. Since GMM SFS kappa updates the features according to the kappa criterion while GMM SFS JM updates the features according to the JM criterion, shouldn’t GMM SFS kappa outperforms GMM SFS JM under the kappa criterion? Or is there some explanation to it?
