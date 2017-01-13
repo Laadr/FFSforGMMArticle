@@ -59,7 +59,7 @@
 % was not built to handle multiple paragraphs
 %
 
-\author{Adrien~Lagrange,~Mathieu~Fauvel~and~Manuel~Grizonnet% <-this % stops a space
+\author{Adrien~Lagrange ̃\IEEEmembership{Student, IEEE},~Mathieu~Fauvel~\IEEEmembership{Senior, IEEE}~and~Manuel~Grizonnet% <-this % stops a space
 \thanks{A. Lagrange and M. Fauvel are with the Universit\'{e} de Toulouse,
 INP-ENSAT, UMR 1201 DYNAFOR, France and with the INRA, UMR 1201
 DYNAFOR, France.}%
@@ -150,7 +150,7 @@ related to the use of parallel approaches (multi-core, GPU, clusters) to
 improve the  processing time, and  to the use of  streaming techniques
 when data  does not fit in  memory.  One popular open  source software
 solution  is  the Orfeo  Toolbox,  developed  by the  French  Space
-Agency~\cite{christophe2008orfeo}.   Streaming and  parallel computing
+Agency (CNES)~\cite{christophe2008orfeo}.   Streaming and  parallel computing
 are  conveniently proposed  to  users/developpers through  several ``\emph{ready to use}'' modules.
 
 A method  to reduce  both statistical and  computational issues  is to
@@ -294,7 +294,7 @@ $c$.
             \addplot+[very thick,mark=none,smooth,domain=0:200,samples=200] (\x,{\x*(\x+3)/2+1});
             \end{axis}
         \end{tikzpicture}
-        \caption{Number of parameters $\eta_c$ by class in function of dimension $d$: $\eta_c=d(d+3)/2+1$.\label{fig:nb-param}}
+        \caption{Number of parameters $\eta_c$ per class in function of dimension $d$: $\eta_c=d(d+3)/2+1$.\label{fig:nb-param}}
     \end{figure}
 
     There are two major solutions to this problem. The first option is to stabilize the inversion of the covariance matrices. Some methods investigate the use of constraints on the direct problem. Reynolds \emph{et al.} \cite{reynolds1995robust} proposed to use diagonal covariance matrices. It is also possible to force the diagonal element to be higher than a given value by maximizing the GMM likelihood \cite{hathaway1985constrained}. Celeux and Govaert \cite{celeux1995gaussian} suggest to use equality constraints between coefficients of the covariance matrix in a parsimonious cluster-based GMM framework. Other papers propose to work on the inverse problem. A classical method is to use a regularization method as the well-known ridge regularization \cite{hoerl1970ridge}. A ridge regularization aims to stabilize the inversion by replacing the covariance matrix $\boldsymbol{\Sigma}_c$ by $\boldsymbol{\Sigma}_c + \tau \mathbf{I}$ where $\tau$ is a positive parameter and $\mathbf{I}$ the identity matrix. Jensen \emph{et al.} \cite{jensen2008regression} propose a different approach using a sparsity approximation to inverse the covariance matrix.
@@ -378,7 +378,7 @@ Section~\ref{sec:criterion} describes the various criteria used in this work and
         \end{align}
         where Tr is the trace operator and $d$ the dimension of the distribution.
 
-        The    KL   divergence    is   not    symmetric,   \emph{i.e.}
+        The    KL   divergence    is   not    symmetric,   \emph{i.e.},
         $KL_{cc^\prime} \ne KL_{c^\prime c}$.  A symmetrical version  is used to
         compute the criterion function:
         \begin{align}\label{eq:skl}
@@ -400,7 +400,7 @@ Section~\ref{sec:criterion} describes the various criteria used in this work and
             &+ \frac{1}{2} \log \left( \frac{|\boldsymbol{\Sigma}_c + \boldsymbol{\Sigma}_{c^\prime}|}{\sqrt{|\boldsymbol{\Sigma}_c| |\boldsymbol{\Sigma}_{c^\prime}|}} \right).
         \end{align}
 
-        The \emph{Jeffries-Matusita distance} is a measure based on the Bhattacharyya distance. It saturates if the separability between the two distributions increases~\cite{bruzzone2009novel}. The JM distance is defined as
+        The \emph{Jeffries-Matusita distance} is a measure based on the Bhattacharyya distance. It saturates when the separability between the two distributions increases~\cite{bruzzone2009novel}. The JM distance is defined as
         \begin{equation}\label{eq:jm}
             {JM}_{cc^\prime} = \sqrt{ 2 \{1 - \text{exp}(-B_{cc^\prime})\} }.
         \end{equation}
@@ -567,7 +567,7 @@ without the necessity to learn a GMM models for each fold.
         \emph{i.e.}, the  covariance matrix  of the  selected features
         and $\boldsymbol{\Sigma}_c^{(k)}$ denotes  a covariance matrix
         at the $k^{th}$ iteration,  \emph{i.e.}, the covariance matrix
-        of  an  augmented  set  by  the  feature  $x_k$.  Then,  since
+        augmented  by  the  feature  $x_k$.  Then,  since
         $\boldsymbol{\Sigma}_c^{(k)}$ is a positive definite symmetric
         matrix, the covariance matrix can be written as
 
@@ -1124,15 +1124,12 @@ resolution multispectral airborne image.
             GMM SFS kappa & 257             & 496             & 955             & {\bfseries 5.2} & {\bfseries 5.2} & {\bfseries 5.5} & 11.95 & 12    & 12.05\\
             GMM SFS JM &    {\bfseries 8.6} & {\bfseries 8.9} & {\bfseries 9.1} & {\bfseries 5.7} & {\bfseries 5.7} & {\bfseries 5.9} & 11.95 & 12    & 12.05\\
             GMM SFFS JM &   {\bfseries 8.8} & {\bfseries 9.0} & {\bfseries 9.3} & {\bfseries 5.0} & {\bfseries 5.0} & {\bfseries 5.4} & 21.45 & 24.35 & 27.05\\
-            GMM ridge &     71.7            & 105             & 167             & 530 & 530 & 530    & & & \\
-            KNN &           {\bfseries 8.9} & 19.6            & 59.7            & 387 & 639 & 887    & & & \\
-            Random Forest & 24.5            & 49.3            & 105             & 33.0 & 41.7 & 45.9 & & & \\
+            GMM ridge &     71.7            & 105             & 167             & 530 & 530 & 530    & all & all & all \\
+            KNN &           {\bfseries 8.9} & 19.6            & 59.7            & 387 & 639 & 887    & all & all & all \\
+            Random Forest & 24.5            & 49.3            & 105             & 33.0 & 41.7 & 45.9 & all & all & all \\
             \bottomrule
         \end{tabularx}
     \end{table*}
-    
-    
-    
 
 
     The results show that, on this  dataset, GMM classifiers with feature selection get the best classification rate. Among the three variations of the selection algorithm, none appears to perform better than the others. Using kappa or Jeffries-Matusita distance as criterion is equal and using SFFS does not give any advantage.
