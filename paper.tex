@@ -86,7 +86,7 @@ DYNAFOR, France.}%
   saved  a  lot  of  computation  for each  test.   The  algorithm  is
   implemented in  \texttt{C++} and integrated into  the Orfeo Toolbox.
   It has been compared to  other classification algorithms on two high
-  dimension remote sensing images. The  results show that the approach
+  dimension remote sensing images. Results show that the approach
   provides good classification accuracies with low computation time.
 \end{abstract}
 
@@ -108,7 +108,23 @@ DYNAFOR, France.}%
 \section{Introduction}
 \label{sec:intro}
 
-\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the quantity of available Earth observation data for a given landscape becomes larger and larger. Satellite missions produce a huge amount of data on a regular (daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program) satellites managed by the German space agency will produce images with 244 spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager (HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally to hyperspectral data, the amount of available hypertemporal data increases a lot. For instance, the European satellites Sentinel-2 were launched recently and 2 Terabytes of data will be released every day~\cite{drusch2012sentinel}. The Landsat open archive (\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has also released thousands of images. Such high volume of Earth observation data provides accurate information of land state and functions, and helps to improve the understanding of the planet~\cite{rs1010001}. However, processing such data is more and more challenging because of statistical and computational issues.
+\IEEEPARstart{W}{ith} the increasing number of remote sensing missions, the
+quantity of available Earth observation data for a given landscape becomes
+larger and larger. Satellite missions produce a huge amount of data on a regular
+(daily) basis. From 2018, the EnMAP (Environmental Mapping and Analysis Program)
+satellites managed by the German space agency will produce images with 244
+spectral bands, a spatial resolution of 30x30m per pixel and with a frequency of
+revisit of 4 days\cite{Müller09enmap}. The Hyperspectral Infrared Imager
+(HyspIRI) of NASA will also deliver images with 212 spectral bands. Additionally
+to hyperspectral data, the amount of available hypertemporal data increases a
+lot. For instance, the European satellites Sentinel-2 were launched recently and
+2 Terabytes of data will be released every day~\cite{drusch2012sentinel}. The
+Landsat open archive
+(\url{http://landsat.usgs.gov/products_data_at_no_charge.php}) has also released
+thousands of images. Such high volume of Earth observation data provides
+accurate information of land state and functions, and helps to improve the
+understanding of the planet~\cite{rs1010001}. However, processing such data is
+more and more challenging because of statistical and computational issues.
 
 In the spectral or temporal domain, a pixel is represented by a vector
 for   which  each   component  corresponds   to  a   spectral/temporal
@@ -151,7 +167,7 @@ improve the  processing time, and  to the use of  streaming techniques
 when data  does not fit in  memory.  One popular open  source software
 solution  is  the Orfeo  Toolbox,  developed  by the  French  Space
 Agency (CNES)~\cite{christophe2008orfeo}.   Streaming and  parallel computing
-are  conveniently proposed  to  users/developpers through  several ``\emph{ready to use}'' modules.
+are  conveniently proposed  to  users/developers through  several ``\emph{ready to use}'' modules.
 
 A method  to reduce  both statistical and  computational issues  is to
 perform a reduction of the dimension. In fact, with the \emph{curse of
@@ -1219,7 +1235,7 @@ To cope with the large volume of data during the learning step, updates rules fr
 
 Experiments have been conducted on two real high dimensional data set, and the results have been compared to standards classifiers. Results show that the proposed approach  performs, in most cases, at least as best as classifiers (Random Forest) and even outperforms all of them in term of classification time.
 
-The resulting code is available as a remote module of the Orfeo toolbox on Github and makes it possible to process large high dimensional images efficiently. The \texttt{C++} code is freely available for download: \url{https://www.orfeo-toolbox.org/external-projects/}.
+The resulting code is available as a remote module of the Orfeo ToolBox on GitHub and makes it possible to process large high dimensional images efficiently. The \texttt{C++} code is freely available for download: \url{https://www.orfeo-toolbox.org/external-projects/}.
 
 Perspectives of this work concern the selection of continuous interval of features rather than a single feature~\cite{serpico2007extraction,1468090}. It will be of  highest interest for continuous features, such as temporal feature or spectral feature.
 
@@ -1301,7 +1317,7 @@ Perspectives of this work concern the selection of continuous interval of featur
     %     =&\log \left( |\boldsymbol{\Sigma}_c^{(k-1)}| \right) + \log ( \alpha_c )
     % \end{align*}
     % \noindent where $\mathbf{I}_{k-1}$ is the $(k-1) \times (k-1)$ identity matrix and $\mathbf{0}_{k-1,1}$ is the $(k-1) \times 1$ null vector.
-  From eq.~(\ref{eq:cov}) and standard results for the determinant of block matrix~\cite[Chapter 9]{IMM2012-03274} we have immediatly:
+  From eq.~(\ref{eq:cov}) and standard results for the determinant of block matrix~\cite[Chapter 9]{IMM2012-03274} we have immediately:
   \begin{align*}
     \log \left(|\boldsymbol{\Sigma}_c^{(k)}|\right)  & = \log\left(|\boldsymbol{\Sigma}_c^{(k-1)}|\right)\log\left(\sigma^{(k)}_c  - \mathbf{u}_c^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1}  \mathbf{u}_c\right)\\
     &= \log\left(|\boldsymbol{\Sigma}_c^{(k-1)}|\right)\log\left(\alpha_c\right)
