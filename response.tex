@@ -53,7 +53,11 @@ in the revised paper.
 In Algorithm 3, a threshold EPS\_FLT on eigenvalues is used to prevent numerical instability. It’s not clear how the authors select the proper value for this threshold. And how does this threshold influence the classification accuracy?
 
 \begin{resbox}
-  We acknowledge for the missing information. Numerical instability comes from the computation of the inverse and of the log-determinant of the covariance matrix. When the matrix is badly conditionned, e.g. when it is estimated with less samples than the number of parameters to estimate, some eigenvalues might be negative or null. Therefore the covariance matrix is non-invertible and its determinant is zero. To prevent such situations, the eigenvalues are shrunk.
+  We acknowledge for the missing information. Numerical instability comes from
+  the computation of the inverse and of the log-determinant of the covariance
+  matrix. When the matrix is badly conditioned, e.g. when it is estimated with
+  less samples than the number of parameters to estimate, some eigenvalues might
+  be negative or null. Therefore the covariance matrix is non invertible and its determinant is zero. To prevent such situations, the eigenvalues are shrunk.
 
   In practice, it consists in thresholding eigenvalues to the smallest significant positive value: $\lambda_c = \max\{EPS\_FLT,\lambda_c\}$, where $EPS\_FLT$ is defined by the computer architecture and C++ specifications. This thresholding can be seen as a ridge regularization with a very small value.
 
