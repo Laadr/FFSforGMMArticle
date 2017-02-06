@@ -10,7 +10,7 @@
 \usepackage{algorithmic}
 \usepackage{array}
 \usepackage[caption=false,font=footnotesize]{subfig}
-\usepackage{fixltx2e}
+% \usepackage{fixltx2e} % it trigers a warning. It may be useless ?
 \usepackage{url}
 \usepackage{listings}
 \usepackage{multirow}
@@ -37,7 +37,8 @@
 
 % correct bad hyphenation here
 % \hyphenation{op-tical net-works semi-conduc-tor}
-\newcommand{\rev}[1]{\textcolor{magenta}{\emph{#1}}}
+% \newcommand{\rev}[1]{\textcolor{black}{\emph{#1}}}
+\newcommand{\rev}[1]{\textcolor{black}{#1}}
 
 \begin{document}
 %
@@ -74,8 +75,6 @@ DYNAFOR, France.}%
 
 % \tableofcontents
 % \clearpage
-% As a general rule, do not put math, special symbols or citations
-% in the abstract or keywords.
 \begin{abstract}
   A  large  scale  feature  selection wrapper  is  discussed  for  the
   classification  of high  dimensional  remote  sensing. An  efficient
@@ -91,9 +90,9 @@ DYNAFOR, France.}%
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
-% \begin{IEEEkeywords}
-% remote sensing, hyperspectral imaging, feature selection, gaussian mixture model, fast computing.
-% \end{IEEEkeywords}
+\begin{IEEEkeywords}
+remote sensing, hyperspectral imaging, feature selection, gaussian mixture model, fast computing.
+\end{IEEEkeywords}
 
 % For peer review papers, you can put extra information on the cover
 % page as needed:
@@ -187,10 +186,6 @@ statistical complexity  and computational load. In  short, by reducing
 the dimension, better classification results are expected with a reduced
 computational load.
 
-% Among the various dimension reduction techniques, feature selection demonstrates several appealing for practical situation. The objective of feature selection is to find a subset of the original features with a minimum loss according the objective. Thus, 
-
-% retrieve the most compact representation of the data with minimum loss of information \cite{Guyon:2006:FEF:1208773}. By deleting the redundant information, feature selection allows to reduce dimension and thus avoid statistical issue, increase algorithm speed and limit storage requirements. Moreover, it adds several beneficial side effects. It improves data understanding by identify where is the most relevant information and it is then possible to save resources when organizing a new data acquisition.
-
 There  are  two  main  strategies  to  reduce  dimension~\cite[Chapter
 1]{Guyon:2006:FEF:1208773}: feature extraction and feature selection.
 Feature extraction means reformulate  and summarize the information by
@@ -210,15 +205,12 @@ Feature selection/extraction algorithms can be divided into three classes. The f
 
 The second class are known as \emph{wrapper methods}. They search for the best subset of variables for a given learning model. Since exhaustive searches are too expensive in terms of processing time, several sub-optimal search strategies have been designed, mainly iterative forward or backward search~\cite{whitney1971direct,marill1963effectiveness} or a combination of both~\cite{somol1999adaptive}. The advantage of such methods compared to filter methods is that they are dedicated to a particular model and to a particular learning problem. On the other hand, as they require the training of multiple models to test various set of variables, they are more time consuming.
 
-% The method proposed in this paper is actually a wrapper method which has been optimized in order to accelerate model learning and testing which is the weak point of this family.
 
 The third class corresponds to the \emph{embedded methods}. They do not separate the feature selection process from the learning algorithm and allow interactions between the two processes. A popular embedded method is the \emph{Random Forest}. Embedded methods also exist for other models, \emph{e.g.} SVM \cite{guyon2002gene,weston2003use,tuia2015multiclass}.
 
 Despite a large diversity of methods, feature selection algorithms usually do not scale well with the number of pixels to be processed~\cite{fauvel2015fast}. The training computational load is too important to compensate the reduced prediction computational load. Hence, feature selection is not widely used in operational situations. However, methods based on Gaussian Mixture Models (GMM) have several interesting properties that make them suitable for feature selection in the context of large amount of data. By taking advantage of their intrinsic properties, it is possible to increase the computational efficiency with respect to standard implementation.
 
 \rev{The contribution of this paper is a extension of the forward feature selection method proposed in~\cite{fauvel2015fast}. A smart implementation of the feature selection update rules are presented in order to perform efficiently on large amount of data. The rules use on linear algebra on block matrices applied to the covariance matrix of the conditional class density function.  Furthermore, a floating version of the algorithm is proposed and evaluated. Several \emph{correctness of fit} criteria are proposed to handle unbalanced training sets, extending the conventional \emph{overall accuracy} measure.  Finally, the developed algorithm is made available to the scientific community as a remote module of the Orfeo Toolbox~\cite{christophe2008orfeo}.}
-
-% Finally, tests are conducted to compare different variations of the method and to compare also to other classifiers (GMM, Random Forest, k-nearest-neighbor) available in the Orfeo Toolbox .
 
 The     remaining    of     the     article     is    organized     as
 follows.   Section~\ref{sec:gmm-hd}  presents   GMM  classifiers   and
@@ -247,7 +239,7 @@ $c$.
     (convex     combination)     of      several     class     conditioned
     distributions~\cite{Fraley00model-basedclustering}:
     \begin{align}
-        p(\mathbf{x}) = \sum_{c=1}^{C} \pi_c f_c(\mathbf{x}|\theta)
+        p(\mathbf{x}) = \sum_{c=1}^{C} \pi_c f_c(\mathbf{x}|\theta),
     \end{align}
     where $\pi_c$ is  the prior, \emph{i.e.}, the  proportion of class
     $c$  and  $f_c$  a  parametric density  function  controlled by
@@ -306,7 +298,7 @@ $c$.
     \begin{figure}[!t]
         \centering
         \begin{tikzpicture}
-          \begin{axis}[ymode=log,xmin=0,xmax=200,ymin=0,width=0.8\columnwidth,grid,axis x line=left ,axis y line=left, tick align=outside,xlabel = $d$,ylabel = $\eta_c$,small]
+          \begin{axis}[ymode=log,xmin=0,xmax=200,width=0.8\columnwidth,grid,axis x line=left ,axis y line=left, tick align=outside,xlabel = $d$,ylabel = $\eta_c$,small]
             \addplot+[very thick,mark=none,smooth,domain=0:200,samples=200] (\x,{\x*(\x+3)/2+1});
             \end{axis}
         \end{tikzpicture}
@@ -332,8 +324,6 @@ Section~\ref{sec:criterion} describes the various criteria used in this work and
     \subsection{Criterion function}
     \label{sec:criterion}
     The criterion evaluates how a given model built with a subset of features performs for the classification task. It can be an estimation of the correct classification or a measure of separability/similarity between class distributions. The former are in general more demanding in terms of processing time than the later.
-
-    % Criterion functions aim to evaluate either a rate of correct classification or the separability/similarity of class distributions. These functions are used to estimate which sets of variables are the best to represent data, to assure the separability of the classes and to perform classification. The choice of a criterion function is the choice of a way to compare sets of variables.
 
         \subsubsection{Measures of correct classification}
         \label{sec:criterion-rate}
@@ -367,8 +357,6 @@ Section~\ref{sec:criterion} describes the various criteria used in this work and
         iterated $n_{cv}$ times and  the estimated classification rate
         is computed as  the mean test error over  the $n_{cv}$ subsets
         of $\mathcal{S}$.
-
-        \hspace{0pt} \\
 
         \subsubsection{Similarity between distributions}
         The similarity  between two distributions can be  quantified using
@@ -427,10 +415,6 @@ Section~\ref{sec:criterion} describes the various criteria used in this work and
         \begin{equation}
             {C}_{JM} = \sum_{c=1}^{C} \sum_{c^{\prime} = c + 1}^{C} \pi_c \pi_{c^\prime} {JM}_{cc^\prime}.
         \end{equation}
-
-        \vspace{10 mm}
-
-        % According to \cite{bruzzone2009novel}, it is interesting to notice that the KL divergence increases quadratically with respect to the distance between the mean vectors of the class distributions whereas the measures of correct classification asymptotically tends to one when distributions are perfectly separable. On the contrary, the JM distance tends to saturate as the measures of correct classification.
 
         Table~\ref{tab:crit} summarizes the presented criterion functions and their characteristics. In the following $J$ denotes one criterion from Table~\ref{tab:crit}.
 
@@ -587,13 +571,6 @@ without the necessity to learn a GMM models for each fold.
         $\boldsymbol{\Sigma}_c^{(k)}$ is a positive definite symmetric
         matrix, the covariance matrix can be written as
 
-        % Then, the inverse of  the covariance matrix
-        % $(\boldsymbol{\Sigma}^{(k)})^{-1}$,   the   quadratical   term
-        % $(\mathbf{x}^{(k)})^t         (\boldsymbol{\Sigma}^{(k)})^{-1}
-        % \mathbf{x}^{(k)}$        and        the        log-determinant
-        % $\log   |\boldsymbol{\Sigma}^{(k)}|$  can   be  expressed   in
-        % function of terms of the $(k-1)^{th}$ iteration.
-
         \begin{equation}\label{eq:cov}
             \boldsymbol{\Sigma}_c^{(k)} =
             \bigg[\begin{array}{cc}
@@ -630,14 +607,6 @@ without the necessity to learn a GMM models for each fold.
         $(\boldsymbol{\Sigma}^{(k)}_c)^{-1}$  corresponding  to all  the
         possible augmented set of a given selection iteration. Similar
         update formulae can be written for the backward step.
-
-        % In the case of a backward step in SFFS algorithm, the formula is inverted in order to compute $(\boldsymbol{\Sigma}^{(k-1)})^{-1}$ knowing $(\boldsymbol{\Sigma}^{(k)})^{-1}$. The update rule becomes (proof in Appendix~\ref{app:proof-update})
-        % \begin{prop}[Backward update rule for inverse of covariance matrix]
-        % \label{eq:update-inv-back}
-        %     \begin{equation*}
-        %         (\boldsymbol{\Sigma}^{(k-1)})^{-1} = \underbrace{\mathbf{A}}_{\substack{\text{computed once}\\ \text{per selection step}}} - \underbrace{\alpha \mathbf{v} \mathbf{v}^t}_{\substack{\text{computed for} \\ \text{each augmented set}}}
-        %     \end{equation*}
-        % \end{prop}
 
         Using eq.~(\ref{eq:cov}) and~(\ref{eq:cov:inv}), it is possible to
         deduce  the   following  propositions  (proof  are   given  in
@@ -682,7 +651,7 @@ without the necessity to learn a GMM models for each fold.
       \begin{prop}[Jeffries-Matusita distance~(\ref{eq:jm})]
       \begin{align}
         \label{eq:jm-update}
-            \text{B}_{cc^\prime} = &\underbrace{\frac{1}{4} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
+            &\text{B}_{cc^\prime} = \underbrace{\frac{1}{4} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})^t ( \boldsymbol{\tilde{\Sigma}}^{(k-1)} )^{-1} (\boldsymbol{\mu}_c^{(k-1)} - \boldsymbol{\mu}_{c^\prime}^{(k-1)})}_{\substack{\text{computed once per selection step}}} \nonumber \\
             &+ \underbrace{\frac{1}{2} \log \left( \frac{|\boldsymbol{\tilde{\Sigma}}^{(k-1)}|}{\sqrt{|\boldsymbol{\Sigma}_c^{(k-1)}| |\boldsymbol{\Sigma}_{c^\prime}^{(k-1)}|}} \right)}_{\substack{\text{computed once per selection step}}} \nonumber \\
             &+ \underbrace{\frac{1}{4} \tilde{\alpha} ( \left[\begin{array}{cc} \mathbf{\tilde{v}}^t & \frac{1}{\tilde{\alpha}} \end{array}\right] (\boldsymbol{\mu}_c^{(k)} - \boldsymbol{\mu}_{c^\prime}^{(k)}) )^2 + \frac{1}{2} \log \left( \frac{\tilde{\alpha}}{\sqrt{\alpha_c \alpha_{c^\prime}}} \right)}_{\substack{\text{computed for each augmented set}}},
       \end{align}
@@ -849,9 +818,9 @@ resolution multispectral airborne image.
     \begin{figure}[!t]
         \centering
         \begin{tabular}{c}
-            \includegraphics[width=0.7\columnwidth]{Fig/aisa.png} \\
+            \includegraphics[width=0.6\columnwidth]{Fig/aisa.png} \\
             {\bfseries{(a)}} \\
-            \includegraphics[width=0.7\columnwidth]{Fig/aisa_gt.png} \\
+            \includegraphics[width=0.6\columnwidth]{Fig/aisa_gt.png} \\
             {\bfseries{(b)}} \\
         \end{tabular}
         \caption{Aisa dataset: {\bfseries{(a)}} colored composition of the image (R: 634nm, G: 519nm, B: 477nm), {\bfseries{(b)}} ground-truth.\label{fig:aisa}}
@@ -1020,25 +989,9 @@ resolution multispectral airborne image.
                 \draw[thick,red] (axis cs:18,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:18,\pgfkeysvalueof{/pgfplots/ymax});
                 \draw[thick,black] (axis cs:24,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:24,\pgfkeysvalueof{/pgfplots/ymax});
             \end{axis};
-            % \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa},small]
-            %     \addplot[thick,black] table[x=nb,y=crit] {criterion_1000spl.txt};
-            %     \draw[thick,red] (axis cs:15,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:15,\pgfkeysvalueof{/pgfplots/ymax});
-            %     \draw[thick,black] (axis cs:47,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:47,\pgfkeysvalueof{/pgfplots/ymax});
-            % \end{axis};
-            % \begin{axis}[ymin=0.2,ymax=0.75,grid,axis x line=left,axis y line=left,xlabel={\# variables},ylabel={Cohen's kappa}]
-            %     \addplot[thick,black] table[x=nb,y=crit] {criterion_50000spl.txt};
-            %     \draw[thick,red] (axis cs:31,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:31,\pgfkeysvalueof{/pgfplots/ymax});
-            %     \draw[thick,black] (axis cs:31,\pgfkeysvalueof{/pgfplots/ymin}) -- (axis cs:31,\pgfkeysvalueof{/pgfplots/ymax});
-            % \end{axis};
         \end{tikzpicture}
         \caption{Criterion evolution (kappa) in function of the number of selected variables for first trial with Aisa dataset with 500 samples by class. Red vertical line is the retained number of variables and black vertical line is the maximum of the criterion.\label{fig:crit-evol}}
     \end{figure}
-
-    % Then, a small processing is made to select the number of variables used for prediction. The evolution of the criterion function is retrieved from the model file and the discrete derivative of the criterion \emph{DJ} is computed and normalized by its maximum. The subset of variables used for classification $\Omega^{*}$ is the first subset for which this value is lower than a given threshold \emph{th}, equal  to 0.1\% in this experiment,
-    % \begin{equation*}
-    %     \Omega^{*} = \Omega_{\min \{k|DJ_k<th\}}
-    % \end{equation*}
-    % with $DJ_k = \frac{J(\Omega_k) - J(\Omega_{k-1})}{\max_k (J(\Omega_k) - J(\Omega_{k-1}))}$.
 
     The    classification   rate    is    presented   using    Cohen's
     kappa \rev{but scores computed with overall accuracy and mean of f1-score are available in supplementary material}. Processing  time has been  evaluated on a  desktop computer
@@ -1062,14 +1015,14 @@ resolution multispectral airborne image.
     presents  the results  of the  experiment with  mean and  standard
     deviation  of  the  Kappa  coefficient  over  the  20  trials  and
     Table~\ref{tab:aisa-otbsimu-time}  the   corresponding  processing
-    time. Bold values corresponds to best results. In Table~\ref{tab:aisa-otbsimu}, when several bold scores appears for the same experiment, it means that the scores has been assessed as equivalent with a Wilcoxon rank-sum test \cite{mann1947test}. Additionally, Figure~\ref{fig:meanNbVar-aisa} summarizes the mean of the number of selected variables for each variation of the GMM classifier with selection.
+    time. Bold values corresponds to best results. In Table~\ref{tab:aisa-otbsimu}, when several bold scores appears for the same experiment, it means that the scores has been assessed as equivalent with a Wilcoxon rank-sum test \cite{mann1947test}. Additionally, \ref{tab:aisa-otbsimu-time} summarizes the mean of the number of selected variables for each variation of the GMM classifier with selection.
 
     \begin{figure}[!t]
         \centering
         \begin{tabular}{c}
-            \includegraphics[width=0.7\columnwidth]{Fig/aisa_gt_train.png} \\
+            \includegraphics[width=0.6\columnwidth]{Fig/aisa_gt_train.png} \\
             {\bfseries{(a)}} \\
-            \includegraphics[width=0.7\columnwidth]{Fig/aisa_gt_test.png} \\
+            \includegraphics[width=0.6\columnwidth]{Fig/aisa_gt_test.png} \\
             {\bfseries{(b)}} \\
         \end{tabular}
         \caption{Aisa dataset: {\bfseries{(a)}} training polygons of first trial, {\bfseries{(b)}} test polygons of first trial.\label{fig:set-aisa}}
@@ -1092,43 +1045,6 @@ resolution multispectral airborne image.
         \end{tabular}
     \end{table}
 
-    % this one is result without changing the number of selected variables
-    % \begin{table}[!t]
-    %     \centering
-    %     \caption{Average classification accuracy 20 trials (standard deviation in parenthesis).\label{tab:aisa-otbsimu}}
-    %     \begin{tabular}{lccc}\toprule
-    %          & \multicolumn{3}{c}{\bfseries Cohen's kappa} \\ \cmidrule{2-4}
-    %         \# samples by class & 250 & 500 & 1000 \\ \midrule
-
-    %         GMM SFS kappa & {\bfseries 0.684 (0.025)} & {\bfseries 0.698 (0.027)} & {\bfseries 0.711 (0.028)} \\
-    %         GMM SFS JM &    {\bfseries 0.680 (0.028)} & {\bfseries 0.700 (0.028)} & {\bfseries 0.710 (0.030)} \\
-    %         GMM SFFS JM &   {\bfseries 0.680 (0.028)} & {\bfseries 0.700 (0.028)} & {\bfseries 0.710 (0.030)} \\
-    %         GMM ridge &     0.611 (0.040) & 0.620 (0.036) & 0.642 (0.034) \\
-    %         KNN &           0.551 (0.035) & 0.563 (0.033) & 0.574 (0.030) \\
-    %         Random Forest & 0.645 (0.026) & 0.673 (0.023) & 0.693 (0.023) \\
-    %         \bottomrule
-    %     \end{tabular}
-    % \end{table}
-
-    \begin{figure}
-      \centering
-      \begin{tikzpicture}
-        \begin{axis}[ylabel=$\bar{n}_s$,ymax=25,
-          symbolic x coords={0,250,500,1000,1050},
-          enlargelimits=0.15,legend pos=outer north east,xtick=data,legend cell align=left,
-          ybar,
-          bar width=5pt,grid,xlabel=Number of training samples per class,small,area legend]
-          \addplot coordinates {(250,15.9) (500,21.85) (1000,26.65)};
-          \addplot coordinates {(250,11.95) (500,12) (1000,12.05)};
-          \addplot coordinates {(250,11.95) (500,12) (1000,12.05)};
-          %%\addplot[red,very thick,sharp plot,update limits=false]coordinates {(0,252) (1050,252)};
-          \legend{{\footnotesize SFS kappa},{\footnotesize SFS JM},{\footnotesize SFFS JM}}
-        \end{axis}
-      \end{tikzpicture}
-      \caption{Mean number $\bar{n}_s$ of selected features for the different variation of selection methods for Aisa data set. The original number of features is 252.}
-      \label{fig:meanNbVar-aisa}
-    \end{figure}
-
     \begin{table*}[!t]
         \centering
         \caption{Mean processing time for training and classification for results in Table \ref{tab:aisa-otbsimu}.\label{tab:aisa-otbsimu-time}}
@@ -1147,6 +1063,24 @@ resolution multispectral airborne image.
         \end{tabularx}
     \end{table*}
 
+    % \begin{figure}
+    %   \centering
+    %   \begin{tikzpicture}
+    %     \begin{axis}[ylabel=$\bar{n}_s$,ymax=25,
+    %       symbolic x coords={0,250,500,1000,1050},
+    %       enlargelimits=0.15,legend pos=outer north east,xtick=data,legend cell align=left,
+    %       ybar,
+    %       bar width=5pt,grid,xlabel=Number of training samples per class,small,area legend]
+    %       \addplot coordinates {(250,15.9) (500,21.85) (1000,26.65)};
+    %       \addplot coordinates {(250,11.95) (500,12) (1000,12.05)};
+    %       \addplot coordinates {(250,11.95) (500,12) (1000,12.05)};
+    %       \legend{{\footnotesize SFS kappa},{\footnotesize SFS JM},{\footnotesize SFFS JM}}
+    %     \end{axis}
+    %   \end{tikzpicture}
+    %   \caption{Mean number $\bar{n}_s$ of selected features for the different variation of selection methods for Aisa data set. The original number of features is 252.}
+    %   \label{fig:meanNbVar-aisa}
+    % \end{figure}
+
 
     The results show that, on this  dataset, GMM classifiers with feature selection get the best classification rate. Among the three variations of the selection algorithm, none appears to perform better than the others. Using kappa or Jeffries-Matusita distance as criterion is equal and using SFFS does not give any advantage.
 
@@ -1155,7 +1089,6 @@ resolution multispectral airborne image.
     In term of computational time, the GMM classifiers are as expected very fast for classification and also for training, except when the criterion function is a classification rate. In this case, using JM distance as criterion and SFS as search strategy is the best choice in term of time efficiency. The good performance in time can be explained by the dimension reduction. Actually, the decision rule corresponding to Equation~(\ref{eq:decision}) has a complexity in $d^3$ where $d$ is the dimension. Thus, reducing $d$ induces a reduction of the classification time.
 
     The processing times of the three standard classifiers suffer from the increase of training samples. For the GMM classifier with ridge, the selection of regularization parameter is more costly with more samples because of the classification rate estimation needed. For the KNN classifier, the model stores all the training samples and the prediction implies to compute the distance to all the training samples which explains the increase of the processing time and additionally of the size of the model file. Finally, for the Random Forest classifier, the trees tends to be deeper in order to capture the additional information available with more samples and that explains the increase of the processing time.
-    % The computation of the kappa seems  to suffer from  a lack of  parallelization   which could be  improved. ->  plus tard dans la conclusion.
 
     \subsection{Potsdam dataset}
 
@@ -1197,8 +1130,6 @@ resolution multispectral airborne image.
 
     With this second dataset, the Random Forest classifier and the GMM classifier with kappa as selection criterion perform the best in terms of classification accuracy. When using 1000 samples per class, no significant difference of classification rate has been observed on test set. But, with 50,000 samples per class, the Random Forest classifier becomes significantly better in terms of classification accuracy.
 
-    % It can be guessed that the fact that the Gaussian hypothesis is unlikely to be verified explains the difficulty to extract the finer information available in a larger dataset. The JM distance has stressed in Table~\ref{tab:crit} has a strong Gaussian hypothesis and the same hypotheses could also explain the drop of the classification rate of GMM classifiers with JM distance as criterion.
-
     The  Postdam classes  are  more difficult  to discriminate,  since
     Gaussianity assumption  does not  hold. For instance,  a building
     can  be  made of  various  materials,  resulting in  heterogeneous
@@ -1239,22 +1170,9 @@ The resulting code is available as a remote module of the Orfeo ToolBox on GitHu
 
 Perspectives of this work concern the selection of continuous interval of features rather than a single feature~\cite{serpico2007extraction,1468090}. It will be of  highest interest for continuous features, such as temporal feature or spectral feature.
 
-% Finally, an improvement could be made to increase the stability of the selected features. For example, with hyperspectral data, a selection of continuous intervals and not band is a possible solution which has already been explored in \cite{serpico2007extraction}.
-
-% The python and C++ code are available freely for download: \url{https://www.orfeo-toolbox.org/external-projects/}, .
-
 \appendices
 \section{Proof of update rules}
 \label{app:proof-update}
-    % \subsubsection{Proposition~(\ref{eq:update-inv-back})}
-    %     \begin{proof}
-    %         \begin{align*}
-    %             \mathbf{A} - \alpha \mathbf{v} \mathbf{v}^t
-    %             &= (\boldsymbol{\Sigma}^{(k-1)})^{-1} + \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1} \\
-    %             &~~~- \alpha (- \frac{1}{\alpha} (\boldsymbol{\Sigma}^{(k-1)})^{-1} \mathbf{u}) (- \frac{1}{\alpha} \mathbf{u}^t (\boldsymbol{\Sigma}^{(k-1)})^{-1})) \\
-    %             &= (\boldsymbol{\Sigma}^{(k-1)})^{-1}
-    %         \end{align*}
-    %     \end{proof}
 
 \begin{proof}[Proof of proposition~(\ref{eq:update-quad})]
     \begin{alignat*}{3}
@@ -1283,40 +1201,6 @@ Perspectives of this work concern the selection of continuous interval of featur
 
 \begin{proof}[Proof of proposition~(\ref{eq:update-log})]
 
-    % \begin{align*}
-    %     \log &\left(|\boldsymbol{\Sigma}_c^{(k)}|\right) =
-    %     \log \left(\left|
-    %         \bigg[\begin{array}{cc}
-    %             \boldsymbol{\Sigma}_c^{(k-1)} & \mathbf{u}_c      \\
-    %             \mathbf{u}_c^t          & \sigma^{(k)}_c \\
-    %         \end{array}\bigg]
-    %     \right|\right) \\
-    %     =&\log \left(\left|
-    %         \bigg[\begin{array}{cc}
-    %             \boldsymbol{\Sigma}_c^{(k-1)} & \mathbf{0}_{k-1,1}     \\
-    %             \mathbf{u}_c^t          & 1 \\
-    %         \end{array}\bigg]
-    %         \bigg[\begin{array}{cc}
-    %             \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c      \\
-    %             \mathbf{0}_{k-1,1}^t          & \sigma^{(k)}_c - \mathbf{u}_c^t(\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c\\
-    %         \end{array}\bigg]
-    %     \right|\right) \\
-    %     =&\log \left(\left|
-    %         \bigg[\begin{array}{cc}
-    %             \boldsymbol{\Sigma}_c^{(k-1)} & \mathbf{0}_{k-1,1}     \\
-    %             \mathbf{u}_c^t          & 1 \\
-    %         \end{array}\bigg]
-    %     \right|\right)
-    %     +\log \left(\left|
-    %         \bigg[\begin{array}{cc}
-    %             \mathbf{I}_{k-1} & (\boldsymbol{\Sigma}_c^{(k-1)})^{-1} \mathbf{u}_c      \\
-    %             \mathbf{0}_{k-1,1}^t          & \alpha_c \\
-    %         \end{array}\bigg]
-    %     \right|\right) \\
-    %     =&\log \left( |\boldsymbol{\Sigma}_c^{(k-1)}| |1| \right) + \log \left( |\mathbf{I}_{k-1}| |\alpha_c| \right)\\
-    %     =&\log \left( |\boldsymbol{\Sigma}_c^{(k-1)}| \right) + \log ( \alpha_c )
-    % \end{align*}
-    % \noindent where $\mathbf{I}_{k-1}$ is the $(k-1) \times (k-1)$ identity matrix and $\mathbf{0}_{k-1,1}$ is the $(k-1) \times 1$ null vector.
   From eq.~(\ref{eq:cov}) and standard results for the determinant of block matrix~\cite[Chapter 9]{IMM2012-03274} we have immediately:
   \begin{align*}
     \log \left(|\boldsymbol{\Sigma}_c^{(k)}|\right)  & = \log\left(|\boldsymbol{\Sigma}_c^{(k-1)}|\right)\log\left(\sigma^{(k)}_c  - \mathbf{u}_c^t (\boldsymbol{\Sigma}_c^{(k-1)})^{-1}  \mathbf{u}_c\right)\\
@@ -1343,9 +1227,36 @@ Perspectives of this work concern the selection of continuous interval of featur
 %\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
 % or if you just want to reserve a space for a photo:
 
-% \begin{IEEEbiography}{Michael Shell}
-% Biography text here.
-% \end{IEEEbiography}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{Fig/lagrange.jpg}}]{Adrien Lagrange} received an Engineering degree in Robotics and Embedded Systems from ENSTA ParisTech, Paris (Palaiseau), France, and the M.Sc. degree in Machine Learning from the Paris Saclay University, both in 2016.
+
+He is currently a Ph.D. student at the National Polytechnic Institute of Toulouse, within the Signal and Communications Group of the IRIT Laboratory. He is working on the subject of multi-resolution learning for hierarchical analysis of hyperspectral and hypertemporal images under the supervision of Nicolas Dobigeon and Mathieu Fauvel. His research interests are remote sensing, statistical modeling, image processing.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{fauvel.pdf}}]{Mathieu Fauvel}
+ graduated in  electrical engineering  from the Grenoble  Institut of
+ Technology (Grenoble  INP), Grenoble, France, in  2004.  He  received
+ the M.S and  Ph.D.  degrees in image and signal  processing from  the
+ Grenoble INP  in 2004  and 2007,  respectively.  In  2007, he  was a
+ teaching assistant  in Grenoble  INP. From  2008 to  2010, he  was a
+ postdoctoral research associate with the MISTIS Team of the  National
+ Institute  for Research  in  Computer Science  and Control  (INRIA).
+ Since 2011,  Dr.  Fauvel  has been an  Associate Professor  with  the
+ National Polytechnic  Institute of  Toulouse (ENSAT -  University of
+ Toulouse) within  the DYNAFOR lab  (University of Toulouse  -  INRA).
+ His  research interests  are  remote sensing,  data fusion,  pattern
+ recognition, multicomponent signal and image processing. From  2013 to 2016,
+ he was the president of the French Chapter of the GRSS. He is  now in charge of the European GRSS Chapters activities.
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{Fig/manuel}}]{Manuel Grizonnet} received the Mathematical modeling, Vision, Graphics and
+  Simulation Engineer degree from the \'{E}cole Nationale Sup\'{e}rieure d'Informatique
+  et de Math\'{e}matiques Appliqu\'{e}es de Grenoble, France, in 2007. From 2007 to 2009
+  he worked for the BRGM (French geological survey) in Niamey, Niger where he was a
+  Systems and Geological Information System (GIS) engineer. He is currently with
+  the Centre National d'\'{E}tudes Spatiales (French Space Agency), Toulouse,
+  France, where he is developing image processing algorithms and software for
+  the exploitation of Earth observation images.
+\end{IEEEbiography}
 
 % % if you will not have a photo at all:
 % \begin{IEEEbiographynophoto}{John Doe}
@@ -1357,78 +1268,3 @@ Perspectives of this work concern the selection of continuous interval of featur
 %\newpage
 
 \end{document}
-
-
-
-%\begin{figure}[!t]
-
-% An example of a double column floating figure using two subfigures.
-% (The subfig.sty package must be loaded for this to work.)
-% The subfigure \label commands are set within each subfloat command,
-% and the \label for the overall figure must come after \caption.
-% \hfil is used as a separator to get equal spacing.
-% Watch out that the combined width of all the subfigures on a
-% line do not exceed the text width or a line break will occur.
-%
-%\begin{figure*}[!t]
-%\centering
-%\subfloat[Case I]{\includegraphics[width=2.5in]{box}%
-%\label{fig_first_case}}
-%\hfil
-%\subfloat[Case II]{\includegraphics[width=2.5in]{box}%
-%\label{fig_second_case}}
-%\caption{Simulation results for the network.}
-%\label{fig_sim}
-%\end{figure*}
-%
-% Note that often IEEE papers with subfigures do not employ subfigure
-% captions (using the optional argument to \subfloat[]), but instead will
-% reference/describe all of them (a), (b), etc., within the main caption.
-% Be aware that for subfig.sty to generate the (a), (b), etc., subfigure
-% labels, the optional argument to \subfloat must be present. If a
-% subcaption is not desired, just leave its contents blank,
-% e.g., \subfloat[].
-
-
-% An example of a floating table. Note that, for IEEE style tables, the
-% \caption command should come BEFORE the table and, given that table
-% captions serve much like titles, are usually capitalized except for words
-% such as a, an, and, as, at, but, by, for, in, nor, of, on, or, the, to
-% and up, which are usually not capitalized unless they are the first or
-% last word of the caption. Table text will default to \footnotesize as
-% the IEEE normally uses this smaller font for tables.
-% The \label must come after \caption as always.
-%
-%\begin{table}[!t]
-%% increase table row spacing, adjust to taste
-%\renewcommand{\arraystretch}{1.3}
-% if using array.sty, it might be a good idea to tweak the value of
-% \extrarowheight as needed to properly center the text within the cells
-%\caption{An Example of a Table}
-%\label{table_example}
-%\centering
-%% Some packages, such as MDW tools, offer better commands for making tables
-%% than the plain LaTeX2e tabular which is used here.
-%\begin{tabular}{|c||c|}
-%\hline
-%One & Two\\
-%\hline
-%Three & Four\\
-%\hline
-%\end{tabular}
-%\end{table}
-
-
-% Note that the IEEE does not put floats in the very first column
-% - or typically anywhere on the first page for that matter. Also,
-% in-text middle ("here") positioning is typically not used, but it
-% is allowed and encouraged for Computer Society conferences (but
-% not Computer Society journals). Most IEEE journals/conferences use
-% top floats exclusively.
-% Note that, LaTeX2e, unlike IEEE journals/conferences, places
-% footnotes above bottom floats. This can be corrected via the
-% \fnbelowfloat command of the stfloats package.
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:
